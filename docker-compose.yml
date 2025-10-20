@@ -2,10 +2,12 @@
 version: "3.9"
 services:
   app:
+    build:
+      context: .
     depends_on:
       postgres:
         condition: service_healthy
-    image: svhd/logto:${TAG-latest}
+    image: ghcr.io/nbtca/logto:${TAG-latest}
     entrypoint: ["sh", "-c", "npm run cli db seed -- --swe && npm start"]
     ports:
       - 3001:3001
