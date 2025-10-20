@@ -117,6 +117,10 @@ export enum UserScope {
    */
   Roles = 'roles',
   /**
+   * Scope for user's groups (compatibility with systems that expect `groups` claim).
+   */
+  Groups = 'groups',
+  /**
    * Scope for user's organization IDs and perform organization token grant per [RFC 0001](https://github.com/logto-io/rfcs).
    *
    * See {@link idTokenClaims} for mapped claims in ID Token and {@link userinfoClaims} for additional claims in Userinfo Endpoint.
@@ -159,7 +163,8 @@ export const idTokenClaims: Readonly<Record<UserScope, UserClaim[]>> = Object.fr
   [UserScope.Email]: ['email', 'email_verified'],
   [UserScope.Phone]: ['phone_number', 'phone_number_verified'],
   [UserScope.Address]: ['address'],
-  [UserScope.Roles]: ['roles', 'groups'],
+  [UserScope.Roles]: ['roles'],
+  [UserScope.Groups]: ['groups'],
   [UserScope.Organizations]: ['organizations'],
   [UserScope.OrganizationRoles]: ['organization_roles'],
   [UserScope.CustomData]: [],
@@ -175,6 +180,7 @@ export const userinfoClaims: Readonly<Record<UserScope, UserClaim[]>> = Object.f
   [UserScope.Phone]: [],
   [UserScope.Address]: [],
   [UserScope.Roles]: [],
+  [UserScope.Groups]: [],
   [UserScope.Organizations]: ['organization_data'],
   [UserScope.OrganizationRoles]: [],
   [UserScope.CustomData]: ['custom_data'],
