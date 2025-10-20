@@ -5,6 +5,7 @@ const user_scopes = {
     phone: 'Deine Telefonnummer',
     profile: 'Dein Name, Benutzername, Avatar und andere Profilinformationen',
     roles: 'Deine Rollen',
+    groups: 'Deine Gruppen',
     identities: 'Deine verknüpften sozialen Identitäten',
     'urn:logto:scope:organizations': 'Die Informationen deiner Organisationen',
     'urn:logto:scope:organization_roles': 'Deine Rollen in der Organisation',

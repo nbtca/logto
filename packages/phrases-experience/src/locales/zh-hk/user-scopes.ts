@@ -5,6 +5,7 @@ const user_scopes = {
     phone: '你的電話號碼',
     profile: '你的姓名、用戶名、頭像和其他個人資料信息',
     roles: '你的角色',
+    groups: '你的用戶組',
     identities: '你關聯的社交身份',
     'urn:logto:scope:organizations': '你的組織信息',
     'urn:logto:scope:organization_roles': '你的組織角色',
