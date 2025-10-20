@@ -53,6 +53,10 @@ describe('OIDC getUserClaims()', () => {
     ).toEqual([...profileExpectation, 'custom_data', 'identities', 'sso_identities']);
   });
 
+  it('should return roles and groups claims for roles scope', () => {
+    expect(getAcceptedUserClaims(use.idToken, 'openid roles', {}, [])).toEqual(['roles', 'groups']);
+  });
+
   // Ignore `_claims` since [Claims Parameter](https://github.com/panva/node-oidc-provider/tree/main/docs#featuresclaimsparameter) is not enabled
   it('should ignore claims parameter', () => {
     expect(

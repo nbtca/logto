@@ -53,6 +53,7 @@ export const userClaimsList = [
   // Custom claims
   'username',
   'roles',
+  'groups',
   'organizations',
   'organization_data',
   'organization_roles',
@@ -158,7 +159,7 @@ export const idTokenClaims: Readonly<Record<UserScope, UserClaim[]>> = Object.fr
   [UserScope.Email]: ['email', 'email_verified'],
   [UserScope.Phone]: ['phone_number', 'phone_number_verified'],
   [UserScope.Address]: ['address'],
-  [UserScope.Roles]: ['roles'],
+  [UserScope.Roles]: ['roles', 'groups'],
   [UserScope.Organizations]: ['organizations'],
   [UserScope.OrganizationRoles]: ['organization_roles'],
   [UserScope.CustomData]: [],

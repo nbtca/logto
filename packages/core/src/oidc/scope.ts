@@ -20,6 +20,7 @@ const claimToUserKey: Readonly<
       | 'email_verified'
       | 'phone_number_verified'
       | 'roles'
+      | 'groups'
       | 'organizations'
       | 'organization_data'
       | 'organization_roles'
@@ -91,6 +92,10 @@ export const getUserClaimsData = async (
           return [claim, Boolean(user.primaryPhone)];
         }
         case 'roles': {
+          const roles = await userLibrary.findUserRoles(user.id);
+          return [claim, roles.map(({ name }) => name)];
+        }
+        case 'groups': {
           const roles = await userLibrary.findUserRoles(user.id);
           return [claim, roles.map(({ name }) => name)];
         }
