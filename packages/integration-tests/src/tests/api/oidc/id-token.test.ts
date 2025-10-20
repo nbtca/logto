@@ -64,6 +64,15 @@ describe('OpenID Connect ID token', () => {
     });
   });
 
+  it('should be issued with `groups` claim that maps to roles', async () => {
+    const role = await createRole({});
+    await assignRolesToUser(userId, [role.id]);
+    await fetchIdToken(['roles'], {
+      roles: [role.name],
+      groups: [role.name],
+    });
+  });
+
   it('should be issued with `organizations` and `organization_roles` claims', async () => {
     const [org1, org2] = await Promise.all([
       organizationApi.create({ name: 'org1' }),
