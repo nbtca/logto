@@ -1,4 +1,4 @@
-import { type Region as RegionType } from '@logto/cloud/routes';
+import { type RegionResponse as RegionType } from '@logto/cloud/routes';
 import { useCallback } from 'react';
 import useSWRImmutable from 'swr/immutable';
 
@@ -20,8 +20,8 @@ const useAvailableRegions = () => {
       return regions;
     }
   );
-  const getRegionById = useCallback(
-    (id: string) => regions?.find((region) => region.id === id),
+  const getRegionByName = useCallback(
+    (name: string) => regions?.find((region) => region.name === name),
     [regions]
   );
 
@@ -30,8 +30,8 @@ const useAvailableRegions = () => {
     regions,
     /** Error encountered while fetching regions. */
     regionsError,
-    /** Function to get a region by its ID. If the region is not found, returns undefined. */
-    getRegionById,
+    /** Function to get a region by its name. If the region is not found, returns undefined. */
+    getRegionByName,
   };
 };
 

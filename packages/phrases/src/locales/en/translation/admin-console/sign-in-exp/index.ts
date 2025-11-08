@@ -42,6 +42,9 @@ const sign_in_exp = {
     app_logo_and_favicon: 'App logo and favicon',
     company_logo_and_favicon: 'Company logo and favicon',
     organization_logo_and_favicon: 'Organization logo and favicon',
+    hide_logto_branding: 'Hide Logto branding',
+    hide_logto_branding_description:
+      'Remove "Powered by Logto". Spotlight your brand exclusively with a clean, professional sign-in experience.',
   },
   branding_uploads: {
     app_logo: {
@@ -175,7 +178,7 @@ const sign_in_exp = {
       'No SMS connector set-up yet. Set up in <a>"Email and SMS connectors"</a>.',
     no_connector_social_account_center:
       'No social connector set-up yet. Set up in <a>"Social connectors"</a>.',
-    no_mfa_factor: 'No MFA factor set-up yet. <a>{{link}}</a> in "Multi-factor authentication".',
+    no_mfa_factor: 'No MFA factor set-up yet. Set up in <a>{{link}}</a>.',
     setup_link: 'Set up',
   },
   save_alert: {

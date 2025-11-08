@@ -110,6 +110,31 @@ const logtoSkuQuotaGuard = z.object({
   securityFeaturesEnabled: z.boolean(),
 }) satisfies ToZodObject<SubscriptionQuota>;
 
+const systemLimitGuard = z
+  .object({
+    applicationsLimit: z.number(),
+    thirdPartyApplicationsLimit: z.number(),
+    scopesPerResourceLimit: z.number(),
+    socialConnectorsLimit: z.number(),
+    userRolesLimit: z.number(),
+    machineToMachineRolesLimit: z.number(),
+    scopesPerRoleLimit: z.number(),
+    hooksLimit: z.number(),
+    machineToMachineLimit: z.number(),
+    resourcesLimit: z.number(),
+    enterpriseSsoLimit: z.number(),
+    tenantMembersLimit: z.number(),
+    organizationsLimit: z.number(),
+    samlApplicationsLimit: z.number(),
+    usersPerOrganizationLimit: z.number(),
+    organizationUserRolesLimit: z.number(),
+    organizationMachineToMachineRolesLimit: z.number(),
+    organizationScopesLimit: z.number(),
+  })
+  .partial() satisfies ToZodObject<Subscription['systemLimit']>;
+
+export type SystemLimit = z.infer<typeof systemLimitGuard>;
+
 /**
  * Redis cache guard for the subscription data returned from the Cloud API `/api/tenants/my/subscription`.
  * Logto core does not have access to the zod guard of the subscription data in Cloud,
@@ -125,4 +150,6 @@ export const subscriptionCacheGuard = z.object({
   status: subscriptionStatusGuard,
   upcomingInvoice: upcomingInvoiceGuard.nullable().optional(),
   quota: logtoSkuQuotaGuard,
+  // Todo: @xiaoyijun: LOG-12360 make SystemLimit non-optional after this feature is fully rolled out
+  systemLimit: systemLimitGuard.optional(),
 }) satisfies ToZodObject<Subscription>;

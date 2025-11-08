@@ -42,6 +42,9 @@ const sign_in_exp = {
     app_logo_and_favicon: 'Logo aplikacji i favicon',
     company_logo_and_favicon: 'Logo firmy i favicon',
     organization_logo_and_favicon: 'Logo organizacji i favicon',
+    hide_logto_branding: 'Ukryj branding Logto',
+    hide_logto_branding_description:
+      'Usuń napis "Powered by Logto". Zaprezentuj wyłącznie swoją markę w czystym i profesjonalnym procesie logowania.',
   },
   branding_uploads: {
     app_logo: {
@@ -90,74 +93,75 @@ const sign_in_exp = {
       'Twoje niestandardowe zasoby interfejsu użytkownika zostały pomyślnie przesłane i są teraz dostępne. W rezultacie wbudowane okno podglądu zostało wyłączone.\nAby przetestować swoje spersonalizowane UI logowania, kliknij przycisk "Podgląd na żywo", aby otworzyć go w nowej karcie przeglądarki.',
   },
   account_center: {
-    title: 'Centrum konta',
-    description: 'Dostosuj procesy centrum konta z wykorzystaniem interfejsów Logto.',
+    title: 'CENTRUM KONTA',
+    description: 'Dostosuj przepływy centrum konta z wykorzystaniem interfejsów API Logto.',
     enable_account_api: 'Włącz Account API',
     enable_account_api_description:
-      'Włącz Account API, aby budować własne centrum konta i dać użytkownikom bezpośredni dostęp do API bez użycia Logto Management API.',
+      'Włącz Account API, aby zbudować własne centrum konta i zapewnić użytkownikom końcowym bezpośredni dostęp do API bez użycia Logto Management API.',
     field_options: {
-      off: 'Off',
-      edit: 'Edit',
-      read_only: 'Read only',
+      off: 'Wyłączone',
+      edit: 'Edytuj',
+      read_only: 'Tylko do odczytu',
       enabled: 'Włączone',
-      disabled: 'Wyłączone',
+      disabled: 'Nieaktywne',
     },
     sections: {
       account_security: {
-        title: 'ACCOUNT SECURITY',
+        title: 'BEZPIECZEŃSTWO KONTA',
         description:
-          'Manage access to the Account API, enabling users to view or edit their identity information and authentication factors after signing into the application. Users must verify their identity to get a valid 10-minute verification record ID before making these security-related changes.',
+          'Zarządzaj dostępem do Account API, aby użytkownicy po zalogowaniu mogli przeglądać lub edytować swoje dane tożsamości oraz czynniki uwierzytelniania. Zanim wprowadzą te zmiany związane z bezpieczeństwem, użytkownicy muszą potwierdzić swoją tożsamość i uzyskać identyfikator rekordu weryfikacji ważny przez 10 minut.',
         groups: {
           identifiers: {
-            title: 'Identifiers',
+            title: 'Identyfikatory',
           },
           authentication_factors: {
-            title: 'Authentication factors',
+            title: 'Czynniki uwierzytelniające',
           },
         },
       },
       user_profile: {
-        title: 'USER PROFILE',
+        title: 'PROFIL UŻYTKOWNIKA',
         description:
-          'Manage access to the Account API, enabling users to view or edit basic or custom profile data after signing into the application.',
+          'Zarządzaj dostępem do Account API, aby użytkownicy po zalogowaniu mogli przeglądać lub edytować podstawowe albo własne dane profilu.',
         groups: {
           profile_data: {
-            title: 'Profile data',
+            title: 'Dane profilu',
           },
         },
       },
       secret_vault: {
         title: 'TAJNY SEJF',
         description:
-          'Dla złączy społecznościowych i korporacyjnych, bezpieczne przechowywanie tokenów dostępu stron trzecich w celu wywołania ich interfejsów API (np. dodawanie wydarzeń do Kalendarza Google).',
+          'W przypadku konektorów społecznościowych i korporacyjnych bezpiecznie przechowuj tokeny dostępu stron trzecich, aby wywoływać ich interfejsy API (np. dodawać zdarzenia do Kalendarza Google).',
         third_party_token_storage: {
           title: 'Token strony trzeciej',
-          third_party_access_token_retrieval: 'Token strony trzeciej',
+          third_party_access_token_retrieval: 'Pobieranie tokenu dostępu strony trzeciej',
           third_party_token_tooltip:
-            'Aby przechowywać tokeny, możesz włączyć to w ustawieniach odpowiedniego złącza społecznościowego lub korporacyjnego.',
+            'Aby przechowywać tokeny, włącz tę opcję w ustawieniach odpowiedniego konektora społecznościowego lub korporacyjnego.',
           third_party_token_description:
-            'Po włączeniu Account API pobieranie tokenów stron trzecich jest automatycznie aktywowane.',
+            'Po włączeniu Account API pobieranie tokenów stron trzecich jest aktywowane automatycznie.',
         },
       },
     },
     fields: {
-      email: 'Email address',
-      phone: 'Phone number',
-      social: 'Social identities',
-      password: 'Password',
-      mfa: 'Multi-factor authentication',
-      mfa_description: 'Let users manage their MFA methods from the account center.',
-      username: 'Username',
-      name: 'Name',
-      avatar: 'Avatar',
-      profile: 'Profile',
-      profile_description: 'Control access to structured profile attributes.',
-      custom_data: 'Custom data',
-      custom_data_description: 'Control access to custom JSON data stored on the user.',
+      email: 'Adres e-mail',
+      phone: 'Numer telefonu',
+      social: 'Tożsamości społecznościowe',
+      password: 'Hasło',
+      mfa: 'Uwierzytelnianie wieloskładnikowe',
+      mfa_description: 'Pozwól użytkownikom zarządzać metodami MFA w centrum konta.',
+      username: 'Nazwa użytkownika',
+      name: 'Imię i nazwisko',
+      avatar: 'Awatar',
+      profile: 'Profil',
+      profile_description: 'Kontroluj dostęp do ustrukturyzowanych atrybutów profilu.',
+      custom_data: 'Dane niestandardowe',
+      custom_data_description:
+        'Kontroluj dostęp do niestandardowych danych JSON przechowywanych przy użytkowniku.',
     },
     webauthn_related_origins: 'Powiązane źródła WebAuthn',
     webauthn_related_origins_description:
-      'Dodaj domeny swoich aplikacji frontendowych, które mogą rejestrować klucze dostępu za pośrednictwem API konta.',
+      'Dodaj domeny swoich aplikacji front-end, którym pozwalasz rejestrować klucze dostępu przez Account API.',
     webauthn_related_origins_error: 'Źródło musi zaczynać się od https:// lub http://',
   },
   sign_up_and_sign_in,
@@ -175,8 +179,7 @@ const sign_in_exp = {
       'Nie ustawiono jeszcze łącznika SMS. Skonfiguruj go w <a>„Łączniki e-mail i SMS"</a>.',
     no_connector_social_account_center:
       'Nie ustawiono jeszcze łącznika społecznościowego. Skonfiguruj go w <a>„Łączniki społecznościowe"</a>.',
-    no_mfa_factor:
-      'Nie ustawiono jeszcze czynnika MFA. <a>{{link}}</a> w „Uwierzytelnianie wieloskładnikowe".',
+    no_mfa_factor: 'Nie ustawiono jeszcze czynnika MFA. Skonfiguruj go w <a>{{link}}</a>.',
     setup_link: 'Konfiguracja',
   },
   save_alert: {
