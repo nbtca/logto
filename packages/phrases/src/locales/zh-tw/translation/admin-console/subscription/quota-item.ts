@@ -202,6 +202,19 @@ const quota_item = {
     unlimited: '進階安全',
     not_eligible: '移除你的進階安全設定',
   },
+  custom_domains_limit: {
+    name: '自訂網域',
+    limited: '{{count, number}} 自訂網域',
+    limited_other: '{{count, number}} 自訂網域',
+    unlimited: '不限自訂網域數',
+    not_eligible: '移除你的自訂網域',
+  },
+  passkey_sign_in_enabled: {
+    name: '通行密鑰登入',
+    limited: '通行密鑰登入',
+    unlimited: '通行密鑰登入',
+    not_eligible: '不支援通行密鑰登入',
+  },
 };
 
 export default Object.freeze(quota_item);

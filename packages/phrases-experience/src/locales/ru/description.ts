@@ -17,10 +17,9 @@ const description = {
   passcode_sent: 'Код подтверждения был отправлен повторно',
   resend_after_seconds: 'Еще не получили? Отправить повторно через <span>{{seconds}}</span> секунд',
   resend_passcode: 'Еще не получили? <a>Отправить повторно код подтверждения</a>',
-  create_account_id_exists: 'Учетная запись для {{value}} уже существует, хотите войти?',
+  create_account_id_exists: 'Учетная запись {{value}} уже существует. Продолжить вход.',
   link_account_id_exists: 'Учетная запись для {{value}} уже существует, хотите привязать?',
-  sign_in_id_does_not_exist:
-    'Учетная запись для {{value}} не существует, хотите зарегистрироваться?',
+  sign_in_id_does_not_exist: 'Учетная запись для {{value}} не найдена. Создать новую?',
   sign_in_id_does_not_exist_alert: 'Учетная запись для {{value}} не существует.',
   create_account_id_exists_alert:
     'Аккаунт с {{type}} {{value}} связан с другим аккаунтом. Пожалуйста, попробуйте другой {{type}}.',
@@ -111,6 +110,17 @@ const description = {
   switch_account_description:
     'Чтобы продолжить, вы будете выйти из текущей учетной записи и автоматически переключены на новую учетную запись.',
   about_yourself: 'Расскажите нам о себе',
+  verify_identity: 'Подтвердите свою личность',
+  choose_verification_method: 'Выберите способ входа',
+  verification_method: {
+    passkey: 'Ключ доступа',
+    passkey_description: 'Проверка через устройство или USB-оборудование',
+    password: 'Пароль',
+    password_description: 'Введите пароль',
+    email_verification_code: 'Код подтверждения по электронной почте',
+    phone_verification_code: 'Код подтверждения по телефону',
+    verification_code_description: 'Отправить на {{target}}',
+  },
 };
 
 export default Object.freeze(description);

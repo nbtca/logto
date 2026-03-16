@@ -52,7 +52,8 @@ const managementApiIdentifiableEntityNames = Object.freeze(
     'saml-application',
     'secret',
     'email-template',
-    'one-time-token'
+    'one-time-token',
+    'session'
   )
 );
 
@@ -168,7 +169,13 @@ export const buildExperienceApiBaseDocument = (
   tags: [...tags].map((tag) => ({ name: tag })),
 });
 
-const userApiIdentifiableEntityNames = Object.freeze(['profile', 'verification', 'connector']);
+// ID parameters for account API entities.
+const userApiIdentifiableEntityNames = Object.freeze([
+  'profile',
+  'verification',
+  'connector',
+  'session',
+]);
 
 export const buildUserApiBaseDocument = (
   pathMap: Map<string, OpenAPIV3.PathItemObject>,

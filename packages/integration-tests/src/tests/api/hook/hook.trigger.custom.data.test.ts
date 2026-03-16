@@ -13,7 +13,7 @@ import { createScope } from '#src/api/scope.js';
 import { updateSignInExperience } from '#src/api/sign-in-experience.js';
 import { SsoConnectorApi } from '#src/api/sso-connector.js';
 import { setEmailConnector, setSmsConnector } from '#src/helpers/connector.js';
-import { WebHookApiTest } from '#src/helpers/hook.js';
+import { getSupportedHookEvents, WebHookApiTest } from '#src/helpers/hook.js';
 import { registerWithEmail } from '#src/helpers/interactions.js';
 import { OrganizationApiTest, OrganizationInvitationApiTest } from '#src/helpers/organization.js';
 import { enableAllVerificationCodeSignInMethods } from '#src/helpers/sign-in-experience.js';
@@ -25,7 +25,7 @@ import WebhookMockServer from './WebhookMockServer.js';
 import { assertHookLogResult } from './utils.js';
 
 describe('manual data hook tests', () => {
-  const webbHookMockServer = new WebhookMockServer(9999);
+  const webHookMockServer = new WebhookMockServer(9999);
   const webHookApi = new WebHookApiTest();
   const userApi = new UserApiTest();
   const organizationApi = new OrganizationApiTest();
@@ -33,18 +33,18 @@ describe('manual data hook tests', () => {
   const ssoConnectorApi = new SsoConnectorApi();
 
   beforeAll(async () => {
-    await webbHookMockServer.listen();
+    await webHookMockServer.listen();
   });
 
   afterAll(async () => {
-    await webbHookMockServer.close();
+    await webHookMockServer.close();
   });
 
   beforeEach(async () => {
     await webHookApi.create({
       name: hookName,
-      events: [...hookEvents],
-      config: { url: webbHookMockServer.endpoint },
+      events: getSupportedHookEvents([...hookEvents]),
+      config: { url: webHookMockServer.endpoint },
     });
   });
 

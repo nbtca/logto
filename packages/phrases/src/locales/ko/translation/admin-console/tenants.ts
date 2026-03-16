@@ -13,6 +13,9 @@ const tenants = {
     description: '테넌트 이름 설정 및 호스팅된 데이터 영역 및 테넌트 유형을 확인합니다.',
     tenant_id: '테넌트 ID',
     tenant_name: '테넌트 이름',
+    tenant_instance: '인스턴스를 선택하세요',
+    tenant_instance_description:
+      '테넌트가 호스팅될 위치를 선택하세요. 공용 공유 인프라를 위해 Logto Cloud 를 선택하거나, 전용 리소스를 위한 개별 인스턴스를 선택하세요.',
     tenant_region: '데이터 호스팅 영역',
     tenant_region_description:
       '테넌트 리소스 (사용자, 앱 등) 가 호스팅되는 물리적 위치입니다. 생성 후에는 변경할 수 없습니다.',
@@ -25,6 +28,11 @@ const tenants = {
     production_description:
       '최종 사용자가 사용하는 앱을 위한 것으로 유료 구독이 필요할 수 있습니다.',
     tenant_info_saved: '테넌트 정보가 성공적으로 저장되었습니다.',
+    tenant_mfa: '다단계 인증',
+    tenant_mfa_description: '이 테넌트에 접근하려면 구성원이 다단계 인증을 설정해야 합니다.',
+    enterprise_sso: '엔터프라이즈 SSO',
+    enterprise_sso_description:
+      '유료 플랜에서 사용 가능합니다. 엔터프라이즈 SSO를 활성화하여 모든 구성원이 조직의 ID 공급자를 사용하여 Logto Cloud 콘솔에 로그인할 수 있도록 하려면 문의해 주세요.',
   },
   full_env_tag: {
     development: '개발',
@@ -47,6 +55,7 @@ const tenants = {
   create_modal: {
     title: '테넌트 만들기',
     subtitle: '분리된 리소스와 사용자를 가지는 새 테넌트를 만듭니다.',
+    tenant_id: '테넌트 ID',
     tenant_usage_purpose: '이 테넌트를 사용하는 목적은 무엇입니까?',
     development_description:
       '테스트 용으로만 사용하고 프로덕션에서 사용하지 마십시오. 구독이 필요하지 않습니다.',
@@ -60,6 +69,11 @@ const tenants = {
     tenant_created: '테넌트가 성공적으로 생성되었습니다.',
     invitation_failed: '초대 전송에 실패했습니다. 나중에 설정 -> 멤버에서 다시 시도하십시오.',
     tenant_type_description: '생성 후에는 변경할 수 없습니다.',
+    tenant_id_invalid:
+      '테넌트 ID는 소문자, 숫자, 하이픈만 포함할 수 있으며 {{max}}자를 초과할 수 없습니다.',
+    tenant_id_placeholder: '테넌트 ID',
+    tenant_id_tip:
+      '테넌트 ID를 사용자 정의합니다. 비워두면 Logto가 기본 ID를 생성합니다. 테넌트 ID는 생성 후 변경할 수 없습니다.',
   },
   dev_tenant_migration: {
     title: '사용자 정의 테넌트로 전환하여 Pro 기능을 무료로 이용할 수 있습니다!',

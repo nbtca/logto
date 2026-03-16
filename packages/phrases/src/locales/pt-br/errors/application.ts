@@ -4,8 +4,10 @@ const application = {
   invalid_role_type:
     'Não é possível atribuir uma função de tipo de usuário a um aplicativo de máquina para máquina.',
   invalid_third_party_application_type:
-    'Apenas aplicativos da web tradicionais podem ser marcados como um aplicativo de terceiros.',
+    'Apenas aplicativos da web tradicionais, de página única e nativos podem ser marcados como aplicativos de terceiros.',
   third_party_application_only: 'O recurso está disponível apenas para aplicativos de terceiros.',
+  third_party_application_cannot_enable_token_exchange:
+    'Aplicativos de terceiros não podem habilitar a troca de tokens.',
   user_consent_scopes_not_found: 'Escopos de consentimento do usuário inválidos.',
   consent_management_api_scopes_not_allowed:
     'Os escopos da API de gerenciamento não são permitidos.',

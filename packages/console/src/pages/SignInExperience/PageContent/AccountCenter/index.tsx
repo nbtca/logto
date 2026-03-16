@@ -1,13 +1,15 @@
 import { AccountCenterControlValue, type SignInExperience } from '@logto/schemas';
 import { useCallback, useMemo, type ChangeEvent } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 import FormCard from '@/components/FormCard';
 import PageMeta from '@/components/PageMeta';
 import FormField from '@/ds-components/FormField';
+import InlineNotification from '@/ds-components/InlineNotification';
 import type { Option } from '@/ds-components/Select';
 import Switch from '@/ds-components/Switch';
+import TextLink from '@/ds-components/TextLink';
 
 import type {
   AccountCenterFormValues,
@@ -17,6 +19,7 @@ import type {
 import SignInExperienceTabWrapper from '../components/SignInExperienceTabWrapper';
 
 import AccountCenterField from './AccountCenterField';
+import IntegratePrebuiltUi from './IntegratePrebuiltUi';
 import SecretVaultSection from './SecretVaultSection';
 import WebauthnRelatedOriginsField from './WebauthnRelatedOriginsField';
 import { accountCenterSections } from './constants';
@@ -99,9 +102,34 @@ function AccountCenter({ isActive, data }: Props) {
           </FormField>
         </div>
       </FormCard>
+      <IntegratePrebuiltUi />
       {accountCenterSections.map((section) => (
         <FormCard key={section.key} title={section.title} description={section.description}>
           <div className={styles.cardContent}>
+            {section.key === 'accountSecurity' && (
+              <FormField
+                title="sign_in_exp.account_center.sections.account_security.security_verification.title"
+                headlineSpacing="large"
+              >
+                <InlineNotification variant="plain" hasIcon={false}>
+                  <Trans
+                    components={{
+                      strong: <strong />,
+                      a: (
+                        <TextLink
+                          targetBlank="noopener"
+                          href="https://docs.logto.io/end-user-flows/account-settings/by-account-api#get-a-verification-record-id"
+                        />
+                      ),
+                    }}
+                  >
+                    {t(
+                      'sign_in_exp.account_center.sections.account_security.security_verification.description'
+                    )}
+                  </Trans>
+                </InlineNotification>
+              </FormField>
+            )}
             {section.groups.map((group) => (
               <FormField key={group.key} title={group.title} headlineSpacing="large">
                 <div className={styles.groupFields}>

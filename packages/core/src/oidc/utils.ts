@@ -10,14 +10,25 @@ import {
   FirstScreen,
   experience,
 } from '@logto/schemas';
-import { conditional } from '@silverhand/essentials';
+import { condArray, conditional, trySafe } from '@silverhand/essentials';
 import { type AllClientMetadata, type ClientAuthMethod, errors } from 'oidc-provider';
 
 import { type EnvSet } from '#src/env-set/index.js';
 
+/**
+ * Build constant client metadata for an application based on its type and optional flags.
+ *
+ * Grant types are dynamically computed: base grant types are determined by application type,
+ * and optional grant types (e.g., token exchange) are conditionally included based on the
+ * provided options.
+ *
+ * The oidc-provider will enforce `client.grantTypeAllowed(type)` before invoking any grant handler,
+ * so there's no need for additional runtime access checks in individual grant handlers.
+ */
 export const getConstantClientMetadata = (
   envSet: EnvSet,
-  type: ApplicationType
+  type: ApplicationType,
+  options?: { allowTokenExchange?: boolean }
 ): AllClientMetadata => {
   const { jwkSigningAlg } = envSet.oidc;
 
@@ -34,12 +45,16 @@ export const getConstantClientMetadata = (
     }
   };
 
+  const grantTypes = [
+    ...(type === ApplicationType.MachineToMachine
+      ? [GrantType.ClientCredentials]
+      : [GrantType.AuthorizationCode, GrantType.RefreshToken]),
+    ...condArray(options?.allowTokenExchange && GrantType.TokenExchange),
+  ];
+
   return {
     application_type: type === ApplicationType.Native ? 'native' : 'web',
-    grant_types:
-      type === ApplicationType.MachineToMachine
-        ? [GrantType.ClientCredentials]
-        : [GrantType.AuthorizationCode, GrantType.RefreshToken, GrantType.TokenExchange],
+    grant_types: grantTypes,
     token_endpoint_auth_method: getTokenEndpointAuthMethod(),
     response_types: conditional(type === ApplicationType.MachineToMachine && []),
     // https://www.scottbrady91.com/jose/jwts-which-signing-algorithm-should-i-use
@@ -76,9 +91,133 @@ export const isOriginAllowed = (
   { corsAllowedOrigins = [] }: CustomClientMetadata,
   redirectUris: string[] = []
 ) => {
-  const redirectUriOrigins = redirectUris.map((uri) => new URL(uri).origin);
+  if (corsAllowedOrigins.includes(origin)) {
+    return true;
+  }
 
-  return [...corsAllowedOrigins, ...redirectUriOrigins].includes(origin);
+  for (const uri of redirectUris) {
+    if (!uri.includes('*')) {
+      try {
+        if (new URL(uri).origin === origin) {
+          return true;
+        }
+      } catch {
+        continue;
+      }
+
+      continue;
+    }
+
+    if (matchesOriginAgainstRedirectUriPattern(origin, uri)) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+const getEffectivePort = (protocol: string, port: string) => {
+  if (port) {
+    return port;
+  }
+
+  switch (protocol) {
+    case 'http:': {
+      return '80';
+    }
+
+    case 'https:': {
+      return '443';
+    }
+
+    default: {
+      return '';
+    }
+  }
+};
+
+const escapeRegExp = (value: string) => value.replaceAll(/[$()*+.?[\\\]^{|}]/g, '\\$&');
+
+const matchHostnameLabel = (pattern: string, actual: string) => {
+  if (!pattern.includes('*')) {
+    return pattern === actual;
+  }
+
+  const regex = new RegExp(
+    `^${pattern
+      .split('*')
+      .map((part) => escapeRegExp(part))
+      .join('[^.]+')}$`,
+    'i'
+  );
+  return regex.test(actual);
+};
+
+const matchHostnamePattern = (patternHostname: string, actualHostname: string) => {
+  const patternLabels = patternHostname.toLowerCase().split('.');
+  const actualLabels = actualHostname.toLowerCase().split('.');
+
+  if (patternLabels.length !== actualLabels.length) {
+    return false;
+  }
+
+  return patternLabels.every((patternLabel, index) =>
+    matchHostnameLabel(patternLabel, actualLabels[index] ?? '')
+  );
+};
+
+const parseRedirectUriOriginPattern = (patternUrl: string) => {
+  const schemeSeparatorIndex = patternUrl.indexOf('://');
+  if (schemeSeparatorIndex <= 0) {
+    return;
+  }
+
+  // Parse a placeholder URL to validate scheme/port and other basic URL parts.
+  const parsed = trySafe(() => new URL(patternUrl.replaceAll('*', 'wildcard')));
+  if (!parsed) {
+    return;
+  }
+
+  const rest = patternUrl.slice(schemeSeparatorIndex + 3);
+  const authority = rest.split(/[#/?]/)[0] ?? '';
+  if (!authority || authority.includes('@') || authority.startsWith('[')) {
+    return;
+  }
+
+  const lastColonIndex = authority.lastIndexOf(':');
+  const hasPort = lastColonIndex > -1 && authority.indexOf(':') === lastColonIndex;
+  const hostnamePattern = hasPort ? authority.slice(0, lastColonIndex) : authority;
+
+  return {
+    protocol: parsed.protocol,
+    hostnamePattern,
+    port: parsed.port,
+  };
+};
+
+const matchesOriginAgainstRedirectUriPattern = (origin: string, redirectUriPattern: string) => {
+  const pattern = parseRedirectUriOriginPattern(redirectUriPattern);
+  if (!pattern) {
+    return false;
+  }
+
+  const parsedOrigin = trySafe(() => new URL(origin));
+  if (!parsedOrigin) {
+    return false;
+  }
+
+  if (parsedOrigin.protocol !== pattern.protocol) {
+    return false;
+  }
+
+  if (
+    getEffectivePort(parsedOrigin.protocol, parsedOrigin.port) !==
+    getEffectivePort(pattern.protocol, pattern.port)
+  ) {
+    return false;
+  }
+
+  return matchHostnamePattern(pattern.hostnamePattern, parsedOrigin.hostname);
 };
 
 export const getUtcStartOfTheDay = (date: Date) => {

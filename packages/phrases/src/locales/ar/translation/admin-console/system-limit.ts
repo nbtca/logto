@@ -1,5 +1,6 @@
 const system_limit = {
-  limit_exceeded: 'وصل هذا المستأجر إلى حد {{entity}} وفقًا لسياسة حد الكيان الخاصة بـ Logto.',
+  limit_exceeded:
+    'لقد وصل مستأجر <planName/> إلى حد {{entity}} الخاص به بموجب <a>سياسة كيان Logto</a>.',
   entities: {
     application: 'التطبيق',
     third_party_application: 'تطبيق الطرف الثالث',
@@ -15,6 +16,7 @@ const system_limit = {
     tenant_member: 'عضو المستأجر',
     organization: 'المنظمة',
     saml_application: 'تطبيق SAML',
+    custom_domain: 'النطاق المخصص',
     user_per_organization: 'المستخدم لكل منظمة',
     organization_user_role: 'دور مستخدم المنظمة',
     organization_machine_to_machine_role: 'دور الآلة إلى الآلة للمنظمة',

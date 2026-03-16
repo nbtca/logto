@@ -9,6 +9,7 @@ export const reservationLink = 'https://cal.com/logto/30min';
 export const trustAndSecurityLink = 'https://logto.io/trust-and-security';
 export const pricingLink = 'https://logto.io/pricing';
 export const officialWebsiteContactPageLink = 'https://logto.io/contact';
+export const entityPolicyLink = 'https://docs.logto.io/logto-cloud/system-limit';
 
 /** Docs link */
 export const organizationsFeatureLink = '/organizations';
@@ -65,6 +66,8 @@ export const manageRolePermissions =
 export const userManagement = '/user-management';
 export const userCustomData = '/user-management/user-data#custom-data';
 export const personalAccessToken = '/user-management/personal-access-token';
+export const customIdToken = '/developers/custom-id-token';
+export const userImpersonation = '/developers/user-impersonation';
 export const webhooks = '/developers/webhooks';
 export const secureWebhooks = '/developers/webhooks/secure-webhooks';
 export const auditLogs = '/developers/audit-logs';

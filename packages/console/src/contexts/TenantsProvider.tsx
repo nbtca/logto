@@ -1,4 +1,4 @@
-import { defaultTenantId, TenantTag } from '@logto/schemas';
+import { adminTenantId, defaultTenantId, TenantTag } from '@logto/schemas';
 import { conditionalArray, noop } from '@silverhand/essentials';
 import type { ReactNode } from 'react';
 import { useCallback, useMemo, createContext, useState } from 'react';
@@ -31,6 +31,7 @@ export enum GlobalRoute {
   AcceptInvitation = '/accept',
   Profile = '/profile',
   HandleSocial = '/handle-social',
+  EnterpriseSubscription = '/subscriptions',
 }
 
 const reservedRoutes: Readonly<string[]> = Object.freeze([
@@ -169,7 +170,8 @@ function TenantsProvider({ children }: Props) {
       updateTenant,
       isInitComplete,
       currentTenantId,
-      isDevTenant: currentTenant?.tag === TenantTag.Development,
+      isDevTenant:
+        currentTenant?.tag === TenantTag.Development && currentTenant.id !== adminTenantId,
       currentTenant,
       navigateTenant,
     }),

@@ -7,6 +7,7 @@ const user = {
   email_not_exist: '電子郵件地址尚未註冊。',
   phone_not_exist: '手機號碼尚未註冊。',
   identity_not_exist: '該社交帳號尚未註冊。',
+  sso_identity_not_exist: '該企業 SSO 帳戶尚未註冊。',
   identity_already_in_use: '該社交帳號已被註冊。',
   social_account_exists_in_profile: '你已綁定當前社交帳號，無需重複操作。',
   cannot_delete_self: '無法刪除自己的帳戶。',
@@ -43,6 +44,7 @@ const user = {
   enterprise_sso_identity_not_exists:
     '該使用者沒有企業身份鏈接到指定的 SSO 連接器 ID：{{ ssoConnectorId }}。',
   identity_not_exists_in_current_user: '指定的身份在當前使用者帳戶中不存在。請先鏈接該身份再繼續。',
+  passkey_preferred: '建立通行密鑰以簡化登入流程。',
 };
 
 export default Object.freeze(user);

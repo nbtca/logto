@@ -16,9 +16,11 @@ const paywall = {
   scopes_per_resource:
     '已达到 <planName/> 的{{count, number}}个 API 资源每个权限限制。立即升级以扩展。如需任何帮助，请 <a>联系我们</a>。',
   scopes_per_resource_other:
-    '已达到 <planName/> 的{{count, number}}个 API 资源每个权限限制。立即升级以扩展。如需任何帮助，请 <a>联系我们</a>。',
+    '已达到 <planName/> 的{{count, number}}个 API 资源每个权限限制。立即升级以扩展。如需任何帮助,请 <a>联系我们</a>。',
   custom_domain:
-    '升级至 <strong>Hobby</strong> 或 <strong>Pro</strong> 套餐，解锁自定义域功能。如有任何需要，请不要犹豫 <a>联系我们</a>。',
+    '已达到 <planName/> 的 {{count, number}} 个自定义域名限制。升级到付费计划以添加多个自定义域名和高级福利。如有任何问题,请不要犹豫 <a>联系我们</a>。',
+  custom_domain_others:
+    '已达到 <planName/> 的 {{count, number}} 个自定义域名限制。升级到付费计划以添加多个自定义域名和高级福利。如有任何问题,请不要犹豫 <a>联系我们</a>。',
   social_connectors:
     '已达到 <planName/> 的{{count, number}}个社交连接器限制。为满足您团队的需求，请升级计划以获取额外的社交连接器，并可以使用 OIDC、OAuth 2.0 和 SAML 协议创建您自己的连接器。如需任何帮助，请 <a>联系我们</a>。',
   social_connectors_other:
@@ -67,6 +69,8 @@ const paywall = {
     '通过升级到 Pro 计划解锁高级安全功能。如有任何问题，请不要犹豫 <a>联系我们</a>。',
   collect_user_profile:
     '升级到付费计划以解锁在新用户注册期间收集更多用户资料信息的功能。如有任何问题，请不要犹豫 <a>联系我们</a>。',
+  passkey_sign_in:
+    '升级到付费计划，解锁通行密钥登录功能和高级权益。如有任何问题，请随时 <a>联系我们</a>。',
 };
 
 export default Object.freeze(paywall);

@@ -14,6 +14,9 @@ const tenants = {
       "Définissez le nom du locataire et consultez la région d'hébergement de vos données et le type de locataire.",
     tenant_id: 'ID du locataire',
     tenant_name: 'Nom du locataire',
+    tenant_instance: 'Sélectionnez votre instance',
+    tenant_instance_description:
+      'Sélectionnez où votre locataire sera hébergé. Choisissez Logto Cloud pour une infrastructure partagée publique, ou une instance privée pour des ressources dédiées.',
     tenant_region: "Région d'hébergement des données",
     tenant_region_description:
       'Le lieu physique où vos ressources de locataire (utilisateurs, applications, etc.) sont hébergées. Cela ne peut pas être changé après la création.',
@@ -27,6 +30,12 @@ const tenants = {
     production_description:
       'Destiné aux applications utilisées par les utilisateurs finaux et pouvant nécessiter une souscription payante.',
     tenant_info_saved: 'Les informations du locataire ont été enregistrées avec succès.',
+    tenant_mfa: 'Authentification multi-facteurs',
+    tenant_mfa_description:
+      "Exiger que vos membres configurent l'authentification multi-facteurs pour accéder à ce locataire.",
+    enterprise_sso: 'Enterprise SSO',
+    enterprise_sso_description:
+      "Disponible sur les plans payants. Contactez-nous pour activer Enterprise SSO afin que tous les membres puissent se connecter à la console Logto Cloud en utilisant le fournisseur d'identité de votre organisation.",
   },
   full_env_tag: {
     development: 'Développement',
@@ -50,6 +59,7 @@ const tenants = {
   create_modal: {
     title: 'Créer un locataire',
     subtitle: "Créer un nouveau locataire qui dispose de ressources et d'utilisateurs isolés.",
+    tenant_id: 'ID du locataire',
     tenant_usage_purpose: 'Dans quel but souhaitez-vous utiliser ce locataire?',
     development_description:
       "Uniquement pour les tests et ne devrait pas être utilisé en production. Aucune souscription n'est requise.",
@@ -66,6 +76,11 @@ const tenants = {
     invitation_failed:
       "Certaines invitations n'ont pas pu être envoyées. Veuillez réessayer plus tard dans Paramètres -> Membres.",
     tenant_type_description: 'Cela ne peut pas être changé après la création.',
+    tenant_id_invalid:
+      "L'identifiant du locataire ne peut contenir que des lettres minuscules, des chiffres et des tirets, et ne doit pas dépasser {{max}} caractères.",
+    tenant_id_placeholder: 'Votre identifiant de locataire',
+    tenant_id_tip:
+      "Personnalisez l'identifiant du locataire. Si laissé vide, Logto générera un identifiant par défaut. L'identifiant du locataire ne peut pas être modifié après la création.",
   },
   dev_tenant_migration: {
     title:

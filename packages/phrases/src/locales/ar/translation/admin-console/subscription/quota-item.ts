@@ -202,6 +202,19 @@ const quota_item = {
     unlimited: 'الأمان المتقدّم',
     not_eligible: 'قم بإزالة إعدادات الأمان المتقدّمة الخاصة بك',
   },
+  custom_domains_limit: {
+    name: 'النطاقات المخصصة',
+    limited: '{{count, number}} نطاق مخصص',
+    limited_other: '{{count, number}} نطاقات مخصصة',
+    unlimited: 'عدد غير محدود من النطاقات المخصصة',
+    not_eligible: 'قم بإزالة النطاقات المخصصة الخاصة بك',
+  },
+  passkey_sign_in_enabled: {
+    name: 'تسجيل الدخول بمفتاح المرور',
+    limited: 'تسجيل الدخول بمفتاح المرور',
+    unlimited: 'تسجيل الدخول بمفتاح المرور',
+    not_eligible: 'لا يتوفر دعم لتسجيل الدخول بمفتاح المرور',
+  },
 };
 
 export default Object.freeze(quota_item);

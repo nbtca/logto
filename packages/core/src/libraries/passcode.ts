@@ -12,6 +12,7 @@ import { customAlphabet, nanoid } from 'nanoid';
 
 import RequestError from '#src/errors/RequestError/index.js';
 import type { ConnectorLibrary } from '#src/libraries/connector.js';
+import { type WithLogContext } from '#src/middleware/koa-audit-log.js';
 import type Queries from '#src/tenants/Queries.js';
 import {
   buildApplicationContextInfo,
@@ -19,6 +20,7 @@ import {
   buildUserContextInfo,
 } from '#src/utils/connectors/extra-information.js';
 import { ConnectorType, type VerificationCodeContextInfo } from '#src/utils/connectors/types.js';
+import { buildAppInsightsTelemetry } from '#src/utils/request.js';
 
 export const passcodeLength = 6;
 const randomCode = customAlphabet('1234567890', passcodeLength);
@@ -29,7 +31,10 @@ export const passcodeMaxTryCount = 10;
 export type PasscodeLibrary = ReturnType<typeof createPasscodeLibrary>;
 
 export type SendPasscodeContextPayload = Pick<SendMessagePayload, 'locale' | 'uiLocales'> &
-  VerificationCodeContextInfo;
+  VerificationCodeContextInfo & {
+    /** The client IP address for rate limiting and fraud detection. */
+    ip?: string;
+  };
 
 export const createPasscodeLibrary = (queries: Queries, connectorLibrary: ConnectorLibrary) => {
   const {
@@ -91,13 +96,16 @@ export const createPasscodeLibrary = (queries: Queries, connectorLibrary: Connec
       throw new ConnectorError(ConnectorErrorCodes.InvalidConfig);
     }
 
+    const { ip, ...payloadContext } = contextPayload ?? {};
+
     const response = await sendMessage({
       to: emailOrPhone,
       type: messageTypeResult.data,
       payload: {
         code: passcode.code,
-        ...contextPayload,
+        ...payloadContext,
       },
+      ...(ip && { ip }),
     });
 
     return { dbEntry, metadata, response };
@@ -147,21 +155,25 @@ export const createPasscodeLibrary = (queries: Queries, connectorLibrary: Connec
    * Build the context information for the verification code email template.
    * The context data may vary depending on the context of the verification code request.
    */
-  const buildVerificationCodeContext = async ({
-    applicationId,
-    organizationId,
-    userId,
-    user,
-  }: {
-    applicationId?: string;
-    organizationId?: string;
-    userId?: string;
-    /*
-     * If available in the request context, directly providing the user object
-     * is more efficient than providing the userId.
-     */
-    user?: User;
-  }): Promise<VerificationCodeContextInfo> => {
+  // eslint-disable-next-line complexity
+  const buildVerificationCodeContext = async (
+    {
+      applicationId,
+      organizationId,
+      userId,
+      user,
+    }: {
+      applicationId?: string;
+      organizationId?: string;
+      userId?: string;
+      /*
+       * If available in the request context, directly providing the user object
+       * is more efficient than providing the userId.
+       */
+      user?: User;
+    },
+    ctx?: WithLogContext
+  ): Promise<VerificationCodeContextInfo> => {
     try {
       const [application, applicationSignInExperience, organization, userData] = await Promise.all([
         applicationId
@@ -190,7 +202,7 @@ export const createPasscodeLibrary = (queries: Queries, connectorLibrary: Connec
         ...conditional(userData && { user: buildUserContextInfo(userData) }),
       };
     } catch (error: unknown) {
-      void appInsights.trackException(error);
+      void appInsights.trackException(error, ctx ? buildAppInsightsTelemetry(ctx) : undefined);
 
       // Should not block the verification code sending if the context information is not available.
       return {};

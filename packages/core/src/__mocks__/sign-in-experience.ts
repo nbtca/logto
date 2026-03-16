@@ -99,6 +99,9 @@ export const mockSignInExperience: SignInExperience = {
     policy: MfaPolicy.PromptAtSignInAndSignUp,
     factors: [],
   },
+  adaptiveMfa: {
+    enabled: false,
+  },
   singleSignOnEnabled: true,
   socialSignIn: {},
   supportEmail: null,
@@ -108,4 +111,9 @@ export const mockSignInExperience: SignInExperience = {
   sentinelPolicy: {},
   emailBlocklistPolicy: {},
   forgotPasswordMethods: null,
+  passkeySignIn: {
+    enabled: false,
+    showPasskeyButton: false,
+    allowAutofill: false,
+  },
 };

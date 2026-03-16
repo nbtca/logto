@@ -45,6 +45,8 @@ const application_details = {
     'URI, zu dem der Benutzer nach der Anmeldung (egal ob erfolgreich oder nicht) weitergeleitet wird. Siehe OpenID Connect <a>AuthRequest</a> für weitere Informationen.',
   mixed_redirect_uri_warning:
     'Dein Anwendungstyp ist nicht mit mindestens einer der Umleitungs-URIs kompatibel. Es folgt nicht den bewährten Methoden und wir empfehlen dringend, die Umleitungs-URIs konsistent zu halten.',
+  wildcard_redirect_uri_warning:
+    'Wildcard-Umleitungs-URIs sind kein Standard-OIDC und können die Angriffsfläche vergrößern. Verwende sie mit Vorsicht und bevorzuge exakte Umleitungs-URIs, wann immer möglich.',
   post_sign_out_redirect_uri: 'Umleitungs-URI nach Abmeldung',
   post_sign_out_redirect_uris: 'Umleitungs-URIs nach Abmeldung',
   post_sign_out_redirect_uri_placeholder: 'https://deine.website.de/home',
@@ -77,6 +79,14 @@ const application_details = {
   backchannel_logout_uri_session_required: 'Ist eine Sitzung erforderlich?',
   backchannel_logout_uri_session_required_description:
     'Wenn aktiviert, erfordert der RP, dass ein `sid`- (Sitzungs-ID) Anspruch im Logout-Token enthalten ist, um die RP-Sitzung mit dem OP zu identifizieren, wenn die `backchannel_logout_uri` verwendet wird.',
+  token_exchange: 'Token-Austausch',
+  token_exchange_description:
+    'Verwalten Sie die Token-Austausch-Einstellungen für diese Anwendung.',
+  allow_token_exchange: 'Token-Austausch zulassen',
+  allow_token_exchange_description:
+    'Erlauben Sie dieser Anwendung, Token-Austausch-Anfragen zu initiieren. Dies ist erforderlich für <impersonationLink>Benutzer-Impersonation</impersonationLink> und <patLink>persönliche Zugriffstoken</patLink>.',
+  allow_token_exchange_public_client_warning:
+    'Das Aktivieren des Token-Austauschs für öffentliche Clients (Single-Page-App / native App) wird nicht empfohlen. Öffentliche Clients können Anmeldeinformationen nicht sicher speichern, was Ihre Anwendung Risiken der Token-Impersonation aussetzen kann.',
   delete_description:
     'Diese Aktion ist nicht umkehrbar. Die Anwendung wird dauerhaft gelöscht. Bitte geben Sie den Anwendungsnamen <span>{{name}}</span> zur Bestätigung ein.',
   enter_your_application_name: 'Geben Sie einen Anwendungsnamen ein',
@@ -163,6 +173,18 @@ const application_details = {
     organization_description:
       'Wählen Sie die Berechtigungen aus, die von der Drittanbieter-App für den Zugriff auf bestimmte Organisationsdaten angefordert werden.',
     grant_organization_level_permissions: 'Berechtigungen für Organisationdaten erteilen',
+    oidc_title: 'OIDC',
+    oidc_description:
+      'Kern-OIDC-Berechtigungen werden automatisch für Ihre App konfiguriert. Diese Scopes sind für die Authentifizierung erforderlich und werden nicht auf dem Einwilligungsbildschirm angezeigt.',
+    default_oidc_permissions: 'Standard-OIDC-Berechtigungen',
+    permission_column: 'Berechtigung',
+    guide_column: 'Anleitung',
+    openid_permission: 'openid',
+    openid_permission_guide:
+      "Optional für den Zugriff auf OAuth-Ressourcen.\nErforderlich für die OIDC-Authentifizierung. Gewährt Zugriff auf ein ID-Token und ermöglicht den Zugriff auf den 'userinfo_endpoint'.",
+    offline_access_permission: 'offline_access',
+    offline_access_permission_guide:
+      'Optional. Ruft Refresh-Tokens für langfristigen Zugriff oder Hintergrundaufgaben ab.',
   },
   roles: {
     assign_button: 'Rollen von Maschine zu Maschine zuweisen',

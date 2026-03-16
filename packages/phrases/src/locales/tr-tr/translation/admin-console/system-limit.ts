@@ -1,5 +1,6 @@
 const system_limit = {
-  limit_exceeded: "Bu tenant, Logto'nun varlık limit politikası gereği {{entity}} limitine ulaştı.",
+  limit_exceeded:
+    "Bu <planName/> tenant'ı, <a>Logto'nun varlık politikası</a> kapsamında {{entity}} limitine ulaştı.",
   entities: {
     application: 'uygulama',
     third_party_application: 'üçüncü taraf uygulama',
@@ -15,6 +16,7 @@ const system_limit = {
     tenant_member: 'tenant üyesi',
     organization: 'organizasyon',
     saml_application: 'SAML uygulaması',
+    custom_domain: 'özel alan adı',
     user_per_organization: 'organizasyon başına kullanıcı',
     organization_user_role: 'organizasyon kullanıcı rolü',
     organization_machine_to_machine_role: 'organizasyon makine arası rol',

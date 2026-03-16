@@ -2,6 +2,8 @@ import type {
   CreatePersonalAccessToken,
   DesensitizedEnterpriseSsoTokenSetSecret,
   DesensitizedSocialTokenSetSecret,
+  GetUserSessionResponse,
+  GetUserSessionsResponse,
   Identities,
   Identity,
   MfaFactor,
@@ -78,10 +80,12 @@ export const deleteUserIdentity = async (userId: string, connectorTarget: string
   authedAdminApi.delete(`users/${userId}/identities/${connectorTarget}`);
 
 export const assignRolesToUser = async (userId: string, roleIds: string[]) =>
-  authedAdminApi.post(`users/${userId}/roles`, { json: { roleIds } });
+  authedAdminApi
+    .post(`users/${userId}/roles`, { json: { roleIds } })
+    .json<{ roleIds: string[]; addedRoleIds: string[] }>();
 
 export const putRolesToUser = async (userId: string, roleIds: string[]) =>
-  authedAdminApi.put(`users/${userId}/roles`, { json: { roleIds } });
+  authedAdminApi.put(`users/${userId}/roles`, { json: { roleIds } }).json<{ roleIds: string[] }>();
 
 /**
  * Get roles assigned to the user.
@@ -132,13 +136,18 @@ export const createUserMfaVerification = async (userId: string, type: MfaFactor)
       | { type: MfaFactor.BackupCode; codes: string[] }
     >();
 
-export const getUserLogtoConfig = async (userId: string) =>
-  authedAdminApi.get(`users/${userId}/logto-configs`).json<{ mfa: { skipped: boolean } }>();
+type UserLogtoConfig = {
+  mfa: { skipped: boolean; skipMfaOnSignIn: boolean };
+  passkeySignIn: { skipped: boolean };
+};
 
-export const updateUserLogtoConfig = async (userId: string, skipped: boolean) =>
+export const getUserLogtoConfig = async (userId: string) =>
+  authedAdminApi.get(`users/${userId}/logto-configs`).json<UserLogtoConfig>();
+
+export const updateUserLogtoConfig = async (userId: string, logtoConfig: UserLogtoConfig) =>
   authedAdminApi
-    .patch(`users/${userId}/logto-configs`, { json: { mfa: { skipped } } })
-    .json<{ mfa: { skipped: boolean } }>();
+    .patch(`users/${userId}/logto-configs`, { json: logtoConfig })
+    .json<UserLogtoConfig>();
 
 export const getUserOrganizations = async (userId: string) =>
   authedAdminApi.get(`users/${userId}/organizations`).json<OrganizationWithRoles[]>();
@@ -217,3 +226,16 @@ export const getUserSsoIdentity = async (
       tokenSecret?: DesensitizedEnterpriseSsoTokenSetSecret;
     }>();
 };
+
+export const getUserSessions = async (userId: string) =>
+  authedAdminApi.get(`users/${userId}/sessions`).json<GetUserSessionsResponse>();
+
+export const getUserSession = async (userId: string, sessionId: string) =>
+  authedAdminApi.get(`users/${userId}/sessions/${sessionId}`).json<GetUserSessionResponse>();
+
+export const revokeUserSession = async (userId: string, sessionId: string, revokeGrants = false) =>
+  authedAdminApi.delete(`users/${userId}/sessions/${sessionId}`, {
+    searchParams: new URLSearchParams({
+      ...conditional(revokeGrants && { revokeGrants: 'true' }),
+    }),
+  });

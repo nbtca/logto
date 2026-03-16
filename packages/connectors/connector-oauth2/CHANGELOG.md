@@ -1,5 +1,20 @@
 # @logto/connector-oauth
 
+## 1.7.3
+
+### Patch Changes
+
+- Updated dependencies [317f9744d1]
+  - @logto/shared@3.3.1
+
+## 1.7.2
+
+### Patch Changes
+
+- Updated dependencies [462e430445]
+- Updated dependencies [7c87ebc068]
+  - @logto/connector-kit@4.7.0
+
 ## 1.7.1
 
 ### Patch Changes

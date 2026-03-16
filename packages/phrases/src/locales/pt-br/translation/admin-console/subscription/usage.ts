@@ -62,12 +62,20 @@ const usage = {
     tooltip_for_enterprise:
       'Os primeiros {{basicQuota}} membros do locatário estão incluídos e são gratuitos para usar no seu plano baseado em contrato. Se você precisar de mais, ${{price, number}} por membro do locatário por mês.',
   },
+  custom_domains: {
+    title: 'Domínios personalizados',
+    tooltip:
+      'Recurso adicional com preço de ${{price, number}} para até 10 domínios personalizados por mês. O primeiro domínio personalizado é gratuito.',
+  },
   tokens: {
     title: 'Tokens',
     tooltip:
       'Recurso adicional com preço de ${{price, number}} por {{tokenLimit}} de tokens. O primeiro {{basicQuota}} de tokens está incluído.',
     tooltip_for_enterprise:
       'O primeiro {{basicQuota}} de tokens está incluído e é gratuito para usar no seu plano baseado em contrato. Se você precisar de mais, ${{price, number}} por {{tokenLimit}} de tokens por mês.',
+  },
+  m2mTokens: {
+    title: 'Tokens M2M',
   },
   hooks: {
     title: 'Hooks',

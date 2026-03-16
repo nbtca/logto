@@ -1,5 +1,6 @@
 const system_limit = {
-  limit_exceeded: 'ผู้เช่ารายนี้ถึงขอบเขต{{entity}}ตามนโยบายขีดจำกัดเอนทิตีของ Logto แล้ว',
+  limit_exceeded:
+    'ผู้เช่า<planName/>รายนี้ถึงขีดจำกัด{{entity}}ภายใต้<a>นโยบายเอนทิตีของ Logto</a> แล้ว',
   entities: {
     application: 'แอปพลิเคชัน',
     third_party_application: 'แอปพลิเคชันของบุคคลที่สาม',
@@ -15,6 +16,7 @@ const system_limit = {
     tenant_member: 'สมาชิกผู้เช่า',
     organization: 'องค์กร',
     saml_application: 'แอปพลิเคชัน SAML',
+    custom_domain: 'โดเมนแบบกำหนดเอง',
     user_per_organization: 'ผู้ใช้ต่อองค์กร',
     organization_user_role: 'บทบาทผู้ใช้ขององค์กร',
     organization_machine_to_machine_role: 'บทบาทเครื่องต่อเครื่องขององค์กร',

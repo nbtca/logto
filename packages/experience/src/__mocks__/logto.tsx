@@ -118,10 +118,12 @@ export const mockSignInExperience: SignInExperience = {
   supportWebsiteUrl: null,
   unknownSessionRedirectUrl: null,
   captchaPolicy: {},
+  adaptiveMfa: {},
   sentinelPolicy: {},
   emailBlocklistPolicy: {},
   forgotPasswordMethods: [],
   hideLogtoBranding: false,
+  passkeySignIn: {},
 };
 
 export const mockSignInExperienceSettings: SignInExperienceResponse = {
@@ -162,8 +164,10 @@ export const mockSignInExperienceSettings: SignInExperienceResponse = {
   supportWebsiteUrl: null,
   unknownSessionRedirectUrl: null,
   captchaPolicy: {},
+  adaptiveMfa: {},
   sentinelPolicy: {},
   emailBlocklistPolicy: {},
+  passkeySignIn: {},
 };
 
 const usernameSettings = {

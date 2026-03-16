@@ -27,7 +27,9 @@ const error = {
   terms_acceptance_required: 'Потрібно прийняти умови',
   terms_acceptance_required_description:
     'Ви повинні погодитися з умовами, щоб продовжити. Будь ласка, спробуйте ще раз.',
-  something_went_wrong: 'Щось пішло не так.',
+  something_went_wrong: 'Щось пішло не так',
+  feature_not_enabled:
+    'Ви не маєте дозволу на доступ до цієї функції. Зверніться до адміністратора за допомогою.',
 };
 
 export default Object.freeze(error);

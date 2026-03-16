@@ -1,12 +1,11 @@
-import { type PublicRegionName } from '@logto/cloud/routes';
 import { ReservedPlanId, TenantTag, defaultManagementApi } from '@logto/schemas';
 import dayjs from 'dayjs';
 
 import {
-  type NewSubscriptionQuota,
+  type SubscriptionQuota,
   type LogtoSkuResponse,
   type TenantResponse,
-  type NewSubscriptionCountBasedUsage,
+  type SubscriptionCountBasedUsage,
 } from '@/cloud/types/router';
 import { defaultRegionName } from '@/components/Region';
 import { LogtoSkuType } from '@/types/skus';
@@ -32,10 +31,13 @@ export const defaultTenantResponse: TenantResponse = {
     currentPeriodStart: dayjs().toDate(),
     currentPeriodEnd: dayjs().add(1, 'month').toDate(),
     isEnterprisePlan: false,
+    quotaScope: 'dedicated',
   },
   usage: {
     activeUsers: 0,
     tokenUsage: 0,
+    userTokenUsage: 0,
+    m2mTokenUsage: 0,
   },
   quota: {
     mauLimit: null,
@@ -62,6 +64,7 @@ export const defaultLogtoSku: LogtoSkuResponse = {
   productId: null,
   defaultPriceId: null,
   isDefault: true,
+  isDevPlan: true,
   quota: {
     // A soft limit for abuse monitoring
     mauLimit: 100,
@@ -85,13 +88,14 @@ export const defaultLogtoSku: LogtoSkuResponse = {
     subjectTokenEnabled: true,
     bringYourUiEnabled: true,
     collectUserProfileEnabled: true,
+    passkeySignInEnabled: true,
     idpInitiatedSsoEnabled: false,
     securityFeaturesEnabled: true,
   },
 };
 
 /** Quota for Free plan */
-export const defaultSubscriptionQuota: NewSubscriptionQuota = {
+export const defaultSubscriptionQuota: SubscriptionQuota = {
   mauLimit: 50_000,
   tokenLimit: 500_000,
   applicationsLimit: 3,
@@ -113,12 +117,14 @@ export const defaultSubscriptionQuota: NewSubscriptionQuota = {
   subjectTokenEnabled: false,
   bringYourUiEnabled: false,
   collectUserProfileEnabled: false,
+  passkeySignInEnabled: false,
   idpInitiatedSsoEnabled: false,
   samlApplicationsLimit: 0,
   securityFeaturesEnabled: false,
+  customDomainsLimit: 1,
 };
 
-export const defaultSubscriptionUsage: NewSubscriptionCountBasedUsage = {
+export const defaultSubscriptionUsage: SubscriptionCountBasedUsage = {
   applicationsLimit: 0,
   machineToMachineLimit: 0,
   resourcesLimit: 0,
@@ -134,12 +140,13 @@ export const defaultSubscriptionUsage: NewSubscriptionCountBasedUsage = {
   thirdPartyApplicationsLimit: 0,
   tenantMembersLimit: 0,
   customJwtEnabled: false,
-  subjectTokenEnabled: false,
   bringYourUiEnabled: false,
   collectUserProfileEnabled: false,
+  passkeySignInEnabled: false,
   idpInitiatedSsoEnabled: false,
   samlApplicationsLimit: 0,
   securityFeaturesEnabled: false,
+  customDomainsLimit: 0,
 };
 
 const getAdminTenantEndpoint = () => {
@@ -156,14 +163,6 @@ const getAdminTenantEndpoint = () => {
 export const adminTenantEndpoint = getAdminTenantEndpoint();
 
 export const mainTitle = isCloud ? 'Logto Cloud' : 'Logto Console';
-
-// Manually maintaining the list of regions to avoid unexpected changes. We may consider using an API in the future.
-export const availableRegions = Object.freeze([
-  'EU',
-  'US',
-  'AU',
-  'JP',
-] as const satisfies PublicRegionName[]);
 
 // The threshold days to show the convert to production card in the get started page
 export const convertToProductionThresholdDays = 7;

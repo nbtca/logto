@@ -23,6 +23,7 @@ create table sign_in_experiences (
   custom_ui_assets jsonb /* @use CustomUiAssets */,
   password_policy jsonb /* @use PartialPasswordPolicy */ not null default '{}'::jsonb,
   mfa jsonb /* @use Mfa */ not null default '{}'::jsonb,
+  adaptive_mfa jsonb /* @use AdaptiveMfa */ not null default '{}'::jsonb,
   single_sign_on_enabled boolean not null default false,
   support_email text,
   support_website_url text,
@@ -31,5 +32,6 @@ create table sign_in_experiences (
   sentinel_policy jsonb /* @use SentinelPolicy */ not null default '{}'::jsonb,
   email_blocklist_policy jsonb /* @use EmailBlocklistPolicy */ not null default '{}'::jsonb,
   forgot_password_methods jsonb /* @use ForgotPasswordMethods */ default '[]'::jsonb,
+  passkey_sign_in jsonb /* @use PasskeySignIn */ not null default '{}'::jsonb,
   primary key (tenant_id, id)
 );

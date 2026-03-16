@@ -7,6 +7,7 @@ const user = {
   email_not_exist: '邮箱地址尚未注册。',
   phone_not_exist: '手机号码尚未注册。',
   identity_not_exist: '该社交帐号尚未注册。',
+  sso_identity_not_exist: '企业级 SSO 账户尚未注册。',
   identity_already_in_use: '该社交帐号已被注册。',
   social_account_exists_in_profile: '你已绑定当前社交账号，无需重复操作。',
   cannot_delete_self: '无法删除自己的账户。',
@@ -43,6 +44,7 @@ const user = {
   enterprise_sso_identity_not_exists:
     '用户没有与指定的 SSO 连接器 ID {{ ssoConnectorId }} 关联的企业身份。',
   identity_not_exists_in_current_user: '当前用户账户中不存在指定的身份。请在继续之前链接此身份。',
+  passkey_preferred: '创建通行密钥以简化登录流程。',
 };
 
 export default Object.freeze(user);

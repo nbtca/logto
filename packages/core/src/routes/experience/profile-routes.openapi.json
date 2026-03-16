@@ -164,6 +164,55 @@
           }
         }
       }
+    },
+    "/api/experience/profile/mfa/passkey-skipped": {
+      "post": {
+        "operationId": "SkipPasskeyBinding",
+        "summary": "Skip passkey binding",
+        "description": "Skip passkey binding flow. The users can temporarily skip the passkey binding flow by calling this API during sign-up. On sign-in, the skip flag will be persisted to user config.",
+        "responses": {
+          "204": {
+            "description": "The passkey binding flow has been permanently skipped."
+          },
+          "400": {
+            "description": "Not supported for the current interaction event. This API can only be used in the `SignIn` or `Register` interaction."
+          },
+          "404": {
+            "description": "The user has not been identified yet. The `passkey-skipped` configuration must be associated with a identified user."
+          }
+        }
+      }
+    },
+    "/api/experience/profile/mfa/passkey": {
+      "post": {
+        "operationId": "BindPasskey",
+        "summary": "Bind passkey for sign-in",
+        "description": "Bind a WebAuthn credential as a passkey for sign-in purposes. Unlike `POST /api/experience/profile/mfa` with `type: WebAuthn`, this endpoint is exclusively for adding a passkey as a sign-in method and does NOT mark the user's optional MFA as enabled.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "verificationId": {
+                    "description": "The ID of the WebAuthn verification record to bind as a passkey."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The passkey has been successfully bound to the user profile."
+          },
+          "400": {
+            "description": "Invalid request. <br/>- `session.verification_failed:` The WebAuthn verification record is invalid or not verified. <br/>- `session.mfa.pending_info_not_found:` The verification record does not have the required registration data."
+          },
+          "404": {
+            "description": "Entity not found. <br/>- `session.identifier_not_found:` The user has not been identified yet. <br/>- `session.verification_session_not_found:` The WebAuthn verification record is not found."
+          }
+        }
+      }
     }
   }
 }

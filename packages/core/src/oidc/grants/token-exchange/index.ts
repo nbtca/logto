@@ -16,11 +16,7 @@ import { type EnvSet } from '#src/env-set/index.js';
 import type Queries from '#src/tenants/Queries.js';
 import assertThat from '#src/utils/assert-that.js';
 
-import {
-  isThirdPartyApplication,
-  getSharedResourceServerData,
-  reversedResourceAccessTokenTtl,
-} from '../../resource.js';
+import { getSharedResourceServerData, reversedResourceAccessTokenTtl } from '../../resource.js';
 import { handleClientCertificate, handleDPoP, checkOrganizationAccess } from '../utils.js';
 
 import { validateSubjectToken } from './account.js';
@@ -62,11 +58,6 @@ export const buildHandler: (
 
   assertThat(params, new InvalidGrant('parameters must be available'));
   assertThat(client, new InvalidClient('client must be available'));
-  // We don't allow third-party applications to perform token exchange
-  assertThat(
-    !(await isThirdPartyApplication(queries, client.clientId)),
-    new InvalidClient('third-party applications are not allowed for this grant type')
-  );
 
   validatePresence(ctx, ...requiredParameters);
 
@@ -76,11 +67,16 @@ export const buildHandler: (
     scopes: oidcScopes,
   } = providerInstance.configuration();
 
-  const { userId, subjectTokenId } = await validateSubjectToken(
+  const { userId, subjectTokenId } = await validateSubjectToken({
     queries,
-    String(params.subject_token),
-    String(params.subject_token_type)
-  );
+    subjectToken: String(params.subject_token),
+    subjectTokenType: String(params.subject_token_type),
+    AccessToken,
+    jwtVerificationOptions: {
+      localJWKSet: envSet.oidc.localJWKSet,
+      issuer: envSet.oidc.issuer,
+    },
+  });
 
   const account = await Account.findAccount(ctx, userId);
 

@@ -61,12 +61,20 @@ const usage = {
     tooltip_for_enterprise:
       'สมาชิกผู้เช่า {{basicQuota}} แรก รวมอยู่และใช้งานฟรีในแผนตามสัญญาของคุณ หากมากกว่านั้น ราคา ${{price, number}} ต่อสมาชิกต่อเดือน',
   },
+  custom_domains: {
+    title: 'โดเมนแบบกำหนดเอง',
+    tooltip:
+      'ฟีเจอร์เสริมราคา ${{price, number}} สำหรับโดเมนแบบกำหนดเองสูงสุด 10 โดเมนต่อเดือน โดเมนแรกฟรี',
+  },
   tokens: {
     title: 'โทเคน',
     tooltip:
       'ฟีเจอร์เสริมราคา ${{price, number}} ต่อ {{tokenLimit}} โทเคน โทเคน {{basicQuota}} แรก รวมอยู่ในแผน',
     tooltip_for_enterprise:
       'โทเคน {{basicQuota}} แรก รวมอยู่และใช้งานฟรีในแผนตามสัญญาของคุณ หากต้องการมากขึ้น ราคา ${{price, number}} ต่อ {{tokenLimit}} โทเคนต่อเดือน',
+  },
+  m2mTokens: {
+    title: 'โทเคน M2M',
   },
   hooks: {
     title: 'Hook',

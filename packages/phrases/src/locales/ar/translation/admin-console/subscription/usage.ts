@@ -61,12 +61,20 @@ const usage = {
     tooltip_for_enterprise:
       'تشمل خطتك القائمة على العقد أول {{basicQuota}} من أعضاء المستأجر وتكون مجانية للاستخدام. إذا كنت بحاجة إلى المزيد ، {{price, number}} لكل عضو مستأجر شهريًا.',
   },
+  custom_domains: {
+    title: 'نطاقات مخصصة',
+    tooltip:
+      'ميزة إضافية بسعر ${{price, number}} لما يصل إلى 10 نطاقات مخصصة شهريًا. أول نطاق مخصص مجاني.',
+  },
   tokens: {
     title: 'الرموز',
     tooltip:
       'ميزة إضافية بسعر ${{price, number}} لكل {{tokenLimit}} توكن. أول {{basicQuota}} توكن مشمولة.',
     tooltip_for_enterprise:
       'تشمل خطتك القائمة على العقد أول {{basicQuota}} من الرموز وتكون مجانية للاستخدام. إذا كنت بحاجة إلى المزيد ، {{price, number}} لكل {{tokenLimit}} رمز شهريًا.',
+  },
+  m2mTokens: {
+    title: 'رموز M2M',
   },
   hooks: {
     title: 'الخطافات',

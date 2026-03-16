@@ -17,10 +17,9 @@ const description = {
   passcode_sent: 'ได้ส่งรหัสยืนยันใหม่อีกครั้งแล้ว',
   resend_after_seconds: 'ยังไม่ได้รับใช่ไหม? ขอรหัสใหม่ได้หลัง <span>{{seconds}}</span> วินาที',
   resend_passcode: 'ยังไม่ได้รับใช่ไหม? <a>ขอรหัสยืนยันใหม่</a>',
-  create_account_id_exists: 'บัญชี {{type}} {{value}} นี้มีอยู่แล้ว คุณต้องการเข้าสู่ระบบไหม?',
+  create_account_id_exists: 'บัญชี {{value}} มีอยู่แล้ว ดำเนินการเข้าสู่ระบบต่อ',
   link_account_id_exists: 'บัญชี {{type}} {{value}} นี้มีอยู่แล้ว คุณต้องการเชื่อมโยงหรือไม่?',
-  sign_in_id_does_not_exist:
-    'บัญชี {{type}} {{value}} นี้ยังไม่มีอยู่ คุณต้องการสร้างบัญชีใหม่หรือไม่?',
+  sign_in_id_does_not_exist: 'ไม่พบบัญชีสำหรับ {{value}} สร้างบัญชีใหม่หรือไม่?',
   sign_in_id_does_not_exist_alert: 'บัญชี {{type}} {{value}} นี้ยังไม่มีอยู่',
   create_account_id_exists_alert:
     'บัญชี {{type}} {{value}} นี้ได้เชื่อมโยงกับบัญชีอื่นแล้ว โปรดลองใช้ {{type}} อื่น',
@@ -107,6 +106,17 @@ const description = {
   switch_account_description:
     'ในการดำเนินการต่อ คุณจะออกจากบัญชีปัจจุบัน และสลับไปยังบัญชีใหม่โดยอัตโนมัติ',
   about_yourself: 'บอกเราเกี่ยวกับตัวคุณ',
+  verify_identity: 'ยืนยันตัวตนของคุณ',
+  choose_verification_method: 'เลือกวิธีการเข้าสู่ระบบ',
+  verification_method: {
+    passkey: 'กุญแจรหัสผ่าน',
+    passkey_description: 'ยืนยันผ่านอุปกรณ์หรือฮาร์ดแวร์ USB',
+    password: 'รหัสผ่าน',
+    password_description: 'กรอกรหัสผ่าน',
+    email_verification_code: 'รหัสยืนยันทางอีเมล',
+    phone_verification_code: 'รหัสยืนยันทางโทรศัพท์',
+    verification_code_description: 'ส่งไปที่ {{target}}',
+  },
 };
 
 export default Object.freeze(description);

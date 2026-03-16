@@ -44,6 +44,8 @@ const application_details = {
     'Il URI di reindirizzamento dopo il login di un utente (sia riuscito che non). Vedi OpenID Connect autenticazione richiesta per ulteriori informazioni.',
   mixed_redirect_uri_warning:
     'Il tuo tipo di applicazione non è compatibile con almeno uno degli URI di reindirizzamento. Non segue le migliori pratiche e consigliamo vivamente di mantenere gli URI di reindirizzamento coerenti.',
+  wildcard_redirect_uri_warning:
+    'Gli URI di reindirizzamento con wildcard non sono standard OIDC e possono aumentare la superficie di attacco. Usali con cautela e preferisci URI di reindirizzamento esatti quando possibile.',
   post_sign_out_redirect_uri: 'URI di reindirizzamento post disconnessione',
   post_sign_out_redirect_uris: 'URI di reindirizzamento post disconnessione',
   post_sign_out_redirect_uri_placeholder: 'https://your.website.com/home',
@@ -76,6 +78,14 @@ const application_details = {
   backchannel_logout_uri_session_required: 'La sessione è necessaria?',
   backchannel_logout_uri_session_required_description:
     'Quando abilitato, l’RP richiede che un’istanza `sid` (ID sessione) sia inclusa nel token di logout per identificare la sessione RP con l’OP quando viene usato il `backchannel_logout_uri`.',
+  token_exchange: 'Scambio di token',
+  token_exchange_description:
+    'Gestisci le impostazioni di scambio di token per questa applicazione.',
+  allow_token_exchange: 'Consenti lo scambio di token',
+  allow_token_exchange_description:
+    'Consenti a questa applicazione di avviare richieste di scambio di token. È necessario per <impersonationLink>l’impersonificazione dell’utente</impersonationLink> e per i <patLink>token di accesso personali</patLink>.',
+  allow_token_exchange_public_client_warning:
+    'Non è consigliato abilitare lo scambio di token per client pubblici (app a pagina singola / app native). I client pubblici non possono archiviare le credenziali in modo sicuro, il che può esporre la tua applicazione a rischi di impersonificazione dei token.',
   delete_description:
     "Questa azione non può essere annullata. Eliminerà definitivamente l'applicazione. Inserisci il nome dell'applicazione <span>{{name}}</span> per confermare.",
   enter_your_application_name: 'Inserisci il nome della tua applicazione',
@@ -159,6 +169,18 @@ const application_details = {
     organization_description:
       "Seleziona le autorizzazioni richieste dall'applicazione di terze parti per accedere a tipi specifici di dati organizzazione.",
     grant_organization_level_permissions: 'Concedi autorizzazioni dei dati organizzazione',
+    oidc_title: 'OIDC',
+    oidc_description:
+      "Le autorizzazioni OIDC principali sono configurate automaticamente per la tua app. Questi scope sono essenziali per l'autenticazione e non vengono visualizzati nella schermata di consenso dell'utente.",
+    default_oidc_permissions: 'Autorizzazioni OIDC predefinite',
+    permission_column: 'Autorizzazione',
+    guide_column: 'Guida',
+    openid_permission: 'openid',
+    openid_permission_guide:
+      "Opzionale per l'accesso alle risorse OAuth.\nObbligatorio per l'autenticazione OIDC. Concede accesso a un token ID e consente l'accesso a 'userinfo_endpoint'.",
+    offline_access_permission: 'offline_access',
+    offline_access_permission_guide:
+      'Opzionale. Recupera refresh token per accessi di lunga durata o attività in background.',
   },
   roles: {
     assign_button: 'Assegna ruoli da macchina a macchina',

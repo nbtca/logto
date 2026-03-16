@@ -109,13 +109,21 @@ const sign_in_exp = {
       account_security: {
         title: 'HESAP GÜVENLİĞİ',
         description:
-          'Account API erişimini yöneterek kullanıcıların uygulamada oturum açtıktan sonra kimlik bilgilerini ve kimlik doğrulama faktörlerini görüntülemesine veya düzenlemesine izin verin. Bu güvenlikle ilgili değişiklikleri yapmadan önce kullanıcıların kimliğini doğrulayıp 10 dakika geçerli bir doğrulama kayıt kimliği almaları gerekir.',
+          'Account API erişimini yöneterek kullanıcıların uygulamada oturum açtıktan sonra kimlik bilgilerini ve kimlik doğrulama faktörlerini görüntülemesine veya düzenlemesine izin verin.',
+        security_verification: {
+          title: 'Güvenlik doğrulaması',
+          description:
+            'Güvenlik ayarlarını değiştirmeden önce kullanıcıların kimliğini doğrulayıp 10 dakika geçerli bir doğrulama kayıt kimliği almaları gerekir. Bir doğrulama yöntemini (e-posta, telefon, şifre) etkinleştirmek için aşağıdaki Account API iznini <strong>Yalnızca okuma</strong> (minimum) veya <strong>Düzenle</strong> olarak ayarlayın, böylece sistem kullanıcının yapılandırıp yapılandırmadığını algılayabilir. <a>Daha fazla bilgi</a>',
+        },
         groups: {
           identifiers: {
             title: 'Tanımlayıcılar',
           },
           authentication_factors: {
             title: 'Kimlik doğrulama faktörleri',
+          },
+          session_management: {
+            title: 'Oturum yönetimi',
           },
         },
       },
@@ -157,11 +165,36 @@ const sign_in_exp = {
       profile_description: 'Yapılandırılmış profil özniteliklerine erişimi kontrol edin.',
       custom_data: 'Özel veriler',
       custom_data_description: 'Kullanıcıda saklanan özel JSON verilerine erişimi kontrol edin.',
+      sessions: 'Oturumlar',
     },
     webauthn_related_origins: 'WebAuthn İlgili Kaynaklar',
     webauthn_related_origins_description:
       'Account API aracılığıyla passkey kaydedilmesine izin verilen ön uç uygulamalarınızın alan adlarını ekleyin.',
     webauthn_related_origins_error: 'Kaynak https:// veya http:// ile başlamalıdır',
+    prebuilt_ui: {
+      title: 'ÖN TANIMLI ARAYÜZÜ ENTEGRE ET',
+      description:
+        'Hazır doğrulama ve güvenlik ayarı akışlarını ön tanımlı arayüzle hızlıca entegre edin.',
+      permission_notice:
+        'Bu önceden oluşturulmuş akışları entegre etmek için aşağıdaki ayarlarda ilgili Hesap API izinlerini <strong>Düzenle</strong> olarak ayarlayın.',
+      flows_title: 'Hazır güvenlik ayarı akışlarını entegre et',
+      flows_description:
+        "Hesap ayar URL'nizi oluşturmak için alan adınızı rota ile birleştirin (örneğin, https://auth.foo.com/account/email). Başarılı bir güncellemeden sonra kullanıcıları uygulamanıza geri döndürmek için isteğe bağlı olarak bir `redirect=` URL parametresi ekleyin.",
+      tooltips: {
+        email: 'Birincil e-posta adresinizi güncelleyin',
+        phone: 'Birincil telefon numaranızı güncelleyin',
+        username: 'Kullanıcı adınızı güncelleyin',
+        password: 'Yeni bir parola ayarlayın',
+        authenticator_app:
+          'Çok faktörlü kimlik doğrulama için yeni bir doğrulayıcı uygulaması ayarlayın',
+        passkey_add: 'Yeni bir passkey kaydedin',
+        passkey_manage: "Mevcut passkey'lerinizi yönetin veya yenilerini ekleyin",
+        backup_codes_generate: 'Yeni bir 10 yedek kod seti oluşturun',
+        backup_codes_manage: 'Mevcut yedek kodlarınızı görüntüleyin veya yenilerini oluşturun',
+      },
+      customize_note: 'Hazır deneyimi istemiyor musunuz? Bunun yerine, Akın API ile',
+      customize_link: 'akışlarınızı tamamen özelleştirebilirsiniz.',
+    },
   },
   sign_up_and_sign_in,
   content,

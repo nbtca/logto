@@ -1,7 +1,9 @@
+/* eslint-disable max-lines */
 import {
   AlternativeSignUpIdentifier,
   ForgotPasswordMethod,
   InteractionEvent,
+  MfaFactor,
   MissingProfile,
   type SignInExperience,
   SignInIdentifier,
@@ -15,6 +17,7 @@ import type Libraries from '#src/tenants/Libraries.js';
 import type Queries from '#src/tenants/Queries.js';
 import assertThat from '#src/utils/assert-that.js';
 
+import { sortMfaFactors } from '../helpers.js';
 import { type EnterpriseSsoVerification } from '../verifications/enterprise-sso-verification.js';
 import { type VerificationRecord } from '../verifications/index.js';
 
@@ -73,6 +76,9 @@ const parseMandatoryPrimaryIdentifier = (
     return MissingProfile.phone;
   }
 };
+
+const filterOutBackupCodeFactor = (factors: MfaFactor[]) =>
+  factors.filter((factor) => factor !== MfaFactor.BackupCode);
 
 /**
  *  SignInExperienceValidator class provides all the sign-in experience settings validation logic.
@@ -157,7 +163,10 @@ export class SignInExperienceValidator {
     const { getAvailableSsoConnectors } = this.libraries.ssoConnectors;
     const availableSsoConnectors = await getAvailableSsoConnectors();
 
-    return availableSsoConnectors.filter(({ domains }) => domains.includes(domain));
+    return availableSsoConnectors.filter(({ domains }) => {
+      const normalizedDomains = domains.map((item) => item.toLowerCase());
+      return normalizedDomains.includes(domain.toLowerCase());
+    });
   }
 
   public async getMfaSettings() {
@@ -166,10 +175,77 @@ export class SignInExperienceValidator {
     return mfa;
   }
 
+  /**
+   * Get all MFA factors that are currently considered enabled for binding validation.
+   *
+   * @remarks
+   * This is the broadest "enabled" set for binding-time checks:
+   * - Includes all factors in `mfa.factors`.
+   * - Includes `WebAuthn` when passkey sign-in is enabled, even if it is not explicitly listed
+   *   in `mfa.factors`.
+   * - Keeps `BackupCode` in the returned set.
+   *
+   * @example
+   * Used when validating user-submitted binding requests, to ensure every requested factor is
+   * actually enabled by tenant settings before accepting the bind operation.
+   */
+  public async getMfaFactorsEnabledForBinding() {
+    const { mfa, passkeySignIn } = await this.getSignInExperienceData();
+
+    return sortMfaFactors([
+      ...new Set([...mfa.factors, ...(passkeySignIn.enabled ? [MfaFactor.WebAuthn] : [])]),
+    ]);
+  }
+
+  /**
+   * Get actionable MFA factors that can be presented to end users for binding.
+   *
+   * @remarks
+   * This is derived from {@link getMfaFactorsEnabledForBinding} and excludes `BackupCode`.
+   * Backup code is not treated as a primary, user-facing binding option for "bind an MFA factor now"
+   * prompts.
+   *
+   * @example
+   * Used in adaptive MFA flows when risk requires MFA and the user has no available verification
+   * factor, to populate `availableFactors` in `user.missing_mfa` responses.
+   */
+  public async getBindableMfaFactors() {
+    const enabledFactors = await this.getMfaFactorsEnabledForBinding();
+
+    return filterOutBackupCodeFactor(enabledFactors);
+  }
+
+  /**
+   * Get MFA factors configured in sign-in experience for policy-fulfillment checks.
+   *
+   * @remarks
+   * This method reflects explicit MFA configuration only:
+   * - Reads from `mfa.factors`.
+   * - Excludes `BackupCode`.
+   * - Does not inject passkey-backed `WebAuthn`.
+   *
+   * Backup code is validated separately as an additive requirement, not as a primary factor candidate.
+   *
+   * @example
+   * Used when checking whether a user has fulfilled mandatory MFA policy (or organization-required
+   * MFA), i.e. whether the user has at least one configured primary MFA factor bound.
+   */
+  public async getConfiguredMfaFactors() {
+    const { mfa } = await this.getSignInExperienceData();
+
+    return sortMfaFactors(filterOutBackupCodeFactor(mfa.factors));
+  }
+
   public async getPasswordPolicy() {
     const { passwordPolicy } = await this.getSignInExperienceData();
 
     return passwordPolicy;
+  }
+
+  public async getSocialSignInPolicy() {
+    const { socialSignIn } = await this.getSignInExperienceData();
+
+    return socialSignIn;
   }
 
   public async getSignInExperienceData() {
@@ -298,6 +374,7 @@ export class SignInExperienceValidator {
     const {
       signIn: { methods: signInMethods },
       singleSignOnEnabled,
+      passkeySignIn,
     } = await this.getSignInExperienceData();
 
     switch (verificationRecord.type) {
@@ -330,6 +407,14 @@ export class SignInExperienceValidator {
           singleSignOnEnabled,
           new RequestError({ code: 'user.sign_in_method_not_enabled', status: 422 })
         );
+        break;
+      }
+      case VerificationType.SignInWebAuthn: {
+        assertThat(
+          passkeySignIn.enabled,
+          new RequestError({ code: 'user.sign_in_method_not_enabled', status: 422 })
+        );
+        await this.guardPasskeySignInAgainstSsoUsers(verificationRecord.userId);
         break;
       }
       default: {
@@ -369,4 +454,18 @@ export class SignInExperienceValidator {
       }
     }
   }
+
+  /**
+   * Passkey sign-in is not allowed for SSO users.
+   * @throws {RequestError} with status 422 if the user is an SSO user
+   */
+  private async guardPasskeySignInAgainstSsoUsers(userId?: string) {
+    assertThat(userId, 'session.identifier_not_found');
+
+    const ssoIdentities =
+      await this.queries.userSsoIdentities.findUserSsoIdentitiesByUserId(userId);
+
+    assertThat(ssoIdentities.length === 0, 'session.passkey_sign_in.sso_users_not_allowed');
+  }
 }
+/* eslint-enable max-lines */

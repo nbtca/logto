@@ -1,8 +1,5 @@
-import { useContext } from 'react';
-
 import FormCard from '@/components/FormCard';
 import PageMeta from '@/components/PageMeta';
-import { TenantsContext } from '@/contexts/TenantsProvider';
 import FormField from '@/ds-components/FormField';
 import useCustomDomain from '@/hooks/use-custom-domain';
 import useDocumentationUrl from '@/hooks/use-documentation-url';
@@ -11,17 +8,11 @@ import Skeleton from '../components/Skeleton';
 
 import DefaultDomain from './DefaultDomain';
 import MultipleCustomDomainsFormField from './MultipleCustomDomainsFormField';
-import SingleCustomDomainFormField from './SingleCustomDomainFormField';
 import styles from './index.module.scss';
 
 function TenantDomainSettings() {
   const { isLoading: isLoadingCustomDomain } = useCustomDomain(true);
   const { getDocumentationUrl } = useDocumentationUrl();
-  const { currentTenant } = useContext(TenantsContext);
-
-  const isMultipleCustomDomainsEnabled = Boolean(
-    currentTenant?.featureFlags?.isMultipleCustomDomainsEnabled
-  );
 
   if (isLoadingCustomDomain) {
     return <Skeleton />;
@@ -38,11 +29,7 @@ function TenantDomainSettings() {
           targetBlank: 'noopener',
         }}
       >
-        {isMultipleCustomDomainsEnabled ? (
-          <MultipleCustomDomainsFormField />
-        ) : (
-          <SingleCustomDomainFormField />
-        )}
+        <MultipleCustomDomainsFormField />
       </FormCard>
       <FormCard
         title="domain.default.default_domain"

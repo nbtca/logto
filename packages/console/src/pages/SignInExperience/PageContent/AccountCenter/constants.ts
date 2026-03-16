@@ -1,4 +1,7 @@
 import type { AdminConsoleKey } from '@logto/phrases';
+import { conditionalArray } from '@silverhand/essentials';
+
+import { isDevFeaturesEnabled } from '@/consts/env';
 
 import type { AccountCenterFieldKey } from '../../types';
 
@@ -31,6 +34,7 @@ export const accountCenterSections: AccountCenterFieldSection[] = [
         key: 'identifiers',
         title: 'sign_in_exp.account_center.sections.account_security.groups.identifiers.title',
         items: [
+          { key: 'username', title: 'sign_in_exp.account_center.fields.username' },
           { key: 'email', title: 'sign_in_exp.account_center.fields.email' },
           { key: 'phone', title: 'sign_in_exp.account_center.fields.phone' },
           { key: 'social', title: 'sign_in_exp.account_center.fields.social' },
@@ -48,6 +52,21 @@ export const accountCenterSections: AccountCenterFieldSection[] = [
           },
         ],
       },
+      ...conditionalArray(
+        isDevFeaturesEnabled && [
+          {
+            key: 'sessionManagement',
+            title:
+              'sign_in_exp.account_center.sections.account_security.groups.session_management.title',
+            items: [
+              {
+                key: 'session',
+                title: 'sign_in_exp.account_center.fields.sessions',
+              },
+            ],
+          } satisfies AccountCenterFieldGroup,
+        ]
+      ),
     ],
   },
   {
@@ -59,7 +78,6 @@ export const accountCenterSections: AccountCenterFieldSection[] = [
         key: 'profileData',
         title: 'sign_in_exp.account_center.sections.user_profile.groups.profile_data.title',
         items: [
-          { key: 'username', title: 'sign_in_exp.account_center.fields.username' },
           { key: 'name', title: 'sign_in_exp.account_center.fields.name' },
           { key: 'avatar', title: 'sign_in_exp.account_center.fields.avatar' },
           {

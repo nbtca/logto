@@ -202,6 +202,19 @@ const quota_item = {
     unlimited: 'Erweiterte Sicherheitsfunktionen',
     not_eligible: 'Entferne deine erweiterten Sicherheitseinstellungen',
   },
+  custom_domains_limit: {
+    name: 'Benutzerdefinierte Domains',
+    limited: '{{count, number}} benutzerdefinierte Domain',
+    limited_other: '{{count, number}} benutzerdefinierte Domains',
+    unlimited: 'Unbegrenzte benutzerdefinierte Domains',
+    not_eligible: 'Entferne deine benutzerdefinierten Domains',
+  },
+  passkey_sign_in_enabled: {
+    name: 'Passkey-Anmeldung',
+    limited: 'Passkey-Anmeldung',
+    unlimited: 'Passkey-Anmeldung',
+    not_eligible: 'Keine Unterstützung für Passkey-Anmeldung',
+  },
 };
 
 export default Object.freeze(quota_item);

@@ -56,9 +56,11 @@ export const mockQuota = {
   subjectTokenEnabled: false,
   bringYourUiEnabled: false,
   collectUserProfileEnabled: false,
+  passkeySignInEnabled: false,
   idpInitiatedSsoEnabled: false,
   samlApplicationsLimit: 0,
   securityFeaturesEnabled: false,
+  customDomainsLimit: 1,
 };
 
 export const mockSubscriptionData: Subscription = {

@@ -330,7 +330,7 @@ describe('applications', () => {
     }
   );
 
-  it('can create an third party application', async () => {
+  it('can create a third party application', async () => {
     await expect(page).toClick('div[class$=main] div[class$=headline] button span', {
       text: 'Create application',
     });
@@ -354,7 +354,7 @@ describe('applications', () => {
     await expectToProceedApplicationCreationFrom(
       page,
       thirdPartyApp,
-      'Create third-party application'
+      thirdPartyApp.creationModalTitle
     );
 
     await expect(page).toMatchElement('div[class$=main] div[class$=header] div[class$=name]', {

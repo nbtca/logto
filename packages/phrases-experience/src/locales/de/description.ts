@@ -17,12 +17,10 @@ const description = {
   passcode_sent: 'Der Bestätigungscode wurde erneut gesendet',
   resend_after_seconds: 'Noch nicht erhalten? Erneut senden nach <span>{{seconds}}</span> Sekunden',
   resend_passcode: 'Noch nicht erhalten? <a>Bestätigungscode erneut senden</a>',
-  create_account_id_exists:
-    'Das Konto mit {{type}} {{value}} existiert bereits, möchtest du dich anmelden?',
+  create_account_id_exists: 'Ein Konto mit {{value}} existiert bereits. Weiter zur Anmeldung.',
   link_account_id_exists:
     'Das Konto mit {{type}} {{value}} existiert bereits, möchtest du es mit deinem Konto verknüpfen?',
-  sign_in_id_does_not_exist:
-    'Das Konto mit {{type}} {{value}} existiert nicht, möchtest du ein neues Konto erstellen?',
+  sign_in_id_does_not_exist: 'Kein Konto für {{value}} gefunden. Ein neues erstellen?',
   sign_in_id_does_not_exist_alert: 'Das Konto mit {{type}} {{value}} existiert nicht',
   create_account_id_exists_alert:
     'Das Konto mit {{type}} {{value}} ist mit einem anderen Konto verknüpft. Bitte versuche es mit einem anderen {{type}} erneut',
@@ -113,6 +111,17 @@ const description = {
   switch_account_description:
     'Um fortzufahren, wirst du vom aktuellen Konto abgemeldet und automatisch zum neuen Konto gewechselt.',
   about_yourself: 'Erzähl uns etwas über dich',
+  verify_identity: 'Bestätige deine Identität',
+  choose_verification_method: 'Wähle, wie du dich anmelden möchtest',
+  verification_method: {
+    passkey: 'Passkey',
+    passkey_description: 'Über dein Gerät oder USB-Hardware verifizieren',
+    password: 'Passwort',
+    password_description: 'Gib dein Passwort ein',
+    email_verification_code: 'E-Mail-Bestätigungscode',
+    phone_verification_code: 'Telefon-Bestätigungscode',
+    verification_code_description: 'Senden an {{target}}',
+  },
 };
 
 export default Object.freeze(description);

@@ -1,5 +1,72 @@
 # Change Log
 
+## 1.19.0
+
+### Minor Changes
+
+- b8ca1a40c7: support ID token claims configuration
+
+  You can now customize which additional claims (e.g., `custom_data`, `identities`, `roles`, `organizations`, `organization_roles`) are included in the ID token via Console or Management API.
+
+### Patch Changes
+
+- bb2f4ea7c7: fix the issue that the "Tell us about yourself" section does not appear during signup when only optional custom profile fields are configured
+
+  Previously, the `hasMissingExtraProfileFields` method only checked for required custom profile fields, causing the "Tell us about yourself" section to not appear during signup when only optional fields were configured.
+
+  Now, the method also checks for optional fields and whether the user has submitted the extra profile form, ensuring that the section is always displayed as expected.
+
+## 1.18.0
+
+### Minor Changes
+
+- 7cbe315dde: support token exchange grant type with app-level control
+
+  - Add `allowTokenExchange` field to `customClientMetadata` to control whether an application can initiate token exchange requests
+  - Machine-to-machine applications now support token exchange
+  - All new applications will have token exchange disabled by default, you can enable it in the application settings
+  - For backward compatibility, existing first-party Traditional, Native, and SPA applications will have this enabled
+  - Third-party applications are not allowed to use token exchange
+  - Add UI toggle in Console with risk warning for public clients (single-page application / native application)
+
+- c8b2caec5c: add trust-unverified-email support for OIDC social connector and OIDC-based enterprise SSO connectors
+
+  - Add `trustUnverifiedEmail` to the OIDC social connector config (default `false`) to allow syncing emails when `email_verified` is missing or false
+  - Apply the setting in core OIDC/Azure OIDC SSO connectors and expose it in the Admin Console with new tips and translations
+
+### Patch Changes
+
+- 1fc65a2536: return role assignment results in user role APIs
+
+  - POST `/users/:userId/roles` now returns `{ roleIds: string[]; addedRoleIds: string[] }` where `roleIds` echoes the requested IDs, and `addedRoleIds` includes only the IDs that were newly created (existing assignments are omitted)
+  - PUT `/users/:userId/roles` now returns `{ roleIds: string[] }` to confirm the final assigned roles
+
+## 1.17.0
+
+### Minor Changes
+
+- d551f5ccc3: support creating third-party SPA and Native applications
+
+  Previously, only traditional web applications could be marked as third-party apps. Now you can also create third-party single-page applications (SPA) and native applications, enabling more flexible OAuth/OIDC integration scenarios.
+
+## 1.16.0
+
+### Minor Changes
+
+- 08f887c448: support cross-app authentication callbacks within the same browser session
+
+  When multiple applications are initiating authentication requests within the same browser session,
+  authentication callbacks may interfere with each other due to the shared `_interaction` cookie.
+
+  To resolve this, we now change the cookie from a plain UID string to a structured mapping object
+  `{ [app_id]: interaction_uid }`, and maintain the `app_id` in either the URL search parameters or HTTP
+  headers for all authentication-related requests and redirects. This ensures that each application can
+  correctly identify its own authentication context without interference from others.
+
+  The fallback mechanism is also implemented to ensure backward compatibility.
+
+- c3266a917a: add a new webhook event "Identifier.Lockout", which is triggered when a user is locked out due to repeated failed sign-in attempts
+
 ## 1.15.0
 
 ### Minor Changes

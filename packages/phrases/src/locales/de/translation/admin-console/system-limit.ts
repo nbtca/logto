@@ -1,6 +1,6 @@
 const system_limit = {
   limit_exceeded:
-    'Dieser Mandant hat das {{entity}}-Limit gemäß Logtos Entitätslimitrichtlinie erreicht.',
+    'Dieser <planName/>-Mandant hat sein {{entity}}-Limit gemäß <a>Logtos Entitätsrichtlinie</a> erreicht.',
   entities: {
     application: 'Anwendung',
     third_party_application: 'Drittanbieter-Anwendung',
@@ -16,6 +16,7 @@ const system_limit = {
     tenant_member: 'Mandantenmitglied',
     organization: 'Organisation',
     saml_application: 'SAML-Anwendung',
+    custom_domain: 'Benutzerdefinierte Domain',
     user_per_organization: 'Benutzer pro Organisation',
     organization_user_role: 'Organisationsbenutzerrolle',
     organization_machine_to_machine_role: 'Organisations-Maschine-zu-Maschine-Rolle',

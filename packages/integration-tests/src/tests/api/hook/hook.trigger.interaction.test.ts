@@ -6,6 +6,7 @@ import {
 } from '@logto/schemas';
 
 import { authedAdminApi } from '#src/api/api.js';
+import { isDevFeaturesEnabled } from '#src/constants.js';
 import { resetPasswordlessConnectors } from '#src/helpers/connector.js';
 import { WebHookApiTest } from '#src/helpers/hook.js';
 import {
@@ -24,7 +25,11 @@ import { generateEmail, generatePassword } from '#src/utils.js';
 import WebhookMockServer from './WebhookMockServer.js';
 import { assertHookLogResult } from './utils.js';
 
-const webbHookMockServer = new WebhookMockServer(9999);
+const supportedInteractionHookEvents = Object.values(InteractionHookEvent).filter(
+  (event) => isDevFeaturesEnabled || event !== InteractionHookEvent.PostSignInAdaptiveMfaTriggered
+);
+
+const webHookMockServer = new WebhookMockServer(9999);
 const userNamePrefix = 'hookTriggerTestUser';
 const username = `${userNamePrefix}_0`;
 const password = generatePassword();
@@ -42,13 +47,13 @@ beforeAll(async () => {
       password: true,
       verify: false,
     }),
-    webbHookMockServer.listen(),
+    webHookMockServer.listen(),
     userApi.create({ username, password }),
   ]);
 });
 
 afterAll(async () => {
-  await Promise.all([userApi.cleanUp(), webbHookMockServer.close()]);
+  await Promise.all([userApi.cleanUp(), webHookMockServer.close()]);
 });
 
 describe('trigger invalid hook', () => {
@@ -81,18 +86,18 @@ describe('interaction api trigger hooks', () => {
     await Promise.all([
       webHookApi.create({
         name: 'interactionHookEventListener',
-        events: Object.values(InteractionHookEvent),
-        config: { url: webbHookMockServer.endpoint },
+        events: supportedInteractionHookEvents,
+        config: { url: webHookMockServer.endpoint },
       }),
       webHookApi.create({
         name: 'dataHookEventListener',
         events: hookEvents.filter((event) => !(event in InteractionHookEvent)),
-        config: { url: webbHookMockServer.endpoint },
+        config: { url: webHookMockServer.endpoint },
       }),
       webHookApi.create({
         name: 'registerOnlyInteractionHookEventListener',
         events: [InteractionHookEvent.PostRegister],
-        config: { url: webbHookMockServer.endpoint },
+        config: { url: webHookMockServer.endpoint },
       }),
     ]);
   });

@@ -41,6 +41,8 @@ const application_details = {
     '在用户登录完成（不论成功与否）后重定向的目标 URI。参见 OpenID Connect <a>AuthRequest</a> 以了解更多。',
   mixed_redirect_uri_warning:
     '你的应用程序类型与至少一个重定向 URI 不兼容。这不符合最佳实践，我们强烈建议保持重定向 URI 的一致性。',
+  wildcard_redirect_uri_warning:
+    '通配符重定向 URI 不是标准 OIDC，可能会增加攻击面。请谨慎使用，尽可能使用精确的重定向 URI。',
   post_sign_out_redirect_uri: '退出登录后重定向 URI',
   post_sign_out_redirect_uris: '退出登录后重定向 URIs',
   post_sign_out_redirect_uri_placeholder: 'https://your.website.com/home',
@@ -72,6 +74,13 @@ const application_details = {
   backchannel_logout_uri_session_required: '是否需要会话？',
   backchannel_logout_uri_session_required_description:
     '启用后，当使用 `backchannel_logout_uri` 时，RP 需要在注销令牌中包含 `sid`（会话 ID）声明，以标识 RP 与 OP 的会话。',
+  token_exchange: '令牌交换',
+  token_exchange_description: '管理此应用程序的令牌交换设置。',
+  allow_token_exchange: '允许令牌交换',
+  allow_token_exchange_description:
+    '允许此应用程序发起令牌交换请求。这是 <impersonationLink>用户冒充</impersonationLink> 和 <patLink>个人访问令牌</patLink> 所必需的。',
+  allow_token_exchange_public_client_warning:
+    '不建议为公共客户端（单页应用/原生应用）启用令牌交换。公共客户端无法安全存储凭据，可能会使你的应用暴露于令牌冒充风险。',
   delete_description: '本操作会永久性地删除该应用，且不可撤销。输入 <span>{{name}}</span> 确认。',
   enter_your_application_name: '输入你的应用名称',
   application_deleted: '应用 {{name}} 成功删除。',
@@ -145,6 +154,17 @@ const application_details = {
     organization_title: '组织',
     organization_description: '选择第三方应用程序需要访问特定组织数据的权限。',
     grant_organization_level_permissions: '授予组织数据权限',
+    oidc_title: 'OIDC',
+    oidc_description:
+      '核心 OIDC 权限会自动为你的应用配置。这些 scope 对认证至关重要，并且不会显示在用户授权屏幕上。',
+    default_oidc_permissions: '默认 OIDC 权限',
+    permission_column: '权限',
+    guide_column: '指南',
+    openid_permission: 'openid',
+    openid_permission_guide:
+      "用于访问 OAuth 资源时可选。\n用于 OIDC 认证时必需。授予访问 ID Token 的权限，并允许访问 'userinfo_endpoint'。",
+    offline_access_permission: 'offline_access',
+    offline_access_permission_guide: '可选。获取刷新令牌，用于长时访问或后台任务。',
   },
   roles: {
     assign_button: '分配机器对机器角色',

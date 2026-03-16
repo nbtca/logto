@@ -7,6 +7,7 @@ const user = {
   email_not_exist: 'E-posta adresi henüz kaydedilmedi.',
   phone_not_exist: 'Telefon numarası henüz kaydedilmedi',
   identity_not_exist: 'Sosyal platform hesabı henüz kaydedilmedi.',
+  sso_identity_not_exist: 'Kurumsal SSO hesabı henüz kaydedilmedi.',
   identity_already_in_use: 'Sosyal platform hesabı kaydedildi.',
   social_account_exists_in_profile: 'Bu sosyal hesap zaten ilişkilendirilmiş.',
   cannot_delete_self: 'Kendinizi silemezsiniz.',
@@ -46,6 +47,7 @@ const user = {
     'Kullanıcının belirtilen SSO bağlantı kimliği ile bağlantılı bir kurumsal kimliği yoktur: {{ ssoConnectorId }}.',
   identity_not_exists_in_current_user:
     'Belirtilen kimlik mevcut kullanıcı hesabında mevcut değil. Lütfen devam etmeden önce kimliği ekleyin.',
+  passkey_preferred: 'Oturum açma sürecini basitleştirmek için bir passkey oluşturun.',
 };
 
 export default Object.freeze(user);

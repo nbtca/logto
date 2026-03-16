@@ -84,7 +84,9 @@ function Providers() {
 
   const scopes = useMemo(
     () => [
+      UserScope.Profile,
       UserScope.Email,
+      UserScope.Phone,
       UserScope.Identities,
       UserScope.CustomData,
       UserScope.Organizations,
@@ -217,7 +219,6 @@ function Content() {
     if (!tenantEndpoint || (isCloud && isAuthenticated && !isLoaded)) {
       return <AppLoading />;
     }
-
     return <ConsoleRoutes />;
   }
 

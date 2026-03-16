@@ -43,6 +43,8 @@ const application_details = {
     'URI สำหรับ redirect หลังจากผู้ใช้ลงชื่อเข้าใช้ (ไม่ว่าจะสำเร็จหรือไม่) ดูข้อมูลเพิ่มเติมใน OpenID Connect <a>AuthRequest</a>',
   mixed_redirect_uri_warning:
     'ประเภทแอปพลิเคชันของคุณไม่เข้ากันกับ Redirect URI อย่างน้อยหนึ่งรายการ ซึ่งไม่เป็นไปตามแนวทางที่แนะนำและแนะนำให้ตั้งค่า Redirect URIs ให้สอดคล้องกัน',
+  wildcard_redirect_uri_warning:
+    'Wildcard Redirect URI ไม่ใช่มาตรฐาน OIDC และอาจเพิ่มพื้นที่การโจมตี ใช้ด้วยความระมัดระวังและควรใช้ Redirect URI ที่แน่นอนเมื่อเป็นไปได้',
   post_sign_out_redirect_uri: 'Post sign-out redirect URI',
   post_sign_out_redirect_uris: 'Post sign-out redirect URIs',
   post_sign_out_redirect_uri_placeholder: 'https://your.website.com/home',
@@ -75,6 +77,13 @@ const application_details = {
   backchannel_logout_uri_session_required: 'ต้องใช้เซสชันหรือไม่?',
   backchannel_logout_uri_session_required_description:
     'เมื่อเปิดใช้งาน RP ต้องมี claim `sid` (session ID) ใน logout token เพื่อระบุเซสชัน RP กับ OP เมื่อใช้ `backchannel_logout_uri`',
+  token_exchange: 'การแลกเปลี่ยนโทเคน',
+  token_exchange_description: 'จัดการการตั้งค่าการแลกเปลี่ยนโทเคนสำหรับแอปพลิเคชันนี้',
+  allow_token_exchange: 'อนุญาตการแลกเปลี่ยนโทเคน',
+  allow_token_exchange_description:
+    'อนุญาตให้แอปพลิเคชันนี้เริ่มคำขอแลกเปลี่ยนโทเคน จำเป็นสำหรับ <impersonationLink>การสวมรอยผู้ใช้</impersonationLink> และ <patLink>โทเคนการเข้าถึงส่วนบุคคล</patLink>.',
+  allow_token_exchange_public_client_warning:
+    'ไม่แนะนำให้เปิดใช้การแลกเปลี่ยนโทเคนสำหรับไคลเอนต์สาธารณะ (แอปหน้าเดียว / แอปเนทีฟ) ไคลเอนต์สาธารณะไม่สามารถเก็บข้อมูลรับรองอย่างปลอดภัย ซึ่งอาจทำให้แอปพลิเคชันของคุณเสี่ยงต่อการสวมรอยโทเคน.',
   delete_description:
     'การดำเนินการนี้ไม่สามารถย้อนกลับได้ จะลบแอปพลิเคชันนี้อย่างถาวร กรุณากรอกชื่อแอปพลิเคชัน <span>{{name}}</span> เพื่อยืนยัน',
   enter_your_application_name: 'กรอกชื่อแอปพลิเคชันของคุณ',
@@ -152,6 +161,18 @@ const application_details = {
     organization_title: 'องค์กร',
     organization_description: 'เลือกสิทธิ์ที่แอปบุคคลที่สามร้องขอสำหรับใช้เข้าถึงข้อมูลองค์กร',
     grant_organization_level_permissions: 'ให้สิทธิ์ข้อมูลองค์กร',
+    oidc_title: 'OIDC',
+    oidc_description:
+      'สิทธิ์ OIDC หลักจะถูกกำหนดค่าโดยอัตโนมัติสำหรับแอปของคุณ สโคปเหล่านี้จำเป็นสำหรับการยืนยันตัวตนและจะไม่แสดงบนหน้าจอความยินยอมของผู้ใช้',
+    default_oidc_permissions: 'สิทธิ์ OIDC เริ่มต้น',
+    permission_column: 'สิทธิ์',
+    guide_column: 'คู่มือ',
+    openid_permission: 'openid',
+    openid_permission_guide:
+      "ไม่จำเป็นสำหรับการเข้าถึงทรัพยากร OAuth\nจำเป็นสำหรับการยืนยันตัวตนแบบ OIDC ให้สิทธิ์เข้าถึง ID token และอนุญาตให้เข้าถึง 'userinfo_endpoint'",
+    offline_access_permission: 'offline_access',
+    offline_access_permission_guide:
+      'ไม่จำเป็น รับ refresh token สำหรับการเข้าถึงระยะยาวหรือการทำงานเบื้องหลัง',
   },
   roles: {
     assign_button: 'กำหนดบทบาท',

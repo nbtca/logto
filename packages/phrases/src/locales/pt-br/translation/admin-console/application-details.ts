@@ -44,6 +44,8 @@ const application_details = {
     'O URI para o redirecionamento após o login do usuário (seja bem-sucedido ou não). Consulte <a>AuthRequest</a> OpenID Connect para mais informações.',
   mixed_redirect_uri_warning:
     'O tipo de sua aplicação não é compatível com pelo menos um dos URIs de redirecionamento. Isso não segue as melhores práticas, e recomendamos fortemente manter os URIs de redirecionamento consistentes.',
+  wildcard_redirect_uri_warning:
+    'URIs de redirecionamento com curinga não são padrão OIDC e podem aumentar a superfície de ataque. Use com cuidado e prefira URIs de redirecionamento exatos sempre que possível.',
   post_sign_out_redirect_uri: 'URI de redirecionamento após saída',
   post_sign_out_redirect_uris: 'URIs de redirecionamento após saída',
   post_sign_out_redirect_uri_placeholder: 'https://seusite.com.br/home',
@@ -76,6 +78,13 @@ const application_details = {
   backchannel_logout_uri_session_required: 'A sessão é necessária?',
   backchannel_logout_uri_session_required_description:
     'Quando ativado, o RP exige que uma reivindicação `sid` (ID da sessão) seja incluída no token de logout para identificar a sessão do RP com o OP quando o `backchannel_logout_uri` é usado.',
+  token_exchange: 'Troca de tokens',
+  token_exchange_description: 'Gerencie as configurações de troca de tokens para este aplicativo.',
+  allow_token_exchange: 'Permitir troca de tokens',
+  allow_token_exchange_description:
+    'Permita que este aplicativo inicie solicitações de troca de tokens. Isso é necessário para <impersonationLink>impersonação de usuário</impersonationLink> e <patLink>tokens de acesso pessoal</patLink>.',
+  allow_token_exchange_public_client_warning:
+    'Não é recomendado habilitar a troca de tokens para clientes públicos (aplicativo de página única / aplicativo nativo). Clientes públicos não podem armazenar credenciais com segurança, o que pode expor seu aplicativo a riscos de impersonação de tokens.',
   delete_description:
     'Esta ação não pode ser desfeita. Isso excluirá permanentemente o aplicativo. Insira o nome do aplicativo <span>{{name}}</span> para confirmar.',
   enter_your_application_name: 'Digite o nome do seu aplicativo',
@@ -159,6 +168,18 @@ const application_details = {
     organization_description:
       'Selecione as permissões solicitadas pelo aplicativo de terceiros para acessar tipos específicos de dados da organização.',
     grant_organization_level_permissions: 'Conceder permissões de dados da organização',
+    oidc_title: 'OIDC',
+    oidc_description:
+      'As permissões principais do OIDC são configuradas automaticamente para seu app. Esses escopos são essenciais para autenticação e não são exibidos na tela de consentimento do usuário.',
+    default_oidc_permissions: 'Permissões OIDC padrão',
+    permission_column: 'Permissão',
+    guide_column: 'Guia',
+    openid_permission: 'openid',
+    openid_permission_guide:
+      "Opcional para acesso a recursos OAuth.\nObrigatório para autenticação OIDC. Concede acesso a um token de ID e permite acesso ao 'userinfo_endpoint'.",
+    offline_access_permission: 'offline_access',
+    offline_access_permission_guide:
+      'Opcional. Obtém tokens de atualização para acesso de longa duração ou tarefas em segundo plano.',
   },
   roles: {
     assign_button: 'Atribuir funções de máquina para máquina',

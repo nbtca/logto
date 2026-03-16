@@ -55,12 +55,19 @@ const usage = {
     tooltip_for_enterprise:
       '合同计划包括前 {{basicQuota}} 个租户成员，免费使用。如果需要更多，每个租户成员每月 ${{price, number}}。',
   },
+  custom_domains: {
+    title: '自定义域名',
+    tooltip: '附加功能，每月 ${{price, number}}，最多 10 个自定义域名。首个自定义域名免费。',
+  },
   tokens: {
     title: '令牌',
     tooltip:
       '附加功能，每 {{tokenLimit}} 个令牌价格为 ${{price, number}} 。首 {{basicQuota}} 个令牌包含在内。',
     tooltip_for_enterprise:
       '合同计划包括首 {{basicQuota}} 个令牌，免费使用。如果需要更多，每 {{tokenLimit}} 个令牌每月 ${{price, number}}。',
+  },
+  m2mTokens: {
+    title: 'M2M 令牌',
   },
   hooks: {
     title: '钩子',

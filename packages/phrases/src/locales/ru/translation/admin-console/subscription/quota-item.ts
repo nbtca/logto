@@ -202,6 +202,19 @@ const quota_item = {
     unlimited: 'Расширенная безопасность',
     not_eligible: 'Удалите свои настройки расширенной безопасности',
   },
+  custom_domains_limit: {
+    name: 'Пользовательские домены',
+    limited: '{{count, number}} пользовательский домен',
+    limited_other: '{{count, number}} пользовательских доменов',
+    unlimited: 'Неограниченное количество пользовательских доменов',
+    not_eligible: 'Удалите свои пользовательские домены',
+  },
+  passkey_sign_in_enabled: {
+    name: 'Вход с passkey',
+    limited: 'Вход с passkey',
+    unlimited: 'Вход с passkey',
+    not_eligible: 'Вход с passkey не поддерживается',
+  },
 };
 
 export default Object.freeze(quota_item);

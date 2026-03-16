@@ -63,12 +63,20 @@ const usage = {
     tooltip_for_enterprise:
       'Les {{basicQuota}} premiers membres du locataire sont inclus et gratuits dans votre plan basé sur un contrat. Si vous en avez besoin de plus, ${{price, number}} par membre du locataire par mois.',
   },
+  custom_domains: {
+    title: 'Domaines personnalisés',
+    tooltip:
+      'Fonctionnalité supplémentaire au prix de ${{price, number}} pour jusqu’à 10 domaines personnalisés par mois. Le premier domaine personnalisé est gratuit.',
+  },
   tokens: {
     title: 'Jetons',
     tooltip:
       'Fonctionnalité en supplément au prix de ${{price, number}} par {{tokenLimit}} de jetons. Le premier {{basicQuota}} de jetons est inclus.',
     tooltip_for_enterprise:
       'Le premier {{basicQuota}} de jetons est inclus et gratuit dans votre plan basé sur un contrat. Si vous en avez besoin de plus, ${{price, number}} par {{tokenLimit}} jetons par mois.',
+  },
+  m2mTokens: {
+    title: 'Jetons M2M',
   },
   hooks: {
     title: 'Hooks',

@@ -17,9 +17,9 @@ const description = {
   passcode_sent: '驗證碼已經發送',
   resend_after_seconds: '還沒收到？ <span>{{seconds}}</span> 秒後重發',
   resend_passcode: '還沒收到？ <a>重發驗證碼</a>',
-  create_account_id_exists: '{{type}}為 {{value}} 的帳號已存在，你要登錄嗎？',
+  create_account_id_exists: '帳號 {{value}} 已存在，繼續登錄。',
   link_account_id_exists: ' {{type}}為 {{value}} 的帳號已註冊，你要綁定至這個帳號嗎？',
-  sign_in_id_does_not_exist: '{{type}}為 {{value}} 的帳號不存在，你要創建一個新帳號嗎？',
+  sign_in_id_does_not_exist: '未找到帳號 {{value}}，創建一個新帳號？',
   sign_in_id_does_not_exist_alert: '{{type}}為 {{value}} 的帳號不存在。',
   create_account_id_exists_alert: '{{type}} {{value}} 已綁定其他帳號。請嘗試其他{{type}}。',
   social_identity_exist: ' {{type}} {{value}} 已綁定其他帳號。請嘗試其他{{type}}',
@@ -94,6 +94,17 @@ const description = {
   switch_account_title: '你當前以 {{account}} 登錄',
   switch_account_description: '要繼續，你將退出當前帳號，並自動切換到新帳號。',
   about_yourself: '講講你自己',
+  verify_identity: '驗證你的身份',
+  choose_verification_method: '選擇你要登入的方式',
+  verification_method: {
+    passkey: 'Passkey',
+    passkey_description: '透過你的裝置或 USB 硬體驗證',
+    password: '密碼',
+    password_description: '輸入密碼',
+    email_verification_code: '電郵驗證碼',
+    phone_verification_code: '短訊驗證碼',
+    verification_code_description: '發送至 {{target}}',
+  },
 };
 
 export default Object.freeze(description);

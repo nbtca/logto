@@ -109,13 +109,21 @@ const sign_in_exp = {
       account_security: {
         title: 'アカウントセキュリティ',
         description:
-          'Account API へのアクセスを管理し、ユーザーがアプリにサインインした後に本人情報や認証要素を表示または編集できるようにします。これらのセキュリティ関連の変更を行う前に、ユーザーは本人確認を行い、有効期限 10 分の検証レコード ID を取得する必要があります。',
+          'Account API へのアクセスを管理し、ユーザーがアプリにサインインした後に本人情報や認証要素を表示または編集できるようにします。',
+        security_verification: {
+          title: 'セキュリティ検証',
+          description:
+            'セキュリティ設定を変更する前に、ユーザーは本人確認を行い、有効期限 10 分の検証レコード ID を取得する必要があります。検証方法（メール、電話、パスワード）を有効にするには、下記の Account API 権限を<strong>閲覧のみ</strong>（最低限）または<strong>編集</strong>に設定し、ユーザーが設定済みかどうかをシステムが検出できるようにしてください。<a>詳細</a>',
+        },
         groups: {
           identifiers: {
             title: '識別子',
           },
           authentication_factors: {
             title: '認証要素',
+          },
+          session_management: {
+            title: 'セッション管理',
           },
         },
       },
@@ -158,11 +166,36 @@ const sign_in_exp = {
       custom_data: 'カスタムデータ',
       custom_data_description:
         'ユーザーに保存されているカスタム JSON データへのアクセスを制御します。',
+      sessions: 'セッション',
     },
     webauthn_related_origins: 'WebAuthn 関連オリジン',
     webauthn_related_origins_description:
       'Account API を通じてパスキーを登録できるフロントエンドアプリケーションのドメインを追加します。',
     webauthn_related_origins_error: 'オリジンは https:// または http:// で始める必要があります',
+    prebuilt_ui: {
+      title: '組み込み UI を統合',
+      description:
+        'すぐに使える検証フローとセキュリティ設定フローを組み込み UI で迅速に統合します。',
+      permission_notice:
+        'これらのプリビルトフローを統合するには、以下の設定で関連するアカウント API の権限を<strong>編集</strong>に設定してください。',
+      flows_title: 'すぐに使えるセキュリティ設定フローを統合',
+      flows_description:
+        'ドメインとルートを組み合わせてアカウント設定 URL を形成します（例: https://auth.foo.com/account/email）。更新後にユーザーをアプリに戻すために「redirect=」URL パラメータをオプションで追加できます。',
+      tooltips: {
+        email: 'プライマリメールアドレスを更新',
+        phone: 'プライマリ電話番号を更新',
+        username: 'ユーザー名を更新',
+        password: '新しいパスワードを設定',
+        authenticator_app: '多要素認証のための新しい認証アプリを設定',
+        passkey_add: '新しいパスキーを登録',
+        passkey_manage: '既存のパスキーを管理または新しいものを追加',
+        backup_codes_generate: '新しいバックアップコード 10 セットを生成',
+        backup_codes_manage: '使用可能なバックアップコードを表示または新しいものを生成',
+      },
+      customize_note:
+        'すぐに使えるエクスペリエンスを望まない？ 代わりに Account API でフローを完全に',
+      customize_link: 'カスタマイズできます。',
+    },
   },
   sign_up_and_sign_in,
   content,

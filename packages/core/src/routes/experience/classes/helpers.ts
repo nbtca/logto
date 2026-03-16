@@ -5,16 +5,11 @@
  * we have moved some of the standalone functions into this file.
  */
 
-import { defaults, parseAffiliateData } from '@logto/affiliate';
-import { adminTenantId, MfaFactor, VerificationType, type User, type Mfa } from '@logto/schemas';
-import { conditional, trySafe } from '@silverhand/essentials';
-import { type IRouterContext } from 'koa-router';
+import { MfaFactor, VerificationType, type User, type Mfa } from '@logto/schemas';
+import { conditional, type Nullable } from '@silverhand/essentials';
 
-import { EnvSet } from '#src/env-set/index.js';
 import RequestError from '#src/errors/RequestError/index.js';
-import { type CloudConnectionLibrary } from '#src/libraries/cloud-connection.js';
 import assertThat from '#src/utils/assert-that.js';
-import { getConsoleLogFromContext } from '#src/utils/console.js';
 
 import type { InteractionProfile } from '../types.js';
 
@@ -124,7 +119,8 @@ export const identifyUserByVerificationRecord = async (
     case VerificationType.EmailVerificationCode:
     case VerificationType.PhoneVerificationCode:
     case VerificationType.MfaEmailVerificationCode:
-    case VerificationType.MfaPhoneVerificationCode: {
+    case VerificationType.MfaPhoneVerificationCode:
+    case VerificationType.SignInWebAuthn: {
       return {
         user: await verificationRecord.identifyUser(),
       };
@@ -163,7 +159,7 @@ export const identifyUserByVerificationRecord = async (
         return { user, syncedProfile };
       } catch (error: unknown) {
         // Auto fallback to identify the related user if the user does not exist for enterprise SSO.
-        if (error instanceof RequestError && error.code === 'user.identity_not_exist') {
+        if (error instanceof RequestError && error.code === 'user.sso_identity_not_exist') {
           const user = await verificationRecord.identifyRelatedUser();
 
           const syncedProfile = {
@@ -208,6 +204,29 @@ const filterOutEmptyBackupCodes = (
     }
     return true;
   });
+
+/**
+ * Resolve implicit profile-based MFA factors (Email/Phone) from the provided profile source.
+ */
+export const getProfileMfaFactors = (
+  mfaSettings: Mfa,
+  {
+    primaryEmail,
+    primaryPhone,
+  }: {
+    primaryEmail?: Nullable<string>;
+    primaryPhone?: Nullable<string>;
+  }
+): MfaFactor[] => {
+  return [
+    ...(mfaSettings.factors.includes(MfaFactor.PhoneVerificationCode) && primaryPhone
+      ? [MfaFactor.PhoneVerificationCode]
+      : []),
+    ...(mfaSettings.factors.includes(MfaFactor.EmailVerificationCode) && primaryEmail
+      ? [MfaFactor.EmailVerificationCode]
+      : []),
+  ];
+};
 
 /**
  * Get all enabled MFA verifications for a user (stored + implicit)
@@ -260,19 +279,10 @@ export const getAllUserEnabledMfaVerifications = (
     })
     .map(({ type }) => type);
 
-  const email = currentProfile?.primaryEmail ?? user.primaryEmail;
-  const phone = currentProfile?.primaryPhone ?? user.primaryPhone;
-
-  const implicitVerifications = [
-    // Phone MFA Factor: user has primaryPhone + Phone factor enabled in SIE
-    ...(mfaSettings.factors.includes(MfaFactor.PhoneVerificationCode) && phone
-      ? [MfaFactor.PhoneVerificationCode]
-      : []),
-    // Email MFA Factor: user has primaryEmail + Email factor enabled in SIE
-    ...(mfaSettings.factors.includes(MfaFactor.EmailVerificationCode) && email
-      ? [MfaFactor.EmailVerificationCode]
-      : []),
-  ];
+  const implicitVerifications = getProfileMfaFactors(mfaSettings, {
+    primaryEmail: currentProfile?.primaryEmail ?? user.primaryEmail,
+    primaryPhone: currentProfile?.primaryPhone ?? user.primaryPhone,
+  });
 
   return [...storedVerifications, ...implicitVerifications].slice().sort((factorA, factorB) => {
     // Backup code always comes last
@@ -284,30 +294,4 @@ export const getAllUserEnabledMfaVerifications = (
     }
     return 0;
   });
-};
-
-/**
- * Post affiliate data to the cloud service.
- */
-export const postAffiliateLogs = async (
-  ctx: IRouterContext,
-  cloudConnection: CloudConnectionLibrary,
-  userId: string,
-  tenantId: string
-) => {
-  if (!EnvSet.values.isCloud || tenantId !== adminTenantId) {
-    return;
-  }
-
-  const affiliateData = trySafe(() =>
-    parseAffiliateData(JSON.parse(decodeURIComponent(ctx.cookies.get(defaults.cookieName) ?? '')))
-  );
-
-  if (affiliateData) {
-    const client = await cloudConnection.getClient();
-    await client.post('/api/affiliate-logs', {
-      body: { userId, ...affiliateData },
-    });
-    getConsoleLogFromContext(ctx).info('Affiliate logs posted', userId);
-  }
 };

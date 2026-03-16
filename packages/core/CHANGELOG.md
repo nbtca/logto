@@ -1,5 +1,265 @@
 # Change Log
 
+## 1.37.1
+
+### Patch Changes
+
+- Updated dependencies [57b0008ee8]
+  - @logto/core-kit@2.7.1
+  - @logto/account@0.2.0
+  - @logto/cli@1.37.1
+  - @logto/console@1.34.0
+  - @logto/demo-app@1.5.0
+  - @logto/experience@1.18.2
+  - @logto/phrases-experience@1.12.2
+  - @logto/schemas@1.37.1
+
+## 1.37.0
+
+### Minor Changes
+
+- 32d1562699: add out-of-the-box account center app
+
+  Summary
+
+  - Release the Account Center single-page app as a built-in Logto application for end users.
+  - Support profile updates for primary email, phone, username, and password with verification flows.
+  - Provide MFA management for TOTP, backup codes (download/regenerate), and passkeys (WebAuthn), including rename and delete actions.
+  - Gate sensitive operations behind password/email/phone verification and surface dedicated success screens.
+
+  To learn more about this feature, please refer to the documentation: https://docs.logto.io/end-user-flows/account-settings/by-account-api
+
+- eced1f02d4: add application context to JWT customizer
+
+  The application context is now available in the JWT customizer script for both access token and client credentials token types. This allows you to access application details (e.g., name, description, custom data) when customizing JWT claims.
+
+- b8ca1a40c7: support ID token claims configuration
+
+  You can now customize which additional claims (e.g., `custom_data`, `identities`, `roles`, `organizations`, `organization_roles`) are included in the ID token via Console or Management API.
+
+### Patch Changes
+
+- b7632ab97b: ensure built-in Account center and Demo app automatically register custom-domain callback URLs as valid redirect URIs
+
+  - Issue: On custom-domain requests, Account center signs in with `redirect_uri` based on `window.location.origin` (for example `https://custom.example.com/account`), but built-in client metadata was generated from default tenant URLs only, so OIDC validation could reject it with `invalid_redirect_uri`. Demo app had the same gap.
+  - Fix: Updated `getTenantUrls` to accept an optional runtime endpoint and include it in the deduplicated tenant URL list. Then updated built-in metadata generation for both Account center and Demo app to pass `envSet.endpoint`, so redirect/logout URIs now include the active custom domain automatically.
+
+- bb2f4ea7c7: fix the issue that the "Tell us about yourself" section does not appear during signup when only optional custom profile fields are configured
+
+  Previously, the `hasMissingExtraProfileFields` method only checked for required custom profile fields, causing the "Tell us about yourself" section to not appear during signup when only optional fields were configured.
+
+  Now, the method also checks for optional fields and whether the user has submitted the extra profile form, ensuring that the section is always displayed as expected.
+
+- Updated dependencies [32d1562699]
+- Updated dependencies [eced1f02d4]
+- Updated dependencies [3c47f4f947]
+- Updated dependencies [b8ca1a40c7]
+  - @logto/account@0.2.0
+  - @logto/cli@1.37.0
+  - @logto/schemas@1.37.0
+  - @logto/console@1.34.0
+  - @logto/phrases@1.26.0
+  - @logto/experience@1.18.2
+  - @logto/demo-app@1.5.0
+
+## 1.36.0
+
+### Minor Changes
+
+- 7cbe315dde: support token exchange grant type with app-level control
+
+  - Add `allowTokenExchange` field to `customClientMetadata` to control whether an application can initiate token exchange requests
+  - Machine-to-machine applications now support token exchange
+  - All new applications will have token exchange disabled by default, you can enable it in the application settings
+  - For backward compatibility, existing first-party Traditional, Native, and SPA applications will have this enabled
+  - Third-party applications are not allowed to use token exchange
+  - Add UI toggle in Console with risk warning for public clients (single-page application / native application)
+
+- c8b2caec5c: add trust-unverified-email support for OIDC social connector and OIDC-based enterprise SSO connectors
+
+  - Add `trustUnverifiedEmail` to the OIDC social connector config (default `false`) to allow syncing emails when `email_verified` is missing or false
+  - Apply the setting in core OIDC/Azure OIDC SSO connectors and expose it in the Admin Console with new tips and translations
+
+- ce65b07964: support wildcard patterns in redirect URIs
+
+  Added support for wildcard patterns (`*`) in redirect URIs to better support dynamic environments like preview deployments.
+
+  Rules (web only):
+
+  - Wildcards are allowed for http/https redirect URIs in the hostname and/or pathname.
+  - Wildcards are rejected in scheme, port, query, and hash.
+  - Hostname wildcard patterns must contain at least one dot to avoid overly broad patterns.
+
+### Patch Changes
+
+- a4093a4aed: fix enterprise sso account not exist error code
+
+  Fixes the enterprise SSO account not exist error code to use a specific one instead of the generic social account one.
+
+- 7f8b9cd769: remove default pagination from `GET /organizations/:id/jit/email-domains`
+
+  This refactor fixes an issue in the Logto Console.
+
+  Previously, default pagination (page size = 20) was implicitly enabled on the
+  `GET /organizations/:id/jit/email-domains` endpoint. However, in the Logto Console’s Organization details page, JIT email domains are displayed in a single multi-input field, which does not support pagination. As a result, only the first 20 records were returned and displayed, leading to confusing behavior and unexpected bugs.
+
+  Since the number of JIT email domains is currently expected to be relatively small, this change removes the default pagination behavior from the API. Clients may still explicitly enable pagination by providing pagination query parameters (for example, `page` and `page_size`). If no pagination query parameters are provided, the API will return the full list of JIT email domain records.
+
+- 10a9e68f1d: allow skipping mandatory sign-up identifier collection for social sign-in and sign-up
+
+  ## Background
+
+  Previously, Logto enforced mandatory user identifier collection during both sign-in and sign-up flows. Users were required to provide all identifiers configured as mandatory in the sign-up settings. This behavior applies to all sign-in methods except for enterprise SSO.
+
+  For example:
+
+  1. A new user signs up via a GitHub social connector
+  2. The IdP does not provide a verified email address
+  3. Email is configured as a mandatory sign-up identifier in Logto
+  4. In this case, the user would be prompted to provide and verify an email address before the account could be successfully created.
+
+  ## Problem
+
+  For iOS mobile app users, Apple App Store guidelines mandate social sign-in options like "Sign in with Apple" should not require additional information collection beyond what is provided by the social IdP. Enforcing additional identifier collection during social sign-in can result in app review rejection.
+
+  ## Solution
+
+  We have updated the sign-in-experience settings with a new option `skipRequiredIdentifiers` for social sign-in and sign-up flows. When enabled, this option allows users to bypass the mandatory identifier collection step during social sign-in and sign-up.
+
+  By default, this option is set to `false` to maintain existing behavior. Administrators can enable this option in the sign-in experience settings if they wish to allow users to skip mandatory identifier collection during social sign-in and sign-up.
+
+  On Logto console, this option is represented as a checkbox labeled "Require users to provide missing sign-up identifier" on the sign-in experience configuration page under the "Social sign-in" section. Checked by default.
+
+- 1fc65a2536: return role assignment results in user role APIs
+
+  - POST `/users/:userId/roles` now returns `{ roleIds: string[]; addedRoleIds: string[] }` where `roleIds` echoes the requested IDs, and `addedRoleIds` includes only the IDs that were newly created (existing assignments are omitted)
+  - PUT `/users/:userId/roles` now returns `{ roleIds: string[] }` to confirm the final assigned roles
+
+- 317f9744d1: allow disabling Postgres `statement_timeout` for PgBouncer/RDS Proxy
+
+  - add `DATABASE_STATEMENT_TIMEOUT` parsing in shared, core, and CLI
+  - set `DATABASE_STATEMENT_TIMEOUT=DISABLE_TIMEOUT` to omit the startup parameter
+
+- Updated dependencies [d65fa52917]
+- Updated dependencies [fce241ad25]
+- Updated dependencies [a4093a4aed]
+- Updated dependencies [d65fa52917]
+- Updated dependencies [7cbe315dde]
+- Updated dependencies [c8b2caec5c]
+- Updated dependencies [10a9e68f1d]
+- Updated dependencies [317f9744d1]
+- Updated dependencies [ce65b07964]
+  - @logto/console@1.33.0
+  - @logto/experience@1.18.1
+  - @logto/schemas@1.36.0
+  - @logto/phrases@1.25.0
+  - @logto/shared@3.3.1
+  - @logto/cli@1.36.0
+  - @logto/core-kit@2.7.0
+  - @logto/account@0.1.0
+  - @logto/demo-app@1.5.0
+  - @logto/phrases-experience@1.12.1
+
+## 1.35.0
+
+### Minor Changes
+
+- 116dcf5e7d: support reCaptcha domain customization
+
+  You can now customize the domain for reCaptcha, for example, using reCaptcha with `recaptcha.net` domain.
+
+- d551f5ccc3: support creating third-party SPA and Native applications
+
+  Previously, only traditional web applications could be marked as third-party apps. Now you can also create third-party single-page applications (SPA) and native applications, enabling more flexible OAuth/OIDC integration scenarios.
+
+- 7c87ebc068: add client IP address to passwordless connector message payload
+
+  The `SendMessageData` type now includes an optional `ip` field that contains the client IP address of the user who triggered the message. This can be used by HTTP email/SMS connectors for rate limiting, fraud detection, or logging purposes.
+
+- 116dcf5e7d: support reCAPTCHA Enterprise checkbox mode
+
+  You can now choose between two verification modes for reCAPTCHA Enterprise:
+
+  - **Invisible**: Score-based verification that runs automatically in the background (default)
+  - **Checkbox**: Displays the "I'm not a robot" widget for user interaction
+
+  Note: The verification mode must match your reCAPTCHA key type configured in Google Cloud Console.
+
+### Patch Changes
+
+- a6858e76cf: update SAML relay state length and improve error handling
+
+  The data type of the `relay_state` column in the `saml_application_sessions` table has been changed from varchar(256) to varchar(512) to accommodate longer Relay State values. For example, when Firebase acts as a Service Provider and initiates a SAML request, the relay state length is approximately 300-400 characters, which previously prevented Firebase from integrating with Logto as an SP before this fix.
+
+  Additionally, we have updated the error handling logic in the APIs related to the SAML authentication flow to make error messages more straightforward.
+
+- 462e430445: update the `getI18nEmailTemplate` fallback logic to also attempt to retrieve the `generic` template with default locale, if both the locale-specific and fallback templates are unavailable
+- Updated dependencies [a6858e76cf]
+- Updated dependencies [116dcf5e7d]
+- Updated dependencies [e751e8d5ce]
+- Updated dependencies [462e430445]
+- Updated dependencies [d551f5ccc3]
+- Updated dependencies [7c87ebc068]
+- Updated dependencies [116dcf5e7d]
+  - @logto/phrases@1.24.0
+  - @logto/schemas@1.35.0
+  - @logto/experience@1.18.0
+  - @logto/console@1.32.0
+  - @logto/connector-kit@4.7.0
+  - @logto/demo-app@1.5.0
+  - @logto/account@0.1.0
+  - @logto/cli@1.35.0
+
+## 1.34.0
+
+### Minor Changes
+
+- 08f887c448: support cross-app authentication callbacks within the same browser session
+
+  When multiple applications are initiating authentication requests within the same browser session,
+  authentication callbacks may interfere with each other due to the shared `_interaction` cookie.
+
+  To resolve this, we now change the cookie from a plain UID string to a structured mapping object
+  `{ [app_id]: interaction_uid }`, and maintain the `app_id` in either the URL search parameters or HTTP
+  headers for all authentication-related requests and redirects. This ensures that each application can
+  correctly identify its own authentication context without interference from others.
+
+  The fallback mechanism is also implemented to ensure backward compatibility.
+
+- c3266a917a: add a new webhook event "Identifier.Lockout", which is triggered when a user is locked out due to repeated failed sign-in attempts
+
+### Patch Changes
+
+- 900201a48c: align refresh token grant lifetime with 180-day TTL
+
+  Refresh tokens were expiring after 14 days because the provider grant TTL was still capped at the default two weeks, regardless of the configured refresh token TTL.
+
+  Now set the OIDC grant TTL to 180 days so refresh tokens can live for their configured duration, also expand the refresh token TTL up to 180 days.
+
+- dadbea6936: fix email/phone template selection during sign up
+
+  Previously, the send code API (Experience API) always switched to the `TemplateType.BindMfa` email template as soon as an interaction already had an identified user. During multi-step sign-up flows (for example, username + email), the interaction can already identify the user before the email step finishes, so legitimate sign-up verifications were mistakenly treated as MFA binding and used the wrong template.
+
+  The fix checks if the email/phone identifier is part of the sign-up identifiers. If it is, then we are still in the sign-up flow and should use the appropriate sign-up email/phone template. Only when the email/phone is not part of the sign-up identifiers (meaning the sign-up flow is complete) and the interaction has an identified user, do we switch to the `BindMfa` template.
+
+- c6554587ee: improve SSO connectors with case-insensitive domain matching
+
+  According to the latest standards, email domains should be treated as case-insensitive. To ensure robust and user-friendly authentication, we need to locate SSO connectors correctly regardless of the letter case in the provided email domain.
+
+  - Domain normalization on insert: The domains configured for SSO connectors are now normalized to lowercase before being inserted into the database. This ensures consistency and prevents issues arising from varied casing. As part of this change, identical domains with different casing will be treated as duplicates and rejected to maintain data integrity.
+  - Case-insensitive search for SSO connectors: The get SSO connectors by email endpoint has been updated to perform a case-insensitive search when matching email domains. This guarantees that the correct enabled SSO connector is identified, regardless of the casing used in the user's email address.
+
+- Updated dependencies [900201a48c]
+- Updated dependencies [08f887c448]
+- Updated dependencies [c3266a917a]
+  - @logto/schemas@1.34.0
+  - @logto/experience@1.17.0
+  - @logto/console@1.31.0
+  - @logto/phrases@1.23.0
+  - @logto/account-center@0.1.0
+  - @logto/cli@1.34.0
+  - @logto/demo-app@1.5.0
+
 ## 1.33.0
 
 ### Minor Changes

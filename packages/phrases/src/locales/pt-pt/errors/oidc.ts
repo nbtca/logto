@@ -18,6 +18,9 @@ const oidc = {
   provider_error_fallback: 'Ocorreu um erro OIDC: {{code}}.',
   key_required: 'Pelo menos uma chave é necessária.',
   key_not_found: 'A chave com ID {{id}} não foi encontrada.',
+  invalid_session_payload: 'Carga de sessão inválida.',
+  session_not_found: 'Sessão não encontrada.',
+  invalid_session_account_id: 'Incompatibilidade do accountId da sessão.',
 };
 
 export default Object.freeze(oidc);

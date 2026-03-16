@@ -44,6 +44,8 @@ const application_details = {
     'URI перенаправляется после входа пользователя (успешного или нет). См. OpenID Connect <a>AuthRequest</a> для получения дополнительной информации.',
   mixed_redirect_uri_warning:
     'Тип вашего приложения несовместим как минимум с одним из URI перенаправления. Это не соответствует лучшим практикам, и мы настоятельно рекомендуем держать URI перенаправления согласованными.',
+  wildcard_redirect_uri_warning:
+    'URI перенаправления с подстановочными знаками не являются стандартом OIDC и могут увеличить поверхность атаки. Используйте с осторожностью и по возможности предпочитайте точные URI перенаправления.',
   post_sign_out_redirect_uri: 'URI перенаправления после выхода из системы',
   post_sign_out_redirect_uris: 'URI перенаправления после выхода из системы',
   post_sign_out_redirect_uri_placeholder: 'https://ваш.вебсайт.com/домашняя страница',
@@ -76,6 +78,13 @@ const application_details = {
   backchannel_logout_uri_session_required: 'Требуется ли сеанс?',
   backchannel_logout_uri_session_required_description:
     'При включении RP требует, чтобы претензия `sid` (идентификатор сеанса) была включена в токен выхода, чтобы идентифицировать сеанс RP с OP, когда используется `backchannel_logout_uri`.',
+  token_exchange: 'Обмен токенов',
+  token_exchange_description: 'Управляйте настройками обмена токенов для этого приложения.',
+  allow_token_exchange: 'Разрешить обмен токенов',
+  allow_token_exchange_description:
+    'Разрешите этому приложению инициировать запросы на обмен токенов. Это необходимо для <impersonationLink>подмены пользователя</impersonationLink> и <patLink>персональных токенов доступа</patLink>.',
+  allow_token_exchange_public_client_warning:
+    'Включать обмен токенов для публичных клиентов (SPA / нативное приложение) не рекомендуется. Публичные клиенты не могут безопасно хранить учетные данные, что может подвергнуть ваше приложение рискам подмены токенов.',
   delete_description:
     'Это действие нельзя отменить. Оно навсегда удалит приложение. Введите название приложения <span> {{name}} </span>, чтобы подтвердить.',
   enter_your_application_name: 'Введите название своего приложения',
@@ -158,6 +167,18 @@ const application_details = {
     organization_description:
       'Выберите разрешения, которые запрашиваются сторонним приложением для доступа к определенным данным организации.',
     grant_organization_level_permissions: 'Предоставить разрешения на данные организации',
+    oidc_title: 'OIDC',
+    oidc_description:
+      'Основные разрешения OIDC автоматически настраиваются для вашего приложения. Эти области (scopes) необходимы для аутентификации и не отображаются на экране согласия пользователя.',
+    default_oidc_permissions: 'Разрешения OIDC по умолчанию',
+    permission_column: 'Разрешение',
+    guide_column: 'Руководство',
+    openid_permission: 'openid',
+    openid_permission_guide:
+      "Необязательно для доступа к ресурсам OAuth.\nОбязательно для аутентификации OIDC. Предоставляет доступ к ID-токену и позволяет обращаться к 'userinfo_endpoint'.",
+    offline_access_permission: 'offline_access',
+    offline_access_permission_guide:
+      'Необязательно. Получает refresh-токены для долгосрочного доступа или фоновых задач.',
   },
   roles: {
     assign_button: 'Назначить роли между машинами',

@@ -48,10 +48,12 @@ export type OidcClientMetadata = {
 export const oidcClientMetadataGuard = z.object({
   redirectUris: z
     .string()
-    .refine((url) => validateRedirectUrl(url, 'web'))
-    .or(z.string().refine((url) => validateRedirectUrl(url, 'mobile')))
+    .refine((url) => validateRedirectUrl(url, 'web') || validateRedirectUrl(url, 'mobile'))
     .array(),
-  postLogoutRedirectUris: z.string().url().array(),
+  postLogoutRedirectUris: z
+    .string()
+    .refine((url) => validateRedirectUrl(url, 'web') || validateRedirectUrl(url, 'mobile'))
+    .array(),
   backchannelLogoutUri: z.string().url().optional(),
   backchannelLogoutSessionRequired: z.boolean().optional(),
   logoUri: z.string().optional(),
@@ -78,6 +80,15 @@ export enum CustomClientMetadataKey {
    * It can be turned off for only traditional web apps for enhanced security.
    */
   RotateRefreshToken = 'rotateRefreshToken',
+  /**
+   * Whether the application is allowed to initiate token exchange requests.
+   *
+   * Only first-party applications can use token exchange. Third-party applications are always
+   * forbidden.
+   *
+   * Defaults to `false` for all new applications. Users must explicitly enable it.
+   */
+  AllowTokenExchange = 'allowTokenExchange',
 }
 
 export const customClientMetadataGuard = z.object({
@@ -88,9 +99,58 @@ export const customClientMetadataGuard = z.object({
   [CustomClientMetadataKey.TenantId]: z.string().optional(),
   [CustomClientMetadataKey.AlwaysIssueRefreshToken]: z.boolean().optional(),
   [CustomClientMetadataKey.RotateRefreshToken]: z.boolean().optional(),
+  [CustomClientMetadataKey.AllowTokenExchange]: z.boolean().optional(),
 } satisfies Record<CustomClientMetadataKey, z.ZodType>);
 
 /**
  * @see {@link CustomClientMetadataKey} for key descriptions.
  */
 export type CustomClientMetadata = z.infer<typeof customClientMetadataGuard>;
+
+export const oidcSessionAuthorizationDetailsGuard = z
+  .object({
+    /**
+     * The `sid` (session ID) Claim associated with the session for the current client.
+     *
+     * @remarks
+     * Mark optional to make the guard more robust.
+     * Should always be present in the session authorization details
+     */
+    sid: z.string().optional(),
+    /**
+     * The grantId associated with the session for the current client.
+     *
+     * @remarks
+     * Mark optional to make the guard more robust.
+     * Should always be present in the session authorization details when the session is authorized with a grant.
+     */
+    grantId: z.string().optional(),
+    /**
+     * Whether the grant associated with the session should be persisted after the session is terminated.
+     *
+     * @remarks
+     * Mark optional to make the guard more robust.
+     */
+    persistsLogout: z.boolean().optional(),
+  })
+  .catchall(z.unknown());
+
+export type OidcSessionAuthorizationDetails = z.infer<typeof oidcSessionAuthorizationDetailsGuard>;
+
+export const oidcSessionInstancePayloadGuard = z
+  .object({
+    exp: z.number(),
+    iat: z.number(),
+    jti: z.string(),
+    uid: z.string(),
+    kind: z.literal('Session'),
+    loginTs: z.number(),
+    accountId: z.string(),
+    /**
+     * A map of client_id to session authorization details. @see OidcSessionAuthorizationDetails
+     */
+    authorizations: z.record(z.string(), oidcSessionAuthorizationDetailsGuard),
+  })
+  .catchall(z.unknown());
+
+export type OidcSessionInstancePayload = z.infer<typeof oidcSessionInstancePayloadGuard>;

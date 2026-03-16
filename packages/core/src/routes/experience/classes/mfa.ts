@@ -17,11 +17,15 @@ import {
   OrganizationRequiredMfaPolicy,
   MfaFactor,
   SignInIdentifier,
+  AlternativeSignUpIdentifier,
+  userMfaDataKey,
+  userPasskeySignInDataKey,
 } from '@logto/schemas';
 import { generateStandardId, maskEmail, maskPhone } from '@logto/shared';
-import { cond, condObject, deduplicate, pick } from '@silverhand/essentials';
+import { cond, condObject, deduplicate, pick, type Optional } from '@silverhand/essentials';
 import { z } from 'zod';
 
+import { EnvSet } from '#src/env-set/index.js';
 import RequestError from '#src/errors/RequestError/index.js';
 import { type LogEntry } from '#src/middleware/koa-audit-log.js';
 import type Libraries from '#src/tenants/Libraries.js';
@@ -30,7 +34,12 @@ import assertThat from '#src/utils/assert-that.js';
 
 import { type InteractionContext } from '../types.js';
 
-import { getAllUserEnabledMfaVerifications, sortMfaFactors } from './helpers.js';
+import {
+  getAllUserEnabledMfaVerifications,
+  getProfileMfaFactors,
+  sortMfaFactors,
+} from './helpers.js';
+import type { AdaptiveMfaResult } from './libraries/adaptive-mfa-validator/types.js';
 import { SignInExperienceValidator } from './libraries/sign-in-experience-validator.js';
 
 export type MfaData = {
@@ -40,6 +49,7 @@ export type MfaData = {
    * This flag lives only in the current interaction and should NOT be persisted to user profile.
    */
   additionalBindingSuggestionSkipped?: boolean;
+  passkeySkipped?: boolean;
   totp?: BindTotp;
   webAuthn?: BindWebAuthn[];
   backupCode?: BindBackupCode;
@@ -47,6 +57,7 @@ export type MfaData = {
 
 export type SanitizedMfaData = {
   mfaSkipped?: boolean;
+  passkeySkipped?: boolean;
   totp?: Pick<BindTotp, 'type'>;
   webAuthn?: BindWebAuthn[];
   backupCode?: Omit<BindBackupCode, 'codes'>;
@@ -55,6 +66,7 @@ export type SanitizedMfaData = {
 export const mfaDataGuard = z.object({
   mfaSkipped: z.boolean().optional(),
   additionalBindingSuggestionSkipped: z.boolean().optional(),
+  passkeySkipped: z.boolean().optional(),
   totp: bindTotpGuard.optional(),
   webAuthn: z.array(bindWebAuthnGuard).optional(),
   backupCode: bindBackupCodeGuard.optional(),
@@ -62,12 +74,11 @@ export const mfaDataGuard = z.object({
 
 export const sanitizedMfaDataGuard = z.object({
   mfaSkipped: z.boolean().optional(),
+  passkeySkipped: z.boolean().optional(),
   totp: z.object({ type: z.literal(MfaFactor.TOTP) }).optional(),
   webAuthn: z.array(bindWebAuthnGuard).optional(),
   backupCode: bindBackupCodeGuard.pick({ type: true }).optional(),
 }) satisfies ToZodObject<SanitizedMfaData>;
-
-export const userMfaDataKey = 'mfa';
 
 /**
  * Check if the user has skipped MFA binding
@@ -82,6 +93,24 @@ const isMfaSkipped = (logtoConfig: JsonObject): boolean => {
   return parsed.success ? parsed.data[userMfaDataKey].skipped === true : false;
 };
 
+const isPasskeySkipped = (logtoConfig: JsonObject): boolean => {
+  const userPasskeySignInDataGuard = z.object({
+    skipped: z.boolean().optional(),
+  });
+
+  const parsed = z
+    .object({ [userPasskeySignInDataKey]: userPasskeySignInDataGuard })
+    .safeParse(logtoConfig);
+
+  return parsed.success ? parsed.data[userPasskeySignInDataKey].skipped === true : false;
+};
+
+type SubmitMfaValidationContext = {
+  mfaSettings: MfaSettings;
+  user: User;
+  userFactors: MfaFactor[];
+};
+
 /**
  * This class stores all the pending new MFA settings for a user.
  */
@@ -89,6 +118,7 @@ export class Mfa {
   private readonly signInExperienceValidator: SignInExperienceValidator;
   #mfaSkipped?: boolean;
   #additionalBindingSuggestionSkipped?: boolean;
+  #passkeySkipped?: boolean;
   #totp?: BindTotp;
   #webAuthn?: BindWebAuthn[];
   #backupCode?: BindBackupCode;
@@ -100,13 +130,13 @@ export class Mfa {
     private readonly interactionContext: InteractionContext
   ) {
     this.signInExperienceValidator = new SignInExperienceValidator(libraries, queries);
-    const { mfaSkipped, additionalBindingSuggestionSkipped, totp, webAuthn, backupCode } = data;
 
-    this.#mfaSkipped = mfaSkipped;
-    this.#additionalBindingSuggestionSkipped = additionalBindingSuggestionSkipped;
-    this.#totp = totp;
-    this.#webAuthn = webAuthn;
-    this.#backupCode = backupCode;
+    this.#mfaSkipped = data.mfaSkipped;
+    this.#additionalBindingSuggestionSkipped = data.additionalBindingSuggestionSkipped;
+    this.#passkeySkipped = data.passkeySkipped;
+    this.#totp = data.totp;
+    this.#webAuthn = data.webAuthn;
+    this.#backupCode = data.backupCode;
   }
 
   get mfaSkipped() {
@@ -126,6 +156,7 @@ export class Mfa {
    */
   toUserMfaVerifications(): {
     mfaSkipped?: boolean;
+    passkeySkipped?: boolean;
     mfaVerifications: User['mfaVerifications'];
   } {
     const verificationSet = new Set<User['mfaVerifications'][number]>();
@@ -160,6 +191,7 @@ export class Mfa {
 
     return {
       mfaSkipped: this.mfaSkipped,
+      passkeySkipped: this.#passkeySkipped,
       mfaVerifications: [...verificationSet],
     };
   }
@@ -182,6 +214,13 @@ export class Mfa {
     );
 
     this.#mfaSkipped = true;
+  }
+
+  /**
+   * Mark the passkey binding as skipped and persist to user config.
+   */
+  skipPasskey() {
+    this.#passkeySkipped = true;
   }
 
   /**
@@ -322,7 +361,11 @@ export class Mfa {
     if (
       factorsInUser.includes(MfaFactor.EmailVerificationCode) &&
       !signUp.identifiers.includes(SignInIdentifier.Email) &&
-      !signUp.secondaryIdentifiers?.some(({ identifier }) => identifier === SignInIdentifier.Email)
+      !signUp.secondaryIdentifiers?.some(
+        ({ identifier }) =>
+          identifier === SignInIdentifier.Email ||
+          identifier === AlternativeSignUpIdentifier.EmailOrPhone
+      )
     ) {
       return;
     }
@@ -330,7 +373,11 @@ export class Mfa {
     if (
       factorsInUser.includes(MfaFactor.PhoneVerificationCode) &&
       !signUp.identifiers.includes(SignInIdentifier.Phone) &&
-      !signUp.secondaryIdentifiers?.some(({ identifier }) => identifier === SignInIdentifier.Phone)
+      !signUp.secondaryIdentifiers?.some(
+        ({ identifier }) =>
+          identifier === SignInIdentifier.Phone ||
+          identifier === AlternativeSignUpIdentifier.EmailOrPhone
+      )
     ) {
       return;
     }
@@ -381,14 +428,99 @@ export class Mfa {
     );
   }
 
+  /** Assert MFA fulfillment for the current interaction submit. */
+  async assertMfaFulfilled({
+    adaptiveMfaResult,
+  }: {
+    adaptiveMfaResult: Optional<AdaptiveMfaResult>;
+  }) {
+    // Compute shared async context once per submit to avoid duplicated reads
+    // across adaptive and mandatory phases.
+    const submitMfaValidationContext = await this.buildSubmitMfaValidationContext();
+
+    await this.assertAdaptiveMfaBindingFulfilled(submitMfaValidationContext, adaptiveMfaResult);
+
+    await this.assertUserMandatoryMfaFulfilled(submitMfaValidationContext);
+  }
+
+  async assertPasskeySignInFulfilled() {
+    const { passkeySignIn } = await this.signInExperienceValidator.getSignInExperienceData();
+    const { logtoConfig, mfaVerifications } = await this.interactionContext.getIdentifiedUser();
+
+    if (passkeySignIn.enabled && !(this.#passkeySkipped ?? isPasskeySkipped(logtoConfig))) {
+      const hasPasskey =
+        Boolean(this.data.webAuthn?.length) ||
+        mfaVerifications.some((verification) => verification.type === MfaFactor.WebAuthn);
+
+      assertThat(hasPasskey, new RequestError({ code: 'user.passkey_preferred', status: 422 }));
+    }
+  }
+
+  get data(): MfaData {
+    return {
+      mfaSkipped: this.mfaSkipped,
+      additionalBindingSuggestionSkipped: this.additionalBindingSuggestionSkipped,
+      passkeySkipped: this.#passkeySkipped,
+      totp: this.#totp,
+      webAuthn: this.#webAuthn,
+      backupCode: this.#backupCode,
+    };
+  }
+
+  get sanitizedData(): SanitizedMfaData {
+    return {
+      mfaSkipped: this.mfaSkipped,
+      passkeySkipped: this.#passkeySkipped,
+      totp: cond(this.#totp && pick(this.#totp, 'type')),
+      webAuthn: this.#webAuthn,
+      backupCode: cond(this.#backupCode && pick(this.#backupCode, 'type')),
+    };
+  }
+
+  private async assertAdaptiveMfaBindingFulfilled(
+    submitMfaValidationContext: SubmitMfaValidationContext,
+    adaptiveMfaResult: Optional<AdaptiveMfaResult>
+  ) {
+    if (!EnvSet.values.isDevFeaturesEnabled || !adaptiveMfaResult?.requiresMfa) {
+      return;
+    }
+
+    const { userFactors: availableFactorsForVerification } = submitMfaValidationContext;
+
+    // Adaptive MFA binding is only needed when risk requires MFA and there is no available
+    // factor for verification in the current interaction context.
+    const shouldEnforceAdaptiveMfaBinding = availableFactorsForVerification.length === 0;
+
+    if (!shouldEnforceAdaptiveMfaBinding) {
+      return;
+    }
+
+    // Bindable factors are actionable options for this step (backup code excluded).
+    const bindableFactors = await this.signInExperienceValidator.getBindableMfaFactors();
+
+    // Tenant has no bindable MFA factors enabled in SIE (e.g. all disabled).
+    // In this case there is no actionable binding step for end users, so skip
+    // adaptive binding enforcement instead of throwing a non-actionable error.
+    if (bindableFactors.length === 0) {
+      return;
+    }
+
+    throw new RequestError(
+      { code: 'user.missing_mfa', status: 422 },
+      { availableFactors: bindableFactors }
+    );
+  }
+
   /**
    * @throws {RequestError} with status 422 if the user has not bound the required MFA factors
    * @throws {RequestError} with status 422 if the user has not bound the backup code but enabled in the sign-in experience
    * @throws {RequestError} with status 422 if the user existing backup codes is empty, new backup codes is required
    */
   // eslint-disable-next-line complexity
-  async assertUserMandatoryMfaFulfilled() {
-    const mfaSettings = await this.signInExperienceValidator.getMfaSettings();
+  private async assertUserMandatoryMfaFulfilled(
+    submitMfaValidationContext: SubmitMfaValidationContext
+  ) {
+    const { mfaSettings } = submitMfaValidationContext;
     const { policy, factors } = mfaSettings;
 
     // If there are no factors, then there is nothing to check
@@ -396,7 +528,8 @@ export class Mfa {
       return;
     }
 
-    const { logtoConfig, id: userId } = await this.interactionContext.getIdentifiedUser();
+    const { user: identifiedUser } = submitMfaValidationContext;
+    const { logtoConfig, id: userId } = identifiedUser;
 
     const isMfaRequiredByUserOrganizations = await this.isMfaRequiredByUserOrganizations(
       mfaSettings,
@@ -426,27 +559,26 @@ export class Mfa {
       return;
     }
 
-    const availableFactors = sortMfaFactors(
-      factors.filter((factor) => factor !== MfaFactor.BackupCode)
-    );
+    // Use configured factors for policy fulfillment; backup code is asserted separately below.
+    const configuredFactors = await this.signInExperienceValidator.getConfiguredMfaFactors();
 
-    const factorsInUser = await this.getUserMfaFactors();
+    const { userFactors: factorsInUser } = submitMfaValidationContext;
     const factorsInBind = this.bindMfaFactorsArray.map(({ type }) => type);
     const linkedFactors = deduplicate([...factorsInUser, ...factorsInBind]);
 
     // Assert that the user has at least one of the required factors bound
     assertThat(
-      availableFactors.some((factor) => linkedFactors.includes(factor)),
+      configuredFactors.some((factor) => linkedFactors.includes(factor)),
       new RequestError(
         { code: 'user.missing_mfa', status: 422 },
         policy === MfaPolicy.Mandatory || isMfaRequiredByUserOrganizations
-          ? { availableFactors }
-          : { availableFactors, skippable: true }
+          ? { availableFactors: configuredFactors }
+          : { availableFactors: configuredFactors, skippable: true }
       )
     );
 
     // Optional suggestion: Let Mfa decide whether to suggest additional binding during registration
-    await this.guardAdditionalBindingSuggestion(factorsInUser, availableFactors);
+    await this.guardAdditionalBindingSuggestion(factorsInUser, configuredFactors);
 
     // Assert backup code
     assertThat(
@@ -458,29 +590,12 @@ export class Mfa {
     );
   }
 
-  get data(): MfaData {
-    return {
-      mfaSkipped: this.mfaSkipped,
-      additionalBindingSuggestionSkipped: this.additionalBindingSuggestionSkipped,
-      totp: this.#totp,
-      webAuthn: this.#webAuthn,
-      backupCode: this.#backupCode,
-    };
-  }
+  private async checkMfaFactorsEnabledInSignInExperience(newBindMfaFactors: MfaFactor[]) {
+    const availableFactors = await this.signInExperienceValidator.getMfaFactorsEnabledForBinding();
 
-  get sanitizedData(): SanitizedMfaData {
-    return {
-      mfaSkipped: this.mfaSkipped,
-      totp: cond(this.#totp && pick(this.#totp, 'type')),
-      webAuthn: this.#webAuthn,
-      backupCode: cond(this.#backupCode && pick(this.#backupCode, 'type')),
-    };
-  }
-
-  private async checkMfaFactorsEnabledInSignInExperience(factors: MfaFactor[]) {
-    const { factors: enabledFactors } = await this.signInExperienceValidator.getMfaSettings();
-
-    const isFactorsEnabled = factors.every((factor) => enabledFactors.includes(factor));
+    const isFactorsEnabled = newBindMfaFactors.every((newBindFactor) =>
+      availableFactors.includes(newBindFactor)
+    );
 
     assertThat(isFactorsEnabled, new RequestError({ code: 'session.mfa.mfa_factor_not_enabled' }));
   }
@@ -496,21 +611,51 @@ export class Mfa {
     return organizations.some(({ isMfaRequired }) => isMfaRequired);
   }
 
-  private async getUserMfaFactors(): Promise<MfaFactor[]> {
-    const mfaSettings = await this.signInExperienceValidator.getMfaSettings();
-    const user = await this.interactionContext.getIdentifiedUser();
-    const currentProfile = this.interactionContext.getCurrentProfile();
+  /**
+   * Build shared context for submit-time MFA fulfillment checks.
+   *
+   * @remarks
+   * This context is shared by both adaptive MFA binding check and mandatory MFA policy check,
+   * so we can reuse the same resolved values and avoid duplicated async logic in one submit flow.
+   *
+   * Although we still call async getters here, both of them already rely on internal caching:
+   * - `signInExperienceValidator.getMfaSettings()` reads from cached sign-in experience data.
+   * - `interactionContext.getIdentifiedUser()` resolves to the interaction-level user cache.
+   */
+  private async buildSubmitMfaValidationContext(): Promise<SubmitMfaValidationContext> {
+    const [mfaSettings, user] = await Promise.all([
+      this.signInExperienceValidator.getMfaSettings(),
+      this.interactionContext.getIdentifiedUser(),
+    ]);
+    const userFactors = await this.getUserMfaFactors({ mfaSettings, user });
 
-    const existingVerifications = getAllUserEnabledMfaVerifications(
+    return {
       mfaSettings,
       user,
-      currentProfile
-    );
-    return [
-      ...existingVerifications,
+      userFactors,
+    };
+  }
+
+  private async getUserMfaFactors({
+    mfaSettings,
+    user,
+  }: {
+    mfaSettings?: MfaSettings;
+    user?: User;
+  } = {}): Promise<MfaFactor[]> {
+    const resolvedMfaSettings =
+      mfaSettings ?? (await this.signInExperienceValidator.getMfaSettings());
+    const resolvedUser = user ?? (await this.interactionContext.getIdentifiedUser());
+    const currentProfile = this.interactionContext.getCurrentProfile();
+
+    const existingFactors = getAllUserEnabledMfaVerifications(resolvedMfaSettings, resolvedUser);
+    const inSessionBoundFactors = [
       ...(this.#totp ? [MfaFactor.TOTP] : []),
       ...(this.#webAuthn?.length ? [MfaFactor.WebAuthn] : []),
-    ].filter(Boolean);
+      ...getProfileMfaFactors(resolvedMfaSettings, currentProfile),
+    ];
+
+    return deduplicate([...existingFactors, ...inSessionBoundFactors]);
   }
 }
 /* eslint-enable max-lines */

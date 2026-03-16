@@ -9,6 +9,7 @@ import {
   Users,
   UserSsoIdentities,
   type UserSsoIdentity,
+  webAuthnAuthenticationOptionsGuard,
 } from '@logto/schemas';
 import type { Provider } from 'oidc-provider';
 import { z } from 'zod';
@@ -63,6 +64,12 @@ export type InteractionProfile = {
    * Store encrypted token set from a enterprise SSO verification record.  If present, Logto will save this token set in the Secret Vault for future use by the user.
    */
   enterpriseSsoConnectorTokenSetSecret?: EnterpriseSsoConnectorTokenSetSecret;
+  /**
+   * Whether the user has explicitly submitted the profile form.
+   * When true, only required custom profile fields are enforced;
+   * optional fields can be skipped.
+   */
+  submitted?: boolean;
 } & Pick<
   CreateUser,
   | 'avatar'
@@ -123,6 +130,7 @@ const interactionProfileGuard = Users.createGuard
         enterpriseSsoConnectorRelationPayload: secretEnterpriseSsoConnectorRelationPayloadGuard,
       })
       .optional(),
+    submitted: z.boolean().optional(),
   }) satisfies ToZodObject<InteractionProfile>;
 
 export type SanitizedInteractionProfile = Omit<
@@ -177,6 +185,7 @@ export type InteractionStorage = {
   profile?: InteractionProfile;
   mfa?: MfaData;
   verificationRecords?: VerificationRecordData[];
+  signInContext?: Record<string, string>;
   captcha?: {
     verified: boolean;
     skipped: boolean;
@@ -189,6 +198,7 @@ export const interactionStorageGuard = z.object({
   profile: interactionProfileGuard.optional(),
   mfa: mfaDataGuard.optional(),
   verificationRecords: verificationRecordDataGuard.array().optional(),
+  signInContext: z.record(z.string(), z.string()).optional(),
   captcha: z
     .object({
       verified: z.boolean(),
@@ -203,6 +213,7 @@ export type SanitizedInteractionStorageData = {
   profile?: SanitizedInteractionProfile;
   verificationRecords?: SanitizedVerificationRecordData[];
   mfa?: SanitizedMfaData;
+  signInContext?: Record<string, string>;
   captcha?: {
     verified: boolean;
     skipped: boolean;
@@ -219,6 +230,7 @@ export const sanitizedInteractionStorageGuard = z.object({
   profile: sanitizedInteractionProfileGuard,
   verificationRecords: publicVerificationRecordDataGuard.array().optional(),
   mfa: sanitizedMfaDataGuard.optional(),
+  signInContext: z.record(z.string(), z.string()).optional(),
   captcha: z
     .object({
       verified: z.boolean(),
@@ -226,3 +238,9 @@ export const sanitizedInteractionStorageGuard = z.object({
     })
     .optional(),
 }) satisfies ToZodObject<SanitizedInteractionStorageData>;
+
+export const webAuthnAuthenticationOptionsInteractionStorageGuard = z.object({
+  signInWebAuthn: z.object({
+    authenticationOptions: webAuthnAuthenticationOptionsGuard,
+  }),
+});

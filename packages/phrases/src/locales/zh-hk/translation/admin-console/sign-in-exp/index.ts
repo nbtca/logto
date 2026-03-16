@@ -106,13 +106,21 @@ const sign_in_exp = {
       account_security: {
         title: '帳戶安全',
         description:
-          '管理對 Account API 的存取權限，讓使用者在登入應用程式後，可以檢視或編輯身份資訊與驗證因素。進行這些與安全相關的變更前，使用者必須先完成身份驗證並取得有效期 10 分鐘的驗證紀錄 ID。',
+          '管理對 Account API 的存取權限，讓使用者在登入應用程式後，可以檢視或編輯身份資訊與驗證因素。',
+        security_verification: {
+          title: '安全驗證',
+          description:
+            '在變更安全設定之前，使用者必須驗證身份以取得有效期 10 分鐘的驗證紀錄 ID。要啟用驗證方式（電郵、手機、密碼），請將下方的 Account API 權限設定為<strong>唯讀</strong>（最低要求）或<strong>可編輯</strong>，以便系統偵測使用者是否已配置。<a>了解更多</a>',
+        },
         groups: {
           identifiers: {
             title: '身份識別',
           },
           authentication_factors: {
             title: '驗證因素',
+          },
+          session_management: {
+            title: '會話管理',
           },
         },
       },
@@ -152,11 +160,34 @@ const sign_in_exp = {
       profile_description: '控制對結構化檔案屬性的存取權。',
       custom_data: '自訂資料',
       custom_data_description: '控制對儲存在使用者上的自訂 JSON 資料的存取權。',
+      sessions: '會話',
     },
     webauthn_related_origins: 'WebAuthn 關聯來源',
     webauthn_related_origins_description:
       '新增允許透過 Account API 註冊通行密鑰的前端應用程式網域。',
     webauthn_related_origins_error: '來源必須以 https:// 或 http:// 開頭',
+    prebuilt_ui: {
+      title: '整合預建 UI',
+      description: '快速整合開箱即用的驗證和安全設置流程。',
+      permission_notice:
+        '要整合這些預建流程，請在下方設定中將相關的帳戶 API 權限設為<strong>編輯</strong>。',
+      flows_title: '整合開箱即用的安全設置流程',
+      flows_description:
+        '結合你的域名與路徑形成你的帳戶設置 URL（例如，https://auth.foo.com/account/email）。可以選擇性地添加一個 `redirect=` URL 參數來在成功更新後返回用戶至你的應用程式。',
+      tooltips: {
+        email: '更新你的主電郵地址',
+        phone: '更新你的主電話號碼',
+        username: '更新你的使用者名稱',
+        password: '設置新密碼',
+        authenticator_app: '設置多因素驗證的新的身份驗證應用',
+        passkey_add: '註冊新的通行密鑰',
+        passkey_manage: '管理你現有的通行密鑰或添加新的',
+        backup_codes_generate: '生成一組新的 10 個備份代碼',
+        backup_codes_manage: '查看可用的備份代碼或生成新的',
+      },
+      customize_note: '不想要開箱即用的體驗？你可以完全',
+      customize_link: '使用 Account API 自定義你的流程。',
+    },
   },
   sign_up_and_sign_in,
   content,

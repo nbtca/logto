@@ -54,7 +54,7 @@ function InlineNotification(
     hrefTargetBlank,
     onClick,
     severity = 'info',
-    variant = 'plain',
+    variant,
     hasIcon = true,
     isActionLoading = false,
     actionButtonProps,
@@ -68,7 +68,7 @@ function InlineNotification(
       className={classNames(
         styles.inlineNotification,
         styles[severity],
-        styles[variant],
+        variant && styles[variant],
         className
       )}
     >

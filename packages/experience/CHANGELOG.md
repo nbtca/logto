@@ -1,5 +1,75 @@
 # Change Log
 
+## 1.18.2
+
+### Patch Changes
+
+- 3c47f4f947: fix broken social link flow when username and email are both enabled as required sign-up identifiers and social IdP returns no verified email.
+
+  Repro:
+
+  - enable username+email as required sign-up identifiers;
+  - enable “require users to provide missing sign-up identifiers for social sign-in”;
+  - sign in with a new social identity lacking verified email;
+  - create new account, fulfill required username, then fulfill required email with an address already registered.
+
+  Expected: show a link-and-sign-in modal and link the new social identity to the existing email account when the user clicks the `Link` button.
+
+  Actual: the `link_social` state is lost. Users are prompted with a simple email-exists confirmation modal instead. Clicking the `Sign In` button performs a normal sign-in flow without linking the social identity.
+
+  Root cause: `link_social` query parameter wasn’t propagated after username fulfillment, so the email verification step lost linking context.
+
+  Fix: generate and append `link_social` during username fulfillment so it carries through to email verification and preserves the linking flow.
+
+## 1.18.1
+
+### Patch Changes
+
+- fce241ad25: prevent repeated auto sign-in requests on direct sign-in page
+
+  In certain scenarios, the direct sign-in page may trigger repeated auto sign-in attempts due to re-renders, resulting in unexpected behavior.
+
+  For example, an extra social authentication request can be triggered when a user clicks the Terms of Service link on a social direct sign-in page with manual Terms of Service enforcement enabled. This can cause social authentication to fail.
+
+  This update ensures that the auto sign-in logic runs only once when the component mounts, preventing multiple redirects and improving the overall user experience.
+
+- a4093a4aed: fix enterprise sso account not exist error code
+
+  Fixes the enterprise SSO account not exist error code to use a specific one instead of the generic social account one.
+
+## 1.18.0
+
+### Minor Changes
+
+- 116dcf5e7d: support reCaptcha domain customization
+
+  You can now customize the domain for reCaptcha, for example, using reCaptcha with `recaptcha.net` domain.
+
+- 116dcf5e7d: support reCAPTCHA Enterprise checkbox mode
+
+  You can now choose between two verification modes for reCAPTCHA Enterprise:
+
+  - **Invisible**: Score-based verification that runs automatically in the background (default)
+  - **Checkbox**: Displays the "I'm not a robot" widget for user interaction
+
+  Note: The verification mode must match your reCAPTCHA key type configured in Google Cloud Console.
+
+## 1.17.0
+
+### Minor Changes
+
+- 08f887c448: support cross-app authentication callbacks within the same browser session
+
+  When multiple applications are initiating authentication requests within the same browser session,
+  authentication callbacks may interfere with each other due to the shared `_interaction` cookie.
+
+  To resolve this, we now change the cookie from a plain UID string to a structured mapping object
+  `{ [app_id]: interaction_uid }`, and maintain the `app_id` in either the URL search parameters or HTTP
+  headers for all authentication-related requests and redirects. This ensures that each application can
+  correctly identify its own authentication context without interference from others.
+
+  The fallback mechanism is also implemented to ensure backward compatibility.
+
 ## 1.16.1
 
 ### Patch Changes

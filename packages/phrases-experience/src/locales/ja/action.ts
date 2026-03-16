@@ -21,6 +21,7 @@ const action = {
   switch_to: '{{method}} に切り替える',
   sign_in_via_passcode: '認証コードでサインインする',
   sign_in_via_password: 'パスワードでサインインする',
+  sign_in_via_passkey: 'パスキーでサインインする',
   change: '{{method}} を変更する',
   link_another_email: '別のメールアドレスをリンクする',
   link_another_phone: '別の電話番号をリンクする',
@@ -29,10 +30,14 @@ const action = {
   copy: 'コピー',
   verify_via_passkey: 'パスキー経由で確認',
   download: 'ダウンロード',
+  remove: '削除',
+  edit: '編集',
+  save: '保存',
   single_sign_on: 'シングルサインオン',
   authorize: '認証する',
   use_another_account: '別のアカウントを使用する',
   back_to_current_account: '現在のアカウントに戻る',
+  done: '完了',
 };
 
 export default Object.freeze(action);

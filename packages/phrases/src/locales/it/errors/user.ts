@@ -7,6 +7,7 @@ const user = {
   email_not_exist: "L'indirizzo email non è stato ancora registrato.",
   phone_not_exist: 'Il numero di telefono non è stato ancora registrato.',
   identity_not_exist: "L'account social non è stato ancora registrato.",
+  sso_identity_not_exist: "L'account SSO aziendale non è stato ancora registrato.",
   identity_already_in_use: "L'account social è stato associato ad un account esistente.",
   social_account_exists_in_profile: 'Hai già associato questo account social.',
   cannot_delete_self: 'Non puoi eliminarti da solo.',
@@ -48,6 +49,7 @@ const user = {
     "L'utente non ha un'identità aziendale collegata all'ID del connettore SSO specificato: {{ ssoConnectorId }}.",
   identity_not_exists_in_current_user:
     "L'identità specificata non esiste nell'account utente corrente. Si prega di collegare l'identità prima di procedere.",
+  passkey_preferred: "Crea una passkey per semplificare l'accesso.",
 };
 
 export default Object.freeze(user);

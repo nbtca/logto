@@ -1,7 +1,10 @@
+/* eslint-disable max-lines */
 import {
+  ApplicationType,
   GrantType,
   type AccessTokenPayload,
   type ClientCredentialsPayload,
+  type JwtCustomizerApplicationContext,
   type JwtCustomizerUserContext,
   type JwtCustomizerGrantContext,
   type JwtCustomizerUserInteractionContext,
@@ -29,10 +32,11 @@ const accessTokenJwtCustomizerDefinition = `
 declare interface CustomJwtClaims extends Record<string, any> {}
 
 /** Logto internal data that can be used to pass additional information
- * 
+ *
  * @param {${JwtCustomizerTypeDefinitionKey.JwtCustomizerUserContext}} user - The user info associated with the token.
  * @param {${JwtCustomizerTypeDefinitionKey.JwtCustomizerGrantContext}} [grant] - The grant context associated with the token.
  * @param {${JwtCustomizerTypeDefinitionKey.JwtCustomizerUserInteractionContext}} [interaction] - The user interaction context associated with the token.
+ * @param {${JwtCustomizerTypeDefinitionKey.JwtCustomizerApplicationContext}} [application] - The application info associated with the token.
  */
 declare type Context = {
   /**
@@ -47,6 +51,10 @@ declare type Context = {
    * The user interaction context associated with the token.
    */
   interaction?: ${JwtCustomizerTypeDefinitionKey.JwtCustomizerUserInteractionContext};
+  /**
+   * The application data associated with the token.
+   */
+  application?: ${JwtCustomizerTypeDefinitionKey.JwtCustomizerApplicationContext};
 }
 
 declare type Payload = {
@@ -60,6 +68,7 @@ declare type Payload = {
    * @params {${JwtCustomizerTypeDefinitionKey.JwtCustomizerUserContext}} user
    * @params {${JwtCustomizerTypeDefinitionKey.JwtCustomizerGrantContext}} [grant]
    * @params {${JwtCustomizerTypeDefinitionKey.JwtCustomizerUserInteractionContext}} [interaction]
+   * @params {${JwtCustomizerTypeDefinitionKey.JwtCustomizerApplicationContext}} [application]
    */
   context: Context;
   /**
@@ -82,11 +91,28 @@ declare type Payload = {
 const clientCredentialsJwtCustomizerDefinition = `
 declare interface CustomJwtClaims extends Record<string, any> {}
 
+/** Logto internal data that can be used to pass additional information
+ *
+ * @param {${JwtCustomizerTypeDefinitionKey.JwtCustomizerApplicationContext}} application - The application info associated with the token.
+ */
+declare type Context = {
+  /**
+   * The application data associated with the token.
+   */
+  application?: ${JwtCustomizerTypeDefinitionKey.JwtCustomizerApplicationContext};
+}
+
 declare type Payload = {
   /**
    * Token payload.
    */
-  token: ${JwtCustomizerTypeDefinitionKey.AccessTokenPayload};
+  token: ${JwtCustomizerTypeDefinitionKey.ClientCredentialsPayload};
+  /**
+   * Logto internal data that can be used to pass additional information.
+   *
+   * @params {${JwtCustomizerTypeDefinitionKey.JwtCustomizerApplicationContext}} application
+   */
+  context: Context;
   /**
    * Custom environment variables.
    */
@@ -103,8 +129,10 @@ export const defaultAccessTokenJwtCustomizerCode = `/**
  * This function is called during the access token generation process to get custom claims for the access token.
  * Limit custom claims to under 50KB.
  *
+ * \`context.interaction\` also includes injected header context.
+ *
  * @param {Payload} payload - The input argument of the function.
- * 
+ *
  * @returns The custom claims.
  */
 const getCustomJwtClaims = async ({ token, context, environmentVariables, api }) => {
@@ -119,7 +147,7 @@ export const defaultClientCredentialsJwtCustomizerCode = `/**
  *
  * @returns The custom claims.
  */
-const getCustomJwtClaims = async ({ token, environmentVariables, api }) => {
+const getCustomJwtClaims = async ({ token, context, environmentVariables, api }) => {
   return {};
 }`;
 
@@ -212,7 +240,7 @@ export const denyAccessCodeExample = `/**
  * @param {Payload} payload - The input payload of the function.
  */
 getCustomJwtClaims = async ({ api }) => {
-  // Conditionally deny access 
+  // Conditionally deny access
   return api.denyAccess('Access denied');
 };`;
 
@@ -268,12 +296,42 @@ const defaultGrantContext: Partial<JwtCustomizerGrantContext> = {
 const defaultUserInteractionContext: Partial<JwtCustomizerUserInteractionContext> = {
   interactionEvent: InteractionEvent.SignIn,
   userId: '123',
+  signInContext: {
+    country: 'US',
+    city: 'San Francisco',
+    latitude: '37.7749',
+    longitude: '-122.4194',
+    botScore: '10',
+    botVerified: 'false',
+  },
+};
+
+const defaultApplicationContext: Partial<JwtCustomizerApplicationContext> = {
+  id: 'my_app',
+  name: 'My App',
+  description: 'My application',
+  type: ApplicationType.SPA,
+  oidcClientMetadata: {
+    redirectUris: [],
+    postLogoutRedirectUris: [],
+  },
+  customClientMetadata: {},
+  customData: {
+    foo: 'bar',
+  },
+  isThirdParty: false,
+  createdAt: Date.now(),
 };
 
 export const defaultUserTokenContextData = {
   user: defaultUserContext,
   grant: defaultGrantContext,
   interaction: defaultUserInteractionContext,
+  application: defaultApplicationContext,
+};
+
+export const defaultM2mTokenContextData = {
+  application: defaultApplicationContext,
 };
 
 export const accessTokenPayloadTestModel: ModelSettings = {
@@ -299,3 +357,12 @@ export const userContextTestModel: ModelSettings = {
   title: 'Context data',
   defaultValue: JSON.stringify(defaultUserTokenContextData, null, 2),
 };
+
+export const m2mContextTestModel: ModelSettings = {
+  language: 'json',
+  icon: <UserFileIcon />,
+  name: 'machine-to-machine-token-context.json',
+  title: 'Context data',
+  defaultValue: JSON.stringify(defaultM2mTokenContextData, null, 2),
+};
+/* eslint-enable max-lines */

@@ -1,9 +1,14 @@
-import { jsonObjectGuard } from '@logto/schemas';
+import {
+  jsonObjectGuard,
+  jwtCustomizerUserInteractionContextGuard,
+  oidcSessionInstancePayloadGuard,
+} from '@logto/schemas';
 import { conditional } from '@silverhand/essentials';
 import type { Context } from 'koa';
 import type { InteractionResults, PromptDetail, Provider } from 'oidc-provider';
 import { z } from 'zod';
 
+import RequestError from '#src/errors/RequestError/index.js';
 import type Queries from '#src/tenants/Queries.js';
 import assertThat from '#src/utils/assert-that.js';
 
@@ -94,7 +99,11 @@ const saveInteractionLastSubmissionToSession = async (
   queries: Queries,
   interactionDetails: Awaited<ReturnType<Provider['interactionDetails']>>
 ) => {
-  const { session, lastSubmission } = interactionDetails;
+  const {
+    session,
+    lastSubmission,
+    params: { client_id: clientId },
+  } = interactionDetails;
 
   if (!session || !lastSubmission) {
     return;
@@ -109,6 +118,7 @@ const saveInteractionLastSubmissionToSession = async (
       sessionUid: session.uid,
       accountId: session.accountId,
       lastSubmission: result.data,
+      ...conditional(typeof clientId === 'string' && { clientId }),
     });
   }
 };
@@ -166,4 +176,64 @@ export const consent = async ({
 
   // Configure consent
   return updateInteractionResult(ctx, provider, { consent: { grantId: finalGrantId } }, true);
+};
+
+export const createSessionLibrary = (queries: Queries) => {
+  const { oidcSessionExtensions } = queries;
+
+  const formatSessionWithExtension = (
+    session: Awaited<
+      ReturnType<typeof oidcSessionExtensions.findUserActiveSessionsWithExtensions>
+    >[number]
+  ) => {
+    const { lastSubmission, clientId, accountId, payload, ...rest } = session;
+
+    const interactionContextResult =
+      jwtCustomizerUserInteractionContextGuard.safeParse(lastSubmission);
+
+    const payloadResult = oidcSessionInstancePayloadGuard.safeParse(payload);
+
+    if (!payloadResult.success) {
+      throw new RequestError(
+        { code: 'oidc.invalid_session_payload', status: 500 },
+        {
+          cause: payloadResult.error,
+        }
+      );
+    }
+
+    return {
+      ...rest,
+      payload: payloadResult.data,
+      lastSubmission: interactionContextResult.success ? interactionContextResult.data : null,
+      clientId,
+      accountId,
+    };
+  };
+
+  const findUserActiveSessionsWithExtensions = async (userId: string) => {
+    const result = await oidcSessionExtensions.findUserActiveSessionsWithExtensions(userId);
+
+    const formattedResult = result.map((session) => formatSessionWithExtension(session));
+
+    return formattedResult;
+  };
+
+  const findUserActiveSessionWithExtension = async (userId: string, sessionId: string) => {
+    const result = await oidcSessionExtensions.findUserActiveSessionWithExtension(
+      userId,
+      sessionId
+    );
+
+    if (!result) {
+      return null;
+    }
+
+    return formatSessionWithExtension(result);
+  };
+
+  return {
+    findUserActiveSessionsWithExtensions,
+    findUserActiveSessionWithExtension,
+  };
 };

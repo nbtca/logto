@@ -14,6 +14,9 @@ const tenants = {
       'Defina o nome do inquilino e veja a região de hospedagem dos seus dados e o tipo de inquilino.',
     tenant_id: 'ID do Inquilino',
     tenant_name: 'Nome do Inquilino',
+    tenant_instance: 'Selecione a sua instância',
+    tenant_instance_description:
+      'Selecione onde o seu inquilino será hospedado. Escolha Logto Cloud para infraestrutura pública compartilhada ou uma instância privada para recursos dedicados.',
     tenant_region: 'Região de hospedagem',
     tenant_region_description:
       'A localização física onde os recursos do seu inquilino (utilizadores, aplicações, etc.) estão hospedados. Isto não pode ser alterado após a criação.',
@@ -27,6 +30,12 @@ const tenants = {
     production_description:
       'Destinado a aplicações que estão a ser utilizadas por utilizadores finais e que podem exigir uma subscrição paga.',
     tenant_info_saved: 'A informação do inquilino foi guardada com sucesso.',
+    tenant_mfa: 'Autenticação multifator',
+    tenant_mfa_description:
+      'Exija que os seus membros configurem a autenticação multifator para aceder a este inquilino.',
+    enterprise_sso: 'Enterprise SSO',
+    enterprise_sso_description:
+      'Disponível em planos pagos. Contacte-nos para ativar o Enterprise SSO para que todos os membros possam iniciar sessão na consola Logto Cloud usando o fornecedor de identidade da sua organização.',
   },
   full_env_tag: {
     development: 'Desenvolvimento',
@@ -50,6 +59,7 @@ const tenants = {
   create_modal: {
     title: 'Criar inquilino',
     subtitle: 'Crie um novo inquilino que tenha recursos e utilizadores isolados.',
+    tenant_id: 'ID do Inquilino',
     tenant_usage_purpose: 'Para que pretende utilizar este inquilino?',
     development_description:
       'Apenas para testes e não deve ser usado em produção. Não é necessário nenhum plano de subscrição.',
@@ -65,6 +75,11 @@ const tenants = {
     invitation_failed:
       'Alguns convites falharam ao enviar. Por favor, tente novamente em Definições -> Membros mais tarde.',
     tenant_type_description: 'Isto não pode ser alterado após a criação.',
+    tenant_id_invalid:
+      'O ID do inquilino pode conter apenas letras minúsculas, números e hífens, e não deve exceder {{max}} caracteres.',
+    tenant_id_placeholder: 'O seu ID de inquilino',
+    tenant_id_tip:
+      'Personalize o ID do inquilino. Se deixado em branco, o Logto irá gerar um ID predefinido. O ID do inquilino não pode ser alterado após a criação.',
   },
   dev_tenant_migration: {
     title:

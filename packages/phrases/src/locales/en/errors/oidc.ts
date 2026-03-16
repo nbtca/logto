@@ -20,6 +20,9 @@ const oidc = {
   provider_error_fallback: 'An OIDC error occurred: {{code}}.',
   key_required: 'At least one key is required.',
   key_not_found: 'Key with ID {{id}} is not found.',
+  invalid_session_payload: 'Invalid session payload.',
+  session_not_found: 'Session not found.',
+  invalid_session_account_id: 'Session accountId mismatch.',
 };
 
 export default Object.freeze(oidc);

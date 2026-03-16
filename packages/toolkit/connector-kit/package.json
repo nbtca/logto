@@ -1,6 +1,6 @@
 {
   "name": "@logto/connector-kit",
-  "version": "4.6.0",
+  "version": "4.7.0",
   "author": "Silverhand Inc. <contact@silverhand.io>",
   "homepage": "https://github.com/logto-io/toolkit#readme",
   "repository": {
@@ -12,9 +12,9 @@
   "main": "./lib/index.js",
   "exports": {
     ".": {
-      "default": "./lib/index.js",
       "types": "./lib/index.d.ts",
-      "import": "./lib/index.js"
+      "import": "./lib/index.js",
+      "default": "./lib/index.js"
     },
     "./package.json": "./package.json"
   },

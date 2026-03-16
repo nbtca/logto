@@ -44,6 +44,8 @@ const application_details = {
     'Adres URL, na który użytkownik jest przekierowywany po zalogowaniu (zarówno pozytywnym, jak i negatywnym). Zobacz OpenID Connect <a>AuthRequest</a> po więcej informacji.',
   mixed_redirect_uri_warning:
     'Typ Twojej aplikacji jest niekompatybilny z co najmniej jednym z adresów URL przekierowania. To nie jest zgodne z najlepszymi praktykami i zdecydowanie zalecamy zachowanie spójności adresów URL przekierowania.',
+  wildcard_redirect_uri_warning:
+    'Adresy URL przekierowania z symbolami wieloznacznymi nie są standardem OIDC i mogą zwiększyć powierzchnię ataku. Używaj ich ostrożnie i preferuj dokładne adresy URL przekierowania, gdy to możliwe.',
   post_sign_out_redirect_uri: 'Adres URL przekierowania po wylogowaniu',
   post_sign_out_redirect_uris: 'Adresy URL przekierowania po wylogowaniu',
   post_sign_out_redirect_uri_placeholder: 'https://twoja.strona.com/strona-startowa',
@@ -76,6 +78,13 @@ const application_details = {
   backchannel_logout_uri_session_required: 'Czy sesja jest wymagana?',
   backchannel_logout_uri_session_required_description:
     'Po włączeniu, RP wymaga, aby roszczenie `sid` (ID sesji) było zawarte w tokenie wylogowania, aby zidentyfikować sesję RP z OP, gdy używany jest `backchannel_logout_uri`.',
+  token_exchange: 'Wymiana tokenów',
+  token_exchange_description: 'Zarządzaj ustawieniami wymiany tokenów dla tej aplikacji.',
+  allow_token_exchange: 'Zezwól na wymianę tokenów',
+  allow_token_exchange_description:
+    'Pozwól tej aplikacji inicjować żądania wymiany tokenów. Jest to wymagane dla <impersonationLink>podszywania się pod użytkownika</impersonationLink> i <patLink>osobistych tokenów dostępu</patLink>.',
+  allow_token_exchange_public_client_warning:
+    'Włączanie wymiany tokenów dla klientów publicznych (aplikacja jednostronicowa / aplikacja natywna) nie jest zalecane. Klienci publiczni nie mogą bezpiecznie przechowywać poświadczeń, co może narazić aplikację na ryzyko podszywania się pod tokeny.',
   delete_description:
     'Ta operacja nie może zostać cofnięta. Spowoduje trwałe usunięcie aplikacji. Aby potwierdzić, wpisz nazwę aplikacji <span>{{name}}</span>.',
   enter_your_application_name: 'Wpisz nazwę swojej aplikacji',
@@ -157,6 +166,18 @@ const application_details = {
     organization_description:
       'Wybierz uprawnienia żądane przez aplikację innej firmy do uzyskania dostępu do określonych danych organizacyjnych.',
     grant_organization_level_permissions: 'Udziel uprawnień do danych organizacyjnych',
+    oidc_title: 'OIDC',
+    oidc_description:
+      'Podstawowe uprawnienia OIDC są automatycznie konfigurowane dla Twojej aplikacji. Te zakresy (scopes) są niezbędne do uwierzytelniania i nie są wyświetlane na ekranie zgody użytkownika.',
+    default_oidc_permissions: 'Domyślne uprawnienia OIDC',
+    permission_column: 'Uprawnienie',
+    guide_column: 'Przewodnik',
+    openid_permission: 'openid',
+    openid_permission_guide:
+      "Opcjonalne dla dostępu do zasobów OAuth.\nWymagane do uwierzytelniania OIDC. Umożliwia dostęp do tokenu ID oraz do 'userinfo_endpoint'.",
+    offline_access_permission: 'offline_access',
+    offline_access_permission_guide:
+      'Opcjonalne. Pobiera tokeny odświeżania do długotrwałego dostępu lub zadań w tle.',
   },
   roles: {
     assign_button: 'Przypisz role między maszynami',

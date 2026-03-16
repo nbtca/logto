@@ -44,6 +44,8 @@ const application_details = {
     'ユーザーがサインイン（成功した場合も失敗した場合も）した後にリダイレクトされる URI です。詳細については、OpenID Connect の<a>AuthRequest</a>を参照してください。',
   mixed_redirect_uri_warning:
     'アプリケーションの種類は少なくとも一つのリダイレクト URI と互換性がありません。これは最善のプラクティスに従っておらず、リダイレクト URI を一貫性のあるものにすることを強くお勧めします。',
+  wildcard_redirect_uri_warning:
+    'ワイルドカードリダイレクト URI は標準 OIDC ではなく、攻撃対象領域を広げる可能性があります。慎重に使用し、可能な限り正確なリダイレクト URI を使用してください。',
   post_sign_out_redirect_uri: 'サインアウト後のリダイレクト URI',
   post_sign_out_redirect_uris: 'サインアウト後のリダイレクト URI',
   post_sign_out_redirect_uri_placeholder: 'https://your.website.com/home',
@@ -76,6 +78,13 @@ const application_details = {
   backchannel_logout_uri_session_required: 'セッションが必要ですか？',
   backchannel_logout_uri_session_required_description:
     '有効にすると、RP は、`sid` （セッション ID）クレームをログアウトトークンに含めて、`backchannel_logout_uri` が使用されるときに RP セッションが OP と一致するように要求します。',
+  token_exchange: 'トークン交換',
+  token_exchange_description: 'このアプリケーションのトークン交換設定を管理します。',
+  allow_token_exchange: 'トークン交換を許可',
+  allow_token_exchange_description:
+    'このアプリケーションがトークン交換リクエストを開始できるようにします。これは <impersonationLink>ユーザーなりすまし</impersonationLink> と <patLink>個人用アクセストークン</patLink> に必要です。',
+  allow_token_exchange_public_client_warning:
+    'パブリッククライアント（シングルページアプリ／ネイティブアプリ）でトークン交換を有効にすることは推奨されません。パブリッククライアントは資格情報を安全に保存できないため、アプリケーションがトークンなりすましのリスクにさらされる可能性があります。',
   delete_description:
     'この操作は元に戻すことはできません。アプリケーション名「<span>{{name}}</span>」を入力して確認してください。',
   enter_your_application_name: 'アプリケーション名を入力してください',
@@ -157,6 +166,18 @@ const application_details = {
     organization_description:
       '特定の組織データにアクセスするためにサードパーティアプリケーションが要求する権限を選択します。',
     grant_organization_level_permissions: '組織データの権限を付与する',
+    oidc_title: 'OIDC',
+    oidc_description:
+      '主要な OIDC 権限はアプリに自動的に設定されます。これらのスコープは認証に必須であり、ユーザーの同意画面には表示されません。',
+    default_oidc_permissions: '既定の OIDC 権限',
+    permission_column: '権限',
+    guide_column: 'ガイド',
+    openid_permission: 'openid',
+    openid_permission_guide:
+      "OAuth リソースへのアクセスでは任意です。\nOIDC 認証では必須です。ID トークンへのアクセスを許可し、'userinfo_endpoint' にアクセスできるようにします。",
+    offline_access_permission: 'offline_access',
+    offline_access_permission_guide:
+      '任意。長期アクセスやバックグラウンド処理のためのリフレッシュトークンを取得します。',
   },
   roles: {
     assign_button: 'マシン間の役割を割り当てる',

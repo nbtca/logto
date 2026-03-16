@@ -38,7 +38,7 @@ export default function verificationRoutes<T extends UserRouter>(
     koaGuard({
       body: z.object({ password: z.string().min(1) }),
       response: z.object({ verificationRecordId: z.string(), expiresAt: z.string() }),
-      status: [201, 422],
+      status: [201, 400, 422],
     }),
     async (ctx, next) => {
       const { id: userId } = ctx.auth;
@@ -115,7 +115,7 @@ export default function verificationRoutes<T extends UserRouter>(
       // Build the user context information for the verification code email template.
       const emailContextPayload =
         identifier.type === SignInIdentifier.Email
-          ? await libraries.passcodes.buildVerificationCodeContext({ user, applicationId })
+          ? await libraries.passcodes.buildVerificationCodeContext({ user, applicationId }, ctx)
           : undefined;
 
       await codeVerification.sendVerificationCode({

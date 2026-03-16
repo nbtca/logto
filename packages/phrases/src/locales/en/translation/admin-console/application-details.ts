@@ -43,6 +43,8 @@ const application_details = {
     'The URI redirects after a user sign-in (whether successful or not). See OpenID Connect <a>AuthRequest</a> for more info.',
   mixed_redirect_uri_warning:
     'Your application type is not compatible with at least one of the redirect URIs. It does not follow best practices and we strongly recommend keeping the redirect URIs consistent.',
+  wildcard_redirect_uri_warning:
+    'Wildcard redirect URIs are not standard OIDC and can increase the attack surface. Use with care and prefer exact redirect URIs whenever possible.',
   post_sign_out_redirect_uri: 'Post sign-out redirect URI',
   post_sign_out_redirect_uris: 'Post sign-out redirect URIs',
   post_sign_out_redirect_uri_placeholder: 'https://your.website.com/home',
@@ -75,6 +77,13 @@ const application_details = {
   backchannel_logout_uri_session_required: 'Is session required?',
   backchannel_logout_uri_session_required_description:
     'When enabled, the RP requires that a `sid` (session ID) claim be included in the logout token to identify the RP session with the OP when the `backchannel_logout_uri` is used.',
+  token_exchange: 'Token exchange',
+  token_exchange_description: 'Manage the token exchange settings for this application.',
+  allow_token_exchange: 'Allow token exchange',
+  allow_token_exchange_description:
+    'Allow this application to initiate token exchange requests. This is required for <impersonationLink>user impersonation</impersonationLink> and <patLink>personal access tokens</patLink>.',
+  allow_token_exchange_public_client_warning:
+    'Enabling token exchange for public clients (single-page app / native app) is not recommended. Public clients cannot securely store credentials, which may expose your application to token impersonation risks.',
   delete_description:
     'This action cannot be undone. It will permanently delete the application. Please enter the application name <span>{{name}}</span> to confirm.',
   enter_your_application_name: 'Enter your application name',
@@ -156,6 +165,18 @@ const application_details = {
     organization_description:
       'Select the permissions requested by the third-party app for accessing specific organization data.',
     grant_organization_level_permissions: 'Grant permissions of organization data',
+    oidc_title: 'OIDC',
+    oidc_description:
+      'Core OIDC permissions are automatically configured for your app. These scopes are essential for authentication and are not displayed on the user consent screen.',
+    default_oidc_permissions: 'Default OIDC permissions',
+    permission_column: 'Permission',
+    guide_column: 'Guide',
+    openid_permission: 'openid',
+    openid_permission_guide:
+      "Optional for OAuth resource access.\nRequired for OIDC authentication. Grants access to an ID token and allows access to the 'userinfo_endpoint'.",
+    offline_access_permission: 'offline_access',
+    offline_access_permission_guide:
+      'Optional. Retrieves refresh tokens for long-lived access or background tasks.',
   },
   roles: {
     assign_button: 'Assign roles',

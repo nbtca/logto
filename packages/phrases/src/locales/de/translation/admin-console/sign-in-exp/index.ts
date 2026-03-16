@@ -109,13 +109,21 @@ const sign_in_exp = {
       account_security: {
         title: 'KONTO-SICHERHEIT',
         description:
-          'Verwalten Sie den Zugriff auf die Account-API, damit Benutzer nach der Anmeldung Identitätsinformationen und Authentifizierungsfaktoren anzeigen oder bearbeiten können. Bevor sie sicherheitsrelevante Änderungen vornehmen, müssen sie ihre Identität verifizieren und eine 10 Minuten gültige Verifizierungs-ID erhalten.',
+          'Verwalten Sie den Zugriff auf die Account-API, damit Benutzer nach der Anmeldung Identitätsinformationen und Authentifizierungsfaktoren anzeigen oder bearbeiten können.',
+        security_verification: {
+          title: 'Sicherheitsüberprüfung',
+          description:
+            'Bevor Sicherheitseinstellungen geändert werden, müssen Benutzer ihre Identität verifizieren und eine 10 Minuten gültige Verifizierungs-ID erhalten. Um eine Verifizierungsmethode (E-Mail, Telefon, Passwort) zu aktivieren, setzen Sie die Account-API-Berechtigung unten auf <strong>Nur lesen</strong> (Minimum) oder <strong>Bearbeiten</strong>, damit das System erkennen kann, ob der Benutzer sie konfiguriert hat. <a>Mehr erfahren</a>',
+        },
         groups: {
           identifiers: {
             title: 'Identifikatoren',
           },
           authentication_factors: {
             title: 'Authentifizierungsfaktoren',
+          },
+          session_management: {
+            title: 'Sitzungsverwaltung',
           },
         },
       },
@@ -158,11 +166,39 @@ const sign_in_exp = {
       custom_data: 'Benutzerdefinierte Daten',
       custom_data_description:
         'Steuern Sie den Zugriff auf benutzerdefinierte JSON-Daten, die beim Benutzer gespeichert sind.',
+      sessions: 'Sitzungen',
     },
     webauthn_related_origins: 'WebAuthn-bezogene Ursprünge',
     webauthn_related_origins_description:
       'Fügen Sie die Domains Ihrer Frontend-Anwendungen hinzu, die über die Account-API Passkeys registrieren dürfen.',
     webauthn_related_origins_error: 'Der Ursprung muss mit https:// oder http:// beginnen',
+    prebuilt_ui: {
+      title: 'INTEGRATE PREBUILT UI',
+      description:
+        'Schnell vorgefertigte Verifizierungs- und Sicherheitseinstellungen mit vorgefertigter Benutzeroberfläche integrieren.',
+      permission_notice:
+        'Um diese vorgefertigten Flows zu integrieren, setzen Sie die entsprechenden Account-API-Berechtigungen in den Einstellungen unten auf <strong>Bearbeiten</strong>.',
+      flows_title: 'Vorgefertigte Sicherheits-Einstellungen integrieren',
+      flows_description:
+        'Kombinieren Sie Ihre Domain mit der Route, um Ihre Konto-Einstellungs-URL zu bilden (z. B. https://auth.foo.com/account/email). Optional können Sie einen `redirect=` URL-Parameter hinzufügen, um Benutzer nach erfolgreicher Aktualisierung zurück zu Ihrer App zu leiten.',
+      tooltips: {
+        email: 'Aktualisieren Sie Ihre primäre E-Mail-Adresse',
+        phone: 'Aktualisieren Sie Ihre primäre Telefonnummer',
+        username: 'Aktualisieren Sie Ihren Benutzernamen',
+        password: 'Setzen Sie ein neues Passwort',
+        authenticator_app:
+          'Richten Sie eine neue Authentifizierungs-App für die Multi-Faktor-Authentifizierung ein',
+        passkey_add: 'Registrieren Sie einen neuen Sicherheitsschlüssel',
+        passkey_manage:
+          'Verwalten Sie Ihre vorhandenen Sicherheitsschlüssel oder fügen Sie neue hinzu',
+        backup_codes_generate: 'Erstellen Sie ein neues Set von 10 Backup-Codes',
+        backup_codes_manage:
+          'Sehen Sie sich Ihre verfügbaren Backup-Codes an oder erstellen Sie neue',
+      },
+      customize_note:
+        'Möchten Sie nicht das vorgefertigte Erlebnis? Sie können mit der Account-API stattdessen vollständig',
+      customize_link: 'Ihre Flows anpassen.',
+    },
   },
   sign_up_and_sign_in,
   content,

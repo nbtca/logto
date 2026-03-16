@@ -2,6 +2,7 @@
 /* eslint-disable max-lines */
 import type { Role, Application } from '@logto/schemas';
 import {
+  adminTenantId,
   Applications,
   ApplicationType,
   buildBuiltInApplicationDataForTenant,
@@ -37,6 +38,19 @@ const parseIsThirdPartQueryParam = (isThirdPartyQuery: 'true' | 'false' | undefi
   }
 
   return isThirdPartyQuery === 'true';
+};
+
+/** Third-party applications are not allowed to enable token exchange. */
+const assertThirdPartyApplicationTokenExchangeDisabled = (
+  isThirdParty: boolean,
+  allowTokenExchange?: boolean
+) => {
+  if (isThirdParty && allowTokenExchange === true) {
+    throw new RequestError({
+      code: 'application.third_party_application_cannot_enable_token_exchange',
+      status: 422,
+    });
+  }
 };
 
 const hideOidcClientMetadataForSamlApp = (application: Application) => {
@@ -187,8 +201,15 @@ export default function applicationRoutes<T extends ManagementApiRouter>(
 
       if (rest.isThirdParty) {
         assertThat(
-          rest.type === ApplicationType.Traditional,
+          [ApplicationType.Traditional, ApplicationType.SPA, ApplicationType.Native].includes(
+            rest.type
+          ),
           'application.invalid_third_party_application_type'
+        );
+
+        assertThirdPartyApplicationTokenExchangeDisabled(
+          true,
+          rest.customClientMetadata?.allowTokenExchange
         );
       }
 
@@ -286,6 +307,7 @@ export default function applicationRoutes<T extends ManagementApiRouter>(
       response: Applications.guard,
       status: [200, 400, 404, 422, 500],
     }),
+
     async (ctx, next) => {
       const {
         params: { id },
@@ -299,11 +321,23 @@ export default function applicationRoutes<T extends ManagementApiRouter>(
         throw new RequestError('application.saml.use_saml_app_api');
       }
 
+      assertThirdPartyApplicationTokenExchangeDisabled(
+        pendingUpdateApplication.isThirdParty,
+        rest.customClientMetadata?.allowTokenExchange
+      );
+
       // @deprecated
       // User can enable the admin access of Machine-to-Machine apps by switching on a toggle on Admin Console.
       // Since those apps sit in the user tenant, we provide an internal role to apply the necessary scopes.
       // This role is NOT intended for user assignment.
-      if (isAdmin !== undefined) {
+      if (
+        isAdmin !== undefined &&
+        /**
+         * Note: The internal admin role was not created for the admin tenant, and it's no longer needed
+         * since we migrated to RBAC-based access control. Skip this logic for the admin tenant.
+         */
+        tenantId !== adminTenantId
+      ) {
         const [applicationsRoles, internalAdminRole] = await Promise.all([
           queries.applicationsRoles.findApplicationsRolesByApplicationId(id),
           queries.roles.findRoleByRoleName(InternalRole.Admin),
@@ -315,7 +349,7 @@ export default function applicationRoutes<T extends ManagementApiRouter>(
           new RequestError({
             code: 'entity.not_exists',
             status: 500,
-            data: { name: InternalRole.Admin },
+            name: InternalRole.Admin,
           })
         );
 

@@ -202,6 +202,19 @@ const quota_item = {
     unlimited: '高级安全',
     not_eligible: '移除你的高级安全设置',
   },
+  custom_domains_limit: {
+    name: '自定义域名',
+    limited: '{{count, number}} 个自定义域名',
+    limited_other: '{{count, number}} 个自定义域名',
+    unlimited: '无限制自定义域名',
+    not_eligible: '移除你的自定义域名',
+  },
+  passkey_sign_in_enabled: {
+    name: '通行密钥登录',
+    limited: '通行密钥登录',
+    unlimited: '通行密钥登录',
+    not_eligible: '不支持通行密钥登录',
+  },
 };
 
 export default Object.freeze(quota_item);

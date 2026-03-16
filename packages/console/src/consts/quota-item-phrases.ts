@@ -29,9 +29,11 @@ export const skuQuotaItemPhrasesMap: Record<
   subjectTokenEnabled: 'impersonation_enabled.name',
   bringYourUiEnabled: 'bring_your_ui_enabled.name',
   collectUserProfileEnabled: 'collect_user_profile_enabled.name',
+  passkeySignInEnabled: 'passkey_sign_in_enabled.name',
   idpInitiatedSsoEnabled: 'idp_initiated_sso_enabled.name',
   samlApplicationsLimit: 'saml_applications_limit.name',
   securityFeaturesEnabled: 'security_features_enabled.name',
+  customDomainsLimit: 'custom_domains_limit.name',
 };
 
 export const skuQuotaItemUnlimitedPhrasesMap: Record<
@@ -60,9 +62,11 @@ export const skuQuotaItemUnlimitedPhrasesMap: Record<
   subjectTokenEnabled: 'impersonation_enabled.unlimited',
   bringYourUiEnabled: 'bring_your_ui_enabled.unlimited',
   collectUserProfileEnabled: 'collect_user_profile_enabled.unlimited',
+  passkeySignInEnabled: 'passkey_sign_in_enabled.unlimited',
   idpInitiatedSsoEnabled: 'idp_initiated_sso_enabled.unlimited',
   samlApplicationsLimit: 'saml_applications_limit.unlimited',
   securityFeaturesEnabled: 'security_features_enabled.unlimited',
+  customDomainsLimit: 'custom_domains_limit.unlimited',
 };
 
 export const skuQuotaItemLimitedPhrasesMap: Record<
@@ -91,9 +95,11 @@ export const skuQuotaItemLimitedPhrasesMap: Record<
   subjectTokenEnabled: 'impersonation_enabled.limited',
   bringYourUiEnabled: 'bring_your_ui_enabled.limited',
   collectUserProfileEnabled: 'collect_user_profile_enabled.limited',
+  passkeySignInEnabled: 'passkey_sign_in_enabled.limited',
   idpInitiatedSsoEnabled: 'idp_initiated_sso_enabled.limited',
   samlApplicationsLimit: 'saml_applications_limit.limited',
   securityFeaturesEnabled: 'security_features_enabled.limited',
+  customDomainsLimit: 'custom_domains_limit.limited',
 };
 
 export const skuQuotaItemNotEligiblePhrasesMap: Record<
@@ -122,8 +128,10 @@ export const skuQuotaItemNotEligiblePhrasesMap: Record<
   subjectTokenEnabled: 'impersonation_enabled.not_eligible',
   bringYourUiEnabled: 'bring_your_ui_enabled.not_eligible',
   collectUserProfileEnabled: 'collect_user_profile_enabled.not_eligible',
+  passkeySignInEnabled: 'passkey_sign_in_enabled.not_eligible',
   idpInitiatedSsoEnabled: 'idp_initiated_sso_enabled.not_eligible',
   samlApplicationsLimit: 'saml_applications_limit.not_eligible',
   securityFeaturesEnabled: 'security_features_enabled.not_eligible',
+  customDomainsLimit: 'custom_domains_limit.not_eligible',
 };
 /* === for new pricing model === */

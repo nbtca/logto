@@ -4,9 +4,11 @@ const application = {
   invalid_role_type:
     "Impossibile assegnare un ruolo di tipo utente all'applicazione da macchina a macchina.",
   invalid_third_party_application_type:
-    'Solo le applicazioni web tradizionali possono essere contrassegnate come applicazione di terze parti.',
+    'Solo le applicazioni web tradizionali, single-page e native possono essere contrassegnate come applicazioni di terze parti.',
   third_party_application_only:
     'La funzionalità è disponibile solo per le applicazioni di terze parti.',
+  third_party_application_cannot_enable_token_exchange:
+    'Le applicazioni di terze parti non possono abilitare lo scambio di token.',
   user_consent_scopes_not_found: 'Scopi di consenso utente non validi.',
   consent_management_api_scopes_not_allowed: 'I Management API scopes non sono consentiti.',
   protected_app_metadata_is_required: "I metadati dell'applicazione protetta sono obbligatori.",

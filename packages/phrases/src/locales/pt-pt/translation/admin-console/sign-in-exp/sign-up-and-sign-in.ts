@@ -48,9 +48,26 @@ const sign_up_and_sign_in = {
       set_up_more: 'Configurar',
       go_to: 'outros conectores sociais agora.',
     },
-    automatic_account_linking: 'Ligação automática de conta',
-    automatic_account_linking_label:
-      'Quando ativado, se um utilizador iniciar sessão com uma identidade social que é nova para o sistema e existir exatamente uma conta existente com o mesmo identificador (por exemplo, email), o Logto irá automaticamente ligar a conta com a identidade social em vez de solicitar ao utilizador a ligação da conta.',
+    settings_title: 'Experiência de início de sessão social',
+    automatic_account_linking: 'Ligar automaticamente contas com o mesmo identificador',
+    automatic_account_linking_tip:
+      'Quando ativado, se um usuário fizer login com uma nova identidade social e houver exatamente uma conta existente com o mesmo identificador (por exemplo, um endereço de email), Logto ligará automaticamente a identidade social a essa conta. O usuário não será solicitado a escolher se deseja conectar contas.',
+    required_sign_up_identifiers:
+      'Exigir que os usuários forneçam um identificador de registo em falta',
+    required_sign_up_identifiers_tip:
+      'Quando habilitado, os usuários que fizerem login através de provedores sociais devem preencher qualquer identificador de registo necessário em falta (como email) antes de concluir o login. \n\nSe desativado, os usuários podem prosseguir sem fornecer identificadores em falta, mesmo que a conta social não os tenha sincronizado.',
+  },
+  passkey_sign_in: {
+    title: 'INÍCIO DE SESSÃO COM PASSKEY',
+    passkey_sign_in: 'Início de sessão com Passkey',
+    enable_passkey_sign_in_description:
+      'Permitir que os utilizadores acedam à aplicação de forma rápida e segura através de Passkey (WebAuthn), utilizando biometria ou chave de segurança, etc.',
+    prompts: 'Prompts de Passkey',
+    show_passkey_button: 'Mostrar o botão "Continuar com Passkey" na página de início de sessão',
+    show_passkey_button_tip:
+      'Desativar o botão "Continuar com Passkey" torna o fluxo de início de sessão baseado em identificador primeiro, mostrando as opções de palavra-passe e Passkey no passo seguinte.',
+    allow_autofill:
+      'Permitir prompts e preenchimento automático de Passkeys registadas nos campos de identificador',
   },
   tip: {
     set_a_password: 'Um conjunto único de uma senha para o seu nome de utilizador é obrigatório.',

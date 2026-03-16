@@ -62,12 +62,20 @@ const usage = {
     tooltip_for_enterprise:
       'Die ersten {{basicQuota}} Tenant-Mitglieder sind in deinem vertragsbasierten Plan enthalten und kostenlos. Wenn du mehr benötigst, ${{price, number}} pro Tenant-Mitglied pro Monat.',
   },
+  custom_domains: {
+    title: 'Benutzerdefinierte Domains',
+    tooltip:
+      'Add-on-Funktion zum Preis von ${{price, number}} für bis zu 10 benutzerdefinierte Domains pro Monat. Die erste benutzerdefinierte Domain ist kostenlos.',
+  },
   tokens: {
     title: 'Tokens',
     tooltip:
       'Zusatzfeature zu einem Preis von ${{price, number}} pro {{tokenLimit}} Tokens. Die ersten {{basicQuota}} Tokens sind inklusive.',
     tooltip_for_enterprise:
       'Die ersten {{basicQuota}} Tokens sind in deinem vertragsbasierten Plan enthalten und kostenlos. Wenn du mehr benötigst, ${{price, number}} pro {{tokenLimit}} Tokens pro Monat.',
+  },
+  m2mTokens: {
+    title: 'M2M-Tokens',
   },
   hooks: {
     title: 'Hooks',

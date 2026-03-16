@@ -1,5 +1,148 @@
 # Change Log
 
+## 1.37.1
+
+### Patch Changes
+
+- Updated dependencies [57b0008ee8]
+  - @logto/core-kit@2.7.1
+  - @logto/phrases-experience@1.12.2
+
+## 1.37.0
+
+### Minor Changes
+
+- 32d1562699: add out-of-the-box account center app
+
+  Summary
+
+  - Release the Account Center single-page app as a built-in Logto application for end users.
+  - Support profile updates for primary email, phone, username, and password with verification flows.
+  - Provide MFA management for TOTP, backup codes (download/regenerate), and passkeys (WebAuthn), including rename and delete actions.
+  - Gate sensitive operations behind password/email/phone verification and surface dedicated success screens.
+
+  To learn more about this feature, please refer to the documentation: https://docs.logto.io/end-user-flows/account-settings/by-account-api
+
+- eced1f02d4: add application context to JWT customizer
+
+  The application context is now available in the JWT customizer script for both access token and client credentials token types. This allows you to access application details (e.g., name, description, custom data) when customizing JWT claims.
+
+### Patch Changes
+
+- Updated dependencies [eced1f02d4]
+- Updated dependencies [b8ca1a40c7]
+  - @logto/phrases@1.26.0
+
+## 1.36.0
+
+### Minor Changes
+
+- 7cbe315dde: support token exchange grant type with app-level control
+
+  - Add `allowTokenExchange` field to `customClientMetadata` to control whether an application can initiate token exchange requests
+  - Machine-to-machine applications now support token exchange
+  - All new applications will have token exchange disabled by default, you can enable it in the application settings
+  - For backward compatibility, existing first-party Traditional, Native, and SPA applications will have this enabled
+  - Third-party applications are not allowed to use token exchange
+  - Add UI toggle in Console with risk warning for public clients (single-page application / native application)
+
+- ce65b07964: support wildcard patterns in redirect URIs
+
+  Added support for wildcard patterns (`*`) in redirect URIs to better support dynamic environments like preview deployments.
+
+  Rules (web only):
+
+  - Wildcards are allowed for http/https redirect URIs in the hostname and/or pathname.
+  - Wildcards are rejected in scheme, port, query, and hash.
+  - Hostname wildcard patterns must contain at least one dot to avoid overly broad patterns.
+
+### Patch Changes
+
+- 10a9e68f1d: allow skipping mandatory sign-up identifier collection for social sign-in and sign-up
+
+  ## Background
+
+  Previously, Logto enforced mandatory user identifier collection during both sign-in and sign-up flows. Users were required to provide all identifiers configured as mandatory in the sign-up settings. This behavior applies to all sign-in methods except for enterprise SSO.
+
+  For example:
+
+  1. A new user signs up via a GitHub social connector
+  2. The IdP does not provide a verified email address
+  3. Email is configured as a mandatory sign-up identifier in Logto
+  4. In this case, the user would be prompted to provide and verify an email address before the account could be successfully created.
+
+  ## Problem
+
+  For iOS mobile app users, Apple App Store guidelines mandate social sign-in options like "Sign in with Apple" should not require additional information collection beyond what is provided by the social IdP. Enforcing additional identifier collection during social sign-in can result in app review rejection.
+
+  ## Solution
+
+  We have updated the sign-in-experience settings with a new option `skipRequiredIdentifiers` for social sign-in and sign-up flows. When enabled, this option allows users to bypass the mandatory identifier collection step during social sign-in and sign-up.
+
+  By default, this option is set to `false` to maintain existing behavior. Administrators can enable this option in the sign-in experience settings if they wish to allow users to skip mandatory identifier collection during social sign-in and sign-up.
+
+  On Logto console, this option is represented as a checkbox labeled "Require users to provide missing sign-up identifier" on the sign-in experience configuration page under the "Social sign-in" section. Checked by default.
+
+- Updated dependencies [7cbe315dde]
+- Updated dependencies [c8b2caec5c]
+- Updated dependencies [317f9744d1]
+- Updated dependencies [ce65b07964]
+  - @logto/phrases@1.25.0
+  - @logto/shared@3.3.1
+  - @logto/core-kit@2.7.0
+  - @logto/phrases-experience@1.12.1
+
+## 1.35.0
+
+### Minor Changes
+
+- 116dcf5e7d: support reCaptcha domain customization
+
+  You can now customize the domain for reCaptcha, for example, using reCaptcha with `recaptcha.net` domain.
+
+- 116dcf5e7d: support reCAPTCHA Enterprise checkbox mode
+
+  You can now choose between two verification modes for reCAPTCHA Enterprise:
+
+  - **Invisible**: Score-based verification that runs automatically in the background (default)
+  - **Checkbox**: Displays the "I'm not a robot" widget for user interaction
+
+  Note: The verification mode must match your reCAPTCHA key type configured in Google Cloud Console.
+
+### Patch Changes
+
+- a6858e76cf: update SAML relay state length and improve error handling
+
+  The data type of the `relay_state` column in the `saml_application_sessions` table has been changed from varchar(256) to varchar(512) to accommodate longer Relay State values. For example, when Firebase acts as a Service Provider and initiates a SAML request, the relay state length is approximately 300-400 characters, which previously prevented Firebase from integrating with Logto as an SP before this fix.
+
+  Additionally, we have updated the error handling logic in the APIs related to the SAML authentication flow to make error messages more straightforward.
+
+- Updated dependencies [a6858e76cf]
+- Updated dependencies [116dcf5e7d]
+- Updated dependencies [462e430445]
+- Updated dependencies [d551f5ccc3]
+- Updated dependencies [7c87ebc068]
+- Updated dependencies [116dcf5e7d]
+  - @logto/phrases@1.24.0
+  - @logto/connector-kit@4.7.0
+
+## 1.34.0
+
+### Minor Changes
+
+- c3266a917a: add a new webhook event "Identifier.Lockout", which is triggered when a user is locked out due to repeated failed sign-in attempts
+
+### Patch Changes
+
+- 900201a48c: align refresh token grant lifetime with 180-day TTL
+
+  Refresh tokens were expiring after 14 days because the provider grant TTL was still capped at the default two weeks, regardless of the configured refresh token TTL.
+
+  Now set the OIDC grant TTL to 180 days so refresh tokens can live for their configured duration, also expand the refresh token TTL up to 180 days.
+
+- Updated dependencies [c3266a917a]
+  - @logto/phrases@1.23.0
+
 ## 1.33.0
 
 ### Patch Changes

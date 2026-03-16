@@ -202,6 +202,19 @@ const quota_item = {
     unlimited: 'Segurança avançada',
     not_eligible: 'Remova suas configurações avançadas de segurança',
   },
+  custom_domains_limit: {
+    name: 'Domínios personalizados',
+    limited: '{{count, number}} domínio personalizado',
+    limited_other: '{{count, number}} domínios personalizados',
+    unlimited: 'Domínios personalizados ilimitados',
+    not_eligible: 'Remova seus domínios personalizados',
+  },
+  passkey_sign_in_enabled: {
+    name: 'Login com passkey',
+    limited: 'Login com passkey',
+    unlimited: 'Login com passkey',
+    not_eligible: 'Sem suporte a login com passkey',
+  },
 };
 
 export default Object.freeze(quota_item);

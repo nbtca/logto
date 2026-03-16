@@ -7,6 +7,7 @@ const user = {
   email_not_exist: 'ที่อยู่อีเมลนี้ยังไม่ได้ลงทะเบียน',
   phone_not_exist: 'หมายเลขโทรศัพท์นี้ยังไม่ได้ลงทะเบียน',
   identity_not_exist: 'บัญชีโซเชียลนี้ยังไม่ได้ลงทะเบียน',
+  sso_identity_not_exist: 'บัญชี SSO ขององค์กรยังไม่ได้ลงทะเบียน',
   identity_already_in_use: 'บัญชีโซเชียลนี้ถูกเชื่อมโยงกับบัญชีที่มีอยู่แล้ว',
   social_account_exists_in_profile: 'คุณได้เชื่อมโยงบัญชีโซเชียลนี้แล้ว',
   cannot_delete_self: 'คุณไม่สามารถลบบัญชีของตัวเองได้',
@@ -45,6 +46,7 @@ const user = {
     'ผู้ใช้ยังไม่ได้เชื่อมโยงข้อมูลองค์กรกับ SSO connector ID ที่ระบุ: {{ ssoConnectorId }}',
   identity_not_exists_in_current_user:
     'ไม่พบข้อมูลบัญชีที่ระบุในบัญชีผู้ใช้นี้ กรุณาเชื่อมโยงบัญชีก่อนดำเนินการต่อ',
+  passkey_preferred: 'สร้าง passkey เพื่อทำให้ขั้นตอนการเข้าสู่ระบบง่ายขึ้น',
 };
 
 export default Object.freeze(user);

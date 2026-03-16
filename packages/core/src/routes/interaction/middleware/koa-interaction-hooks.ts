@@ -3,7 +3,7 @@ import type { MiddlewareType } from 'koa';
 import type { IRouterParamContext } from 'koa-router';
 
 import {
-  DataHookContextManager,
+  HookContextManager,
   InteractionHookContextManager,
 } from '#src/libraries/hook/context-manager.js';
 import type { WithInteractionDetailsContext } from '#src/middleware/koa-interaction-details.js';
@@ -16,7 +16,7 @@ export type WithInteractionHooksContext<
   ContextT extends IRouterParamContext = IRouterParamContext,
 > = ContextT & {
   assignInteractionHookResult: InteractionHookContextManager['assignInteractionHookResult'];
-  appendDataHookContext: DataHookContextManager['appendContext'];
+  appendDataHookContext: HookContextManager['appendDataHookContext'];
 };
 
 /**
@@ -55,21 +55,21 @@ export default function koaInteractionHooks<
     ctx.assignInteractionHookResult =
       interactionHookContext.assignInteractionHookResult.bind(interactionHookContext);
 
-    const dataHookContext = new DataHookContextManager({
+    const dataHookContext = new HookContextManager({
       ...interactionApiMetadata,
       ip,
     });
 
-    ctx.appendDataHookContext = dataHookContext.appendContext.bind(dataHookContext);
+    ctx.appendDataHookContext = dataHookContext.appendDataHookContext.bind(dataHookContext);
 
     await next();
 
-    if (interactionHookContext.interactionHookResult) {
+    if (interactionHookContext.interactionHookResults.length > 0) {
       // Hooks should not crash the app
       void trySafe(triggerInteractionHooks(getConsoleLogFromContext(ctx), interactionHookContext));
     }
 
-    if (dataHookContext.contextArray.length > 0) {
+    if (dataHookContext.dataHookContextArray.length > 0) {
       // Hooks should not crash the app
       void trySafe(triggerDataHooks(getConsoleLogFromContext(ctx), dataHookContext));
     }

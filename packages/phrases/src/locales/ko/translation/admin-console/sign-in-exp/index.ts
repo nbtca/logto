@@ -106,13 +106,21 @@ const sign_in_exp = {
       account_security: {
         title: '계정 보안',
         description:
-          'Account API 접근을 관리해 사용자가 애플리케이션에 로그인한 뒤 자신의 신원 정보와 인증 요소를 확인하거나 수정할 수 있도록 합니다. 이러한 보안 관련 변경을 진행하기 전에 사용자는 본인 확인을 완료하고 유효 기간 10분의 검증 기록 ID를 받아야 합니다.',
+          'Account API 접근을 관리해 사용자가 애플리케이션에 로그인한 뒤 자신의 신원 정보와 인증 요소를 확인하거나 수정할 수 있도록 합니다.',
+        security_verification: {
+          title: '보안 인증',
+          description:
+            '보안 설정을 변경하기 전에 사용자는 본인 확인을 완료하고 유효 기간 10분의 검증 기록 ID를 받아야 합니다. 인증 방법(이메일, 전화, 비밀번호)을 활성화하려면 아래 Account API 권한을 <strong>읽기 전용</strong>(최소) 또는 <strong>편집</strong>으로 설정하여 시스템이 사용자의 설정 여부를 감지할 수 있도록 하세요. <a>자세히 알아보기</a>',
+        },
         groups: {
           identifiers: {
             title: '식별자',
           },
           authentication_factors: {
             title: '인증 요소',
+          },
+          session_management: {
+            title: '세션 관리',
           },
         },
       },
@@ -154,11 +162,34 @@ const sign_in_exp = {
       profile_description: '구조화된 프로필 속성에 대한 접근을 제어합니다.',
       custom_data: '사용자 정의 데이터',
       custom_data_description: '사용자에 저장된 사용자 정의 JSON 데이터에 대한 접근을 제어합니다.',
+      sessions: '세션',
     },
     webauthn_related_origins: 'WebAuthn 관련 오리진',
     webauthn_related_origins_description:
       'Account API를 통해 패스키를 등록할 수 있도록 허용된 프런트엔드 애플리케이션 도메인을 추가하세요.',
     webauthn_related_origins_error: '오리진은 https:// 또는 http:// 로 시작해야 합니다',
+    prebuilt_ui: {
+      title: '기본 제공 UI 통합',
+      description: '기본 제공 UI 를 사용하여 즉시 검증 및 보안 설정 흐름을 빠르게 통합하세요.',
+      permission_notice:
+        '이 사전 구축된 흐름을 통합하려면 아래 설정에서 관련 계정 API 권한을 <strong>편집</strong>으로 설정하세요.',
+      flows_title: '기본 제공 보안 설정 흐름 통합',
+      flows_description:
+        '도메인과 경로를 결합하여 계정 설정 URL 을 형성하세요 (예: https://auth.foo.com/account/email). 성공적으로 업데이트 후 사용자를 앱으로 되돌리려면 `redirect=` URL 매개변수를 선택적으로 추가하세요.',
+      tooltips: {
+        email: '주 이메일 주소 업데이트',
+        phone: '주 전화번호 업데이트',
+        username: '사용자 이름 업데이트',
+        password: '새 비밀번호 설정',
+        authenticator_app: '다중 요소 인증을 위한 새 인증 앱 설정',
+        passkey_add: '새 패스키 등록',
+        passkey_manage: '기존 패스키 관리 또는 새 패스키 추가',
+        backup_codes_generate: '새로운 10 개의 백업 코드 세트 생성',
+        backup_codes_manage: '사용 가능한 백업 코드 보기 또는 새로 생성',
+      },
+      customize_note: '기본 제공 경험이 원치 않으시나요? 대신 계정 API 를 사용하여',
+      customize_link: '흐름을 완전히 사용자화할 수 있습니다.',
+    },
   },
   sign_up_and_sign_in,
   content,

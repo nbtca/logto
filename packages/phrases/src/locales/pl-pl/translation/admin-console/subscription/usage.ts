@@ -62,12 +62,20 @@ const usage = {
     tooltip_for_enterprise:
       'Pierwszych {{basicQuota}} członków dzierżawcy jest wliczonych i darmowych w twoim kontrakcie. Jeśli potrzebujesz więcej, ${{price, number}} za członka dzierżawcy miesięcznie.',
   },
+  custom_domains: {
+    title: 'Własne domeny',
+    tooltip:
+      'Funkcja dodatkowa w cenie ${{price, number}} za maksymalnie 10 własnych domen miesięcznie. Pierwsza własna domena jest bezpłatna.',
+  },
   tokens: {
     title: 'Tokeny',
     tooltip:
       'Funkcja dodatkowa w cenie ${{price, number}} za {{tokenLimit}} tokenów. Pierwszy {{basicQuota}} tokenów jest wliczony.',
     tooltip_for_enterprise:
       'Pierwszy {{basicQuota}} tokenów jest wliczony i darmowy w twoim kontrakcie. Jeśli potrzebujesz więcej, ${{price, number}} za {{tokenLimit}} tokenów miesięcznie.',
+  },
+  m2mTokens: {
+    title: 'Tokeny M2M',
   },
   hooks: {
     title: 'Haki',

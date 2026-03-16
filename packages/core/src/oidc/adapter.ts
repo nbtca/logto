@@ -44,7 +44,7 @@ const transpileMetadata = (clientId: string, data: AllClientMetadata): AllClient
 };
 
 const buildDemoAppClientMetadata = (envSet: EnvSet): AllClientMetadata => {
-  const urlStrings = getTenantUrls(envSet.tenantId, EnvSet.values).map(
+  const urlStrings = getTenantUrls(envSet.tenantId, EnvSet.values, envSet.endpoint).map(
     (url) => appendPath(url, '/demo-app').href
   );
 
@@ -58,8 +58,8 @@ const buildDemoAppClientMetadata = (envSet: EnvSet): AllClientMetadata => {
 };
 
 const buildAccountCenterClientMetadata = (envSet: EnvSet): AllClientMetadata => {
-  const urlStrings = getTenantUrls(envSet.tenantId, EnvSet.values).map(
-    (url) => appendPath(url, '/account-center').href
+  const urlStrings = getTenantUrls(envSet.tenantId, EnvSet.values, envSet.endpoint).map(
+    (url) => appendPath(url, '/account').href
   );
 
   return {
@@ -68,6 +68,7 @@ const buildAccountCenterClientMetadata = (envSet: EnvSet): AllClientMetadata => 
     client_name: 'Account Center',
     redirect_uris: urlStrings,
     post_logout_redirect_uris: urlStrings,
+    alwaysIssueRefreshToken: true,
   };
 };
 
@@ -138,7 +139,7 @@ export default function postgresAdapter(
       client_id,
       client_secret,
       client_name,
-      ...getConstantClientMetadata(envSet, type),
+      ...getConstantClientMetadata(envSet, type, customClientMetadata),
       ...transpileMetadata(client_id, snakecaseKeys(oidcClientMetadata)),
       // `node-oidc-provider` won't camelCase custom parameter keys, so we need to keep the keys camelCased
       ...customClientMetadata,

@@ -149,10 +149,20 @@ export type SocialSignIn = {
    * to the system and exactly one existing account is found with the same identifier (e.g., email).
    */
   automaticAccountLinking?: boolean;
+  /**
+   * If required identifiers (e.g., email, phone) should be skipped during social sign-in.
+   * @remarks
+   * By default, if a social identity does not provide all required identifiers,
+   * the user will be prompted to provide them before completing sign-in.
+   *
+   * Setting this to `true` will bypass that requirement.
+   */
+  skipRequiredIdentifiers?: boolean;
 };
 
 export const socialSignInGuard = z.object({
   automaticAccountLinking: z.boolean().optional(),
+  skipRequiredIdentifiers: z.boolean().optional(),
 }) satisfies ToZodObject<SocialSignIn>;
 
 export const connectorTargetsGuard = z.string().array();
@@ -225,6 +235,33 @@ export const mfaGuard = z.object({
   organizationRequiredMfaPolicy: z.nativeEnum(OrganizationRequiredMfaPolicy).optional(),
 }) satisfies ToZodObject<Mfa>;
 
+/**
+ * Adaptive MFA configuration for the sign-in experience.
+ *
+ * @remarks
+ * This is a single enable switch for the rule-based Adaptive MFA flow.
+ * Use it in Management API sign-in experience updates (`PATCH /api/sign-in-exp`).
+ * When enabled, the server evaluates fixed risk rules from request signals
+ * (IP, User-Agent, edge-injected headers) and may require MFA verification.
+ * If omitted, Adaptive MFA is disabled.
+ *
+ * @example
+ * ```ts
+ * {
+ *   adaptiveMfa: {
+ *     enabled: true,
+ *   },
+ * }
+ * ```
+ */
+export type AdaptiveMfa = {
+  enabled?: boolean;
+};
+
+export const adaptiveMfaGuard = z.object({
+  enabled: z.boolean().optional(),
+}) satisfies ToZodObject<AdaptiveMfa>;
+
 export const customUiAssetsGuard = z.object({
   id: z.string(),
   createdAt: z.number(),
@@ -289,3 +326,17 @@ export enum ForgotPasswordMethod {
 export const forgotPasswordMethodsGuard = z.nativeEnum(ForgotPasswordMethod).array();
 
 export type ForgotPasswordMethods = z.infer<typeof forgotPasswordMethodsGuard>;
+
+export type PasskeySignIn = {
+  enabled?: boolean;
+  showPasskeyButton?: boolean;
+  allowAutofill?: boolean;
+};
+
+export const passkeySignInGuard = z
+  .object({
+    enabled: z.boolean(),
+    showPasskeyButton: z.boolean(),
+    allowAutofill: z.boolean(),
+  })
+  .partial() satisfies ToZodObject<PasskeySignIn>;

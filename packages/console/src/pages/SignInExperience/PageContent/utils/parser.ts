@@ -120,9 +120,11 @@ export const sieFormDataParser = {
       // Start: Remove the omitted fields from the data
       passwordPolicy,
       mfa,
+      adaptiveMfa,
       captchaPolicy,
       sentinelPolicy,
       emailBlocklistPolicy,
+      socialSignIn,
       // End: Remove the omitted fields from the data
       ...rest
     } = data;
@@ -132,19 +134,31 @@ export const sieFormDataParser = {
       signUp: signUpFormDataParser.fromSignUp(signUp),
       createAccountEnabled: rest.signInMode !== SignInMode.SignIn,
       customCss: customCss ?? undefined,
+      socialSignIn: {
+        automaticAccountLinking: false,
+        skipRequiredIdentifiers: false,
+        ...socialSignIn,
+      },
       branding: {
         ...emptyBranding,
         ...branding,
       },
+      passkeySignIn: {
+        enabled: false,
+        showPasskeyButton: false,
+        allowAutofill: false,
+        ...rest.passkeySignIn,
+      },
     };
   },
   toSignInExperience: (formData: SignInExperienceForm): SignInExperiencePageManagedData => {
-    const { branding, createAccountEnabled, signUp, customCss, forgotPasswordMethods } = formData;
+    const { branding, createAccountEnabled, signUp, customCss, socialSignIn } = formData;
 
     return {
       ...formData,
       branding: removeFalsyValues(branding),
       signUp: signUpFormDataParser.toSignUp(signUp),
+      socialSignIn,
       signInMode: createAccountEnabled ? SignInMode.SignInAndRegister : SignInMode.SignIn,
       customCss: customCss?.length ? customCss : null,
     };
@@ -163,6 +177,7 @@ export const sieFormDataParser = {
  * - `signUp.secondaryIdentifiers`: This field is optional in the data schema,
  *  but through the form, we always fill it with an empty array.
  * - `mfa`
+ * - `adaptiveMfa`
  * - `passwordPolicy`
  * - `captchaPolicy`
  * - `sentinelPolicy`
@@ -175,6 +190,7 @@ export const signInExperienceToUpdatedDataParser = (
     signUp,
     // Start: Remove the omitted fields from the data
     mfa,
+    adaptiveMfa,
     passwordPolicy,
     captchaPolicy,
     sentinelPolicy,

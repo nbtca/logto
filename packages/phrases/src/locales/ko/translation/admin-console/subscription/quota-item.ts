@@ -202,6 +202,19 @@ const quota_item = {
     unlimited: '고급 보안',
     not_eligible: '고급 보안 설정을 제거하십시오',
   },
+  custom_domains_limit: {
+    name: '사용자 정의 도메인',
+    limited: '{{count, number}} 사용자 정의 도메인',
+    limited_other: '{{count, number}} 사용자 정의 도메인',
+    unlimited: '제한 없는 사용자 정의 도메인',
+    not_eligible: '사용자 정의 도메인을 제거하십시오',
+  },
+  passkey_sign_in_enabled: {
+    name: '패스키 로그인',
+    limited: '패스키 로그인',
+    unlimited: '패스키 로그인',
+    not_eligible: '패스키 로그인이 지원되지 않습니다',
+  },
 };
 
 export default Object.freeze(quota_item);

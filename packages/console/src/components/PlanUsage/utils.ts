@@ -2,9 +2,9 @@ import { type AdminConsoleKey } from '@logto/phrases';
 import { type TFuncKey } from 'i18next';
 
 import {
-  type NewSubscriptionCountBasedUsage,
-  type NewSubscriptionPeriodicUsage,
-  type NewSubscriptionQuota,
+  type SubscriptionCountBasedUsage,
+  type SubscriptionPeriodicUsage,
+  type SubscriptionQuota,
 } from '@/cloud/types/router';
 import {
   resourceAddOnUnitPrice,
@@ -19,23 +19,24 @@ import {
   samlApplicationsAddOnUnitPrice,
   thirdPartyApplicationsAddOnUnitPrice,
   rbacEnabledAddOnUnitPrice,
+  customDomainAddOnUnitPrice,
 } from '@/consts/subscriptions';
 import { isProPlan } from '@/utils/subscription';
 
-/**
- * Unlike other usage keys,
- * `rbacEnabled` add-on is not a part of the standard Logto SKU quota key,
- * instead it is calculated based on the `userRolesLimit` and `machineToMachineRolesLimit`
- * two quotas.
- * So we need to manually define it here, and calculate the status based on the two quotas.
- */
-enum CustomUsageKey {
+export enum CustomUsageKey {
+  /**
+   * Unlike other usage keys,
+   * `rbacEnabled` add-on is not a part of the standard Logto SKU quota key,
+   * instead it is calculated based on the `userRolesLimit` and `machineToMachineRolesLimit`
+   * two quotas.
+   * So we need to manually define it here, and calculate the status based on the two quotas.
+   */
   RbacEnabled = 'rbacEnabled',
 }
 
-type UsageKey =
+export type UsageKey =
   | keyof Pick<
-      NewSubscriptionQuota,
+      SubscriptionQuota,
       | 'mauLimit'
       | 'organizationsLimit'
       | 'mfaEnabled'
@@ -48,6 +49,7 @@ type UsageKey =
       | 'securityFeaturesEnabled'
       | 'thirdPartyApplicationsLimit'
       | 'samlApplicationsLimit'
+      | 'customDomainsLimit'
     >
   | CustomUsageKey.RbacEnabled;
 
@@ -62,9 +64,17 @@ export const usageKeys: UsageKey[] = [
   'machineToMachineLimit',
   'samlApplicationsLimit',
   'thirdPartyApplicationsLimit',
+  'customDomainsLimit',
   'tenantMembersLimit',
   'tokenLimit',
   'securityFeaturesEnabled',
+];
+
+export const featureEnablementUsageKeys: UsageKey[] = [
+  'mfaEnabled',
+  CustomUsageKey.RbacEnabled,
+  'securityFeaturesEnabled',
+  'organizationsLimit',
 ];
 
 export const usageKeyPriceMap: Record<UsageKey, number> = {
@@ -81,6 +91,7 @@ export const usageKeyPriceMap: Record<UsageKey, number> = {
   thirdPartyApplicationsLimit: thirdPartyApplicationsAddOnUnitPrice,
   securityFeaturesEnabled: securityFeaturesAddOnUnitPrice,
   rbacEnabled: rbacEnabledAddOnUnitPrice,
+  customDomainsLimit: customDomainAddOnUnitPrice,
 };
 
 export const titleKeyMap: Record<
@@ -100,6 +111,7 @@ export const titleKeyMap: Record<
   thirdPartyApplicationsLimit: 'third_party_applications.title',
   samlApplicationsLimit: 'saml_applications.title',
   rbacEnabled: 'rbacEnabled.title',
+  customDomainsLimit: 'custom_domains.title',
 };
 
 const tooltipKeyMap: Record<
@@ -119,6 +131,7 @@ const tooltipKeyMap: Record<
   thirdPartyApplicationsLimit: 'third_party_applications.tooltip',
   samlApplicationsLimit: 'saml_applications.tooltip',
   rbacEnabled: 'rbacEnabled.tooltip',
+  customDomainsLimit: 'custom_domains.tooltip',
 };
 
 const enterpriseTooltipKeyMap: Record<
@@ -138,9 +151,10 @@ const enterpriseTooltipKeyMap: Record<
   thirdPartyApplicationsLimit: 'third_party_applications.tooltip',
   samlApplicationsLimit: 'saml_applications.tooltip',
   rbacEnabled: 'rbacEnabled.tooltip',
+  customDomainsLimit: 'custom_domains.tooltip',
 };
 
-const isRbacEnabled = ({ userRolesLimit, machineToMachineRolesLimit }: NewSubscriptionQuota) =>
+const isRbacEnabled = ({ userRolesLimit, machineToMachineRolesLimit }: SubscriptionQuota) =>
   userRolesLimit === null && machineToMachineRolesLimit === null;
 
 export const formatNumber = (number: number): string => {
@@ -155,9 +169,9 @@ export const getUsageByKey = (
     countBasedUsage,
     basicQuota,
   }: {
-    periodicUsage: NewSubscriptionPeriodicUsage;
-    countBasedUsage: NewSubscriptionCountBasedUsage;
-    basicQuota: NewSubscriptionQuota;
+    periodicUsage: SubscriptionPeriodicUsage;
+    countBasedUsage: SubscriptionCountBasedUsage;
+    basicQuota: SubscriptionQuota;
   }
 ) => {
   if (key === 'mauLimit' || key === 'tokenLimit') {
@@ -185,7 +199,7 @@ export const getUsageByKey = (
   return countBasedUsage[key];
 };
 
-export const getQuotaByKey = (key: UsageKey, subscriptionQuota: NewSubscriptionQuota) => {
+export const getQuotaByKey = (key: UsageKey, subscriptionQuota: SubscriptionQuota) => {
   if (key === CustomUsageKey.RbacEnabled) {
     return isRbacEnabled(subscriptionQuota);
   }
@@ -195,7 +209,7 @@ export const getQuotaByKey = (key: UsageKey, subscriptionQuota: NewSubscriptionQ
 
 export const getToolTipByKey = (
   key: UsageKey,
-  basicQuota: NewSubscriptionQuota,
+  basicQuota: SubscriptionQuota,
   isEnterprisePlan: boolean
 ): AdminConsoleKey | undefined => {
   // Do not show tooltip if the RBAC quota is enabled (userRolesLimit and machineToMachineRolesLimit) is unlimited.
@@ -233,7 +247,7 @@ export const getToolTipByKey = (
 
 export const shouldHideQuotaNotice = (
   key: UsageKey,
-  basicQuota: NewSubscriptionQuota,
+  basicQuota: SubscriptionQuota,
   planId: string
 ) => {
   // Only applicable for Pro plans

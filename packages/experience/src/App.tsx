@@ -1,6 +1,8 @@
 import { MfaFactor, experience } from '@logto/schemas';
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
 
+import { handleSearchParametersData } from '@/shared/utils/search-parameters';
+
 import AppLayout from './Layout/AppLayout';
 import AppBoundary from './Providers/AppBoundary';
 import CaptchaContextProvider from './Providers/CaptchaContextProvider';
@@ -8,6 +10,7 @@ import LoadingLayerProvider from './Providers/LoadingLayerProvider';
 import PageContextProvider from './Providers/PageContextProvider';
 import SettingsProvider from './Providers/SettingsProvider';
 import UserInteractionContextProvider from './Providers/UserInteractionContextProvider';
+import { isDevFeaturesEnabled } from './constants/env';
 import DevelopmentTenantNotification from './containers/DevelopmentTenantNotification';
 import Callback from './pages/Callback';
 import Consent from './pages/Consent';
@@ -31,12 +34,15 @@ import TotpVerification from './pages/MfaVerification/TotpVerification';
 import WebAuthnVerification from './pages/MfaVerification/WebAuthnVerification';
 import OneTimeToken from './pages/OneTimeToken';
 import OneTimeTokenErrorPage from './pages/OneTimeToken/Error';
+import PasskeySetup from './pages/PasskeySetup';
 import Register from './pages/Register';
 import RegisterPassword from './pages/RegisterPassword';
 import ResetPassword from './pages/ResetPassword';
 import ResetPasswordLanding from './pages/ResetPasswordLanding';
 import SignIn from './pages/SignIn';
+import SignInPasskeyVerification from './pages/SignInPasskeyVerification';
 import SignInPassword from './pages/SignInPassword';
+import SignInVerificationMethods from './pages/SignInVerificationMethods';
 import SingleSignOnConnectors from './pages/SingleSignOnConnectors';
 import SingleSignOnEmail from './pages/SingleSignOnEmail';
 import SingleSignOnLanding from './pages/SingleSignOnLanding';
@@ -47,9 +53,8 @@ import Springboard from './pages/Springboard';
 import SwitchAccount from './pages/SwitchAccount';
 import VerificationCode from './pages/VerificationCode';
 import { UserMfaFlow } from './types';
-import { handleSearchParametersData } from './utils/search-parameters';
 import 'overlayscrollbars/overlayscrollbars.css';
-import './scss/normalized.scss';
+import './shared/scss/normalized.scss';
 import './scss/overlayscrollbars.scss';
 
 handleSearchParametersData();
@@ -88,7 +93,21 @@ const App = () => {
                       <Route path={experience.routes.signIn}>
                         <Route index element={<SignIn />} />
                         <Route path="password" element={<SignInPassword />} />
+                        {isDevFeaturesEnabled && (
+                          <>
+                            <Route path="passkey" element={<SignInPasskeyVerification />} />
+                            <Route
+                              path="verification-methods"
+                              element={<SignInVerificationMethods />}
+                            />
+                          </>
+                        )}
                       </Route>
+
+                      {/* Create passkey for sign-in */}
+                      {isDevFeaturesEnabled && (
+                        <Route path="create-passkey" element={<PasskeySetup />} />
+                      )}
 
                       {/* Register */}
                       <Route path={experience.routes.register}>

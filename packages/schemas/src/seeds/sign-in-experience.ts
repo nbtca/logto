@@ -2,7 +2,12 @@ import { generateDarkColor } from '@logto/core-kit';
 
 import type { CreateSignInExperience } from '../db-entries/index.js';
 import { SignInMode } from '../db-entries/index.js';
-import { MfaPolicy, SignInIdentifier } from '../foundations/index.js';
+import {
+  MfaFactor,
+  MfaPolicy,
+  OrganizationRequiredMfaPolicy,
+  SignInIdentifier,
+} from '../foundations/index.js';
 
 import { adminTenantId, defaultTenantId } from './tenant.js';
 
@@ -73,5 +78,10 @@ export const createAdminTenantSignInExperience = (): Readonly<CreateSignInExperi
     branding: {
       logoUrl: 'https://logto.io/logo.svg',
       darkLogoUrl: 'https://logto.io/logo-dark.svg',
+    },
+    mfa: {
+      factors: [MfaFactor.TOTP, MfaFactor.WebAuthn, MfaFactor.BackupCode],
+      policy: MfaPolicy.NoPrompt,
+      organizationRequiredMfaPolicy: OrganizationRequiredMfaPolicy.Mandatory,
     },
   });

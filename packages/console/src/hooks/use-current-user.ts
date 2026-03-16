@@ -5,23 +5,25 @@ import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
 
-import { adminTenantEndpoint, meApi } from '@/consts';
-
+import useAccountApi from './use-account-api';
 import type { RequestError } from './use-api';
-import { useStaticApi } from './use-api';
-import useSwrFetcher from './use-swr-fetcher';
 
 const useCurrentUser = () => {
   const { isAuthenticated } = useLogto();
   const { t } = useTranslation(undefined, { keyPrefix: 'admin_console' });
-  const api = useStaticApi({ prefixUrl: adminTenantEndpoint, resourceIndicator: meApi.indicator });
-  const fetcher = useSwrFetcher<UserProfileResponse>(api);
+
+  const accountApi = useAccountApi();
+  const accountApiFetcher = useCallback(
+    async () => accountApi.get('').json<UserProfileResponse>(),
+    [accountApi]
+  );
+
   const {
     data: user,
     error,
     isLoading,
     mutate,
-  } = useSWR<UserProfileResponse, RequestError>(isAuthenticated && 'me', fetcher);
+  } = useSWR<UserProfileResponse, RequestError>(isAuthenticated && 'me', accountApiFetcher);
 
   const updateCustomData = useCallback(
     async (customData: JsonObject) => {
@@ -30,16 +32,14 @@ const useCurrentUser = () => {
         return;
       }
 
-      await mutate({
-        ...user,
-        customData: await api
-          .patch(`me/custom-data`, {
-            json: customData,
-          })
-          .json<JsonObject>(),
-      });
+      // Account API uses 'replace' mode, so we need to merge with existing customData
+      const mergedCustomData = { ...user.customData, ...customData };
+      const data = await accountApi
+        .patch('', { json: { customData: mergedCustomData } })
+        .json<UserProfileResponse>();
+      await mutate({ ...user, customData: data.customData });
     },
-    [api, mutate, t, user]
+    [accountApi, mutate, t, user]
   );
 
   return {

@@ -1,8 +1,9 @@
-import { type PublicRegionName, type RegionResponse as RegionType } from '@logto/cloud/routes';
 import { TenantTag } from '@logto/schemas';
 import classNames from 'classnames';
 import { useMemo, type FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { type RegionResponse as RegionType } from '@/cloud/types/router';
 
 import auFlag from './assets/au.svg?react';
 import euFlag from './assets/eu.svg?react';
@@ -12,16 +13,15 @@ import ukFlag from './assets/uk.svg?react';
 import usFlag from './assets/us.svg?react';
 import styles from './index.module.scss';
 
-export const defaultRegionName = 'EU' satisfies PublicRegionName;
+export const defaultRegionName = 'EU';
 
-const regionDisplayNameMap: Readonly<Record<PublicRegionName, string> & Record<string, string>> =
-  Object.freeze({
-    EU: 'Europe',
-    US: 'West US',
-    AU: 'Australia',
-    JP: 'Japan',
-    UK: 'United Kingdom',
-  });
+const regionDisplayNameMap: Readonly<Record<string, string>> = Object.freeze({
+  EU: 'Europe',
+  US: 'West US',
+  AU: 'Australia',
+  JP: 'Japan',
+  UK: 'United Kingdom',
+});
 
 /**
  * Get the display name of the region. If the region is not in the map, return the original region
@@ -86,7 +86,16 @@ export type InstanceDropdownItemProps = Pick<
   'name' | 'country' | 'tags' | 'displayName'
 >;
 
-export const logtoDropdownItem: InstanceDropdownItemProps = {
+/**
+ * The default public Logto instance dropdown item.
+ *
+ * @remarks
+ * This item is a placeholder for the public Logto instance and is used in the instance selection dropdown.
+ *
+ * - When selected, it indicates that the user is choosing the public Logto instance, need to show the public region radio options below.
+ * - When not selected, it indicates that the user is choosing a private instance, need to hide the public region radio options below.
+ */
+export const publicInstancesDropdownItem: InstanceDropdownItemProps = {
   name: 'logto',
   displayName: 'Logto Cloud (Public)',
   country: 'LOGTO',

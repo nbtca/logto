@@ -1,6 +1,6 @@
 const system_limit = {
   limit_exceeded:
-    'Este tenant atingiu o limite de {{entity}} de acordo com a política de limite de entidade do Logto.',
+    'Este tenant <planName/> atingiu seu limite de {{entity}} sob <a>a política de entidade do Logto</a>.',
   entities: {
     application: 'aplicação',
     third_party_application: 'aplicação de terceiros',
@@ -16,6 +16,7 @@ const system_limit = {
     tenant_member: 'membro do tenant',
     organization: 'organização',
     saml_application: 'aplicação SAML',
+    custom_domain: 'domínio personalizado',
     user_per_organization: 'usuário por organização',
     organization_user_role: 'função de usuário da organização',
     organization_machine_to_machine_role: 'função de máquina para máquina da organização',

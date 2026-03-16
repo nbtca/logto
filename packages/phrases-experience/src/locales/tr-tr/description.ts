@@ -17,10 +17,9 @@ const description = {
   passcode_sent: 'Doğrulama kodu yeniden gönderildi',
   resend_after_seconds: 'Henüz almadınız mı? <span>{{seconds}}</span> saniye sonra tekrar gönderin',
   resend_passcode: 'Henüz almadınız mı? <a>Doğrulama kodunu tekrar gönderin</a>',
-  create_account_id_exists: '{{type}} {{value}} ile hesap mevcut, giriş yapmak ister misiniz?',
+  create_account_id_exists: '{{value}} ile bir hesap zaten var. Giriş yapmaya devam edin.',
   link_account_id_exists: '{{type}} {{value}} olan hesap zaten var, bağlamak ister misiniz?',
-  sign_in_id_does_not_exist:
-    '{{type}} {{value}} ile hesap mevcut değil, yeni bir hesap oluşturmak ister misiniz?',
+  sign_in_id_does_not_exist: '{{value}} için hesap bulunamadı. Yeni bir tane oluşturulsun mu?',
   sign_in_id_does_not_exist_alert: '{{type}} {{value}} olan hesap mevcut değil.',
   create_account_id_exists_alert:
     '{{type}} {{value}} olan hesap başka bir hesaba bağlı. Lütfen başka bir {{type}} deneyin.',
@@ -105,6 +104,17 @@ const description = {
   switch_account_description:
     'Devam etmek için, mevcut hesaptan çıkış yapacak ve otomatik olarak yeni hesaba geçeceksiniz.',
   about_yourself: 'Kendinizden bahsedin',
+  verify_identity: 'Kimliğinizi doğrulayın',
+  choose_verification_method: 'Nasıl giriş yapmak istediğinizi seçin',
+  verification_method: {
+    passkey: 'Passkey',
+    passkey_description: 'Cihazınız veya USB donanımıyla doğrulayın',
+    password: 'Şifre',
+    password_description: 'Şifrenizi girin',
+    email_verification_code: 'E-posta doğrulama kodu',
+    phone_verification_code: 'Telefon doğrulama kodu',
+    verification_code_description: '{{target}} adresine gönder',
+  },
 };
 
 export default Object.freeze(description);

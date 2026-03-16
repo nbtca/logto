@@ -44,6 +44,8 @@ const application_details = {
     "L'URI de redirection après la connexion d'un utilisateur (qu'elle soit réussie ou non). Voir OpenID Connect <a>AuthRequest</a> pour plus d'informations.",
   mixed_redirect_uri_warning:
     "Le type de votre application n'est pas compatible avec au moins une des URIs de redirection. Cela ne suit pas les meilleures pratiques et nous recommandons fortement de garder les URIs de redirection cohérentes.",
+  wildcard_redirect_uri_warning:
+    "Les URIs de redirection avec wildcard ne sont pas standard OIDC et peuvent augmenter la surface d'attaque. Utilisez-les avec prudence et privilégiez des URIs exactes lorsque c'est possible.",
   post_sign_out_redirect_uri: 'URI de redirection post-déconnexion',
   post_sign_out_redirect_uris: 'URI de redirection après la déconnexion',
   post_sign_out_redirect_uri_placeholder: 'https://votre.site.com/home',
@@ -76,6 +78,13 @@ const application_details = {
   backchannel_logout_uri_session_required: 'La session est-elle requise ?',
   backchannel_logout_uri_session_required_description:
     "Lorsqu'elle est activée, le RP exige qu'une réclamation `sid` (ID de session) soit incluse dans le jeton de déconnexion pour identifier la session RP avec l'OP lorsque l'`URI de déconnexion en backchannel` est utilisé.",
+  token_exchange: 'Échange de jetons',
+  token_exchange_description: 'Gérez les paramètres d’échange de jetons pour cette application.',
+  allow_token_exchange: 'Autoriser l’échange de jetons',
+  allow_token_exchange_description:
+    'Autorisez cette application à initier des requêtes d’échange de jetons. Ceci est nécessaire pour <impersonationLink>l’usurpation d’utilisateur</impersonationLink> et les <patLink>jetons d’accès personnels</patLink>.',
+  allow_token_exchange_public_client_warning:
+    'Activer l’échange de jetons pour les clients publics (application monopage / application native) n’est pas recommandé. Les clients publics ne peuvent pas stocker les identifiants de manière sécurisée, ce qui peut exposer votre application à des risques d’usurpation de jeton.',
   delete_description:
     "Cette action ne peut être annulée. Elle supprimera définitivement l'application. Veuillez entrer le nom de l'application <span>{{nom}}</span> pour confirmer.",
   enter_your_application_name: 'Entrez le nom de votre application',
@@ -159,6 +168,18 @@ const application_details = {
     organization_description:
       "Sélectionnez les permissions demandées par l'application tierce pour accéder à des données d'organisation spécifiques.",
     grant_organization_level_permissions: "Accorder des permissions des données d'organisation",
+    oidc_title: 'OIDC',
+    oidc_description:
+      'Les permissions OIDC de base sont configurées automatiquement pour votre application. Ces scopes sont essentiels à l’authentification et ne sont pas affichés sur l’écran de consentement de l’utilisateur.',
+    default_oidc_permissions: 'Permissions OIDC par défaut',
+    permission_column: 'Permission',
+    guide_column: 'Guide',
+    openid_permission: 'openid',
+    openid_permission_guide:
+      "Optionnel pour l’accès aux ressources OAuth.\nRequis pour l’authentification OIDC. Donne accès à un jeton d’identification (ID token) et permet d’accéder à 'userinfo_endpoint'.",
+    offline_access_permission: 'offline_access',
+    offline_access_permission_guide:
+      'Optionnel. Récupère des jetons d’actualisation (refresh tokens) pour un accès de longue durée ou des tâches en arrière-plan.',
   },
   roles: {
     assign_button: 'Attribuer des rôles de machine à machine',

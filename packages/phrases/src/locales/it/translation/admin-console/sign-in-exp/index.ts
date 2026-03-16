@@ -109,13 +109,21 @@ const sign_in_exp = {
       account_security: {
         title: "SICUREZZA DELL'ACCOUNT",
         description:
-          'Gestisci l’accesso all’Account API consentendo agli utenti, dopo l’accesso all’applicazione, di visualizzare o modificare le loro informazioni di identità e i fattori di autenticazione. Prima di effettuare queste modifiche legate alla sicurezza, gli utenti devono verificare la propria identità e ottenere un ID di registrazione della verifica valido per 10 minuti.',
+          "Gestisci l'accesso all'Account API consentendo agli utenti, dopo l'accesso all'applicazione, di visualizzare o modificare le loro informazioni di identità e i fattori di autenticazione.",
+        security_verification: {
+          title: 'Verifica di sicurezza',
+          description:
+            "Prima di modificare le impostazioni di sicurezza, gli utenti devono verificare la propria identità per ottenere un ID di registrazione della verifica valido per 10 minuti. Per abilitare un metodo di verifica (email, telefono, password), imposta il permesso dell'Account API qui sotto su <strong>Sola lettura</strong> (minimo) o <strong>Modifica</strong> in modo che il sistema possa rilevare se l'utente lo ha configurato. <a>Scopri di più</a>",
+        },
         groups: {
           identifiers: {
             title: 'Identificatori',
           },
           authentication_factors: {
             title: 'Fattori di autenticazione',
+          },
+          session_management: {
+            title: 'Gestione sessioni',
           },
         },
       },
@@ -158,11 +166,36 @@ const sign_in_exp = {
       custom_data: 'Dati personalizzati',
       custom_data_description:
         'Controlla l’accesso ai dati JSON personalizzati archiviati sull’utente.',
+      sessions: 'Sessioni',
     },
     webauthn_related_origins: 'Origini correlate a WebAuthn',
     webauthn_related_origins_description:
       'Aggiungi i domini delle applicazioni front-end autorizzate a registrare passkey tramite l’Account API.',
     webauthn_related_origins_error: "L'origine deve iniziare con https:// o http://",
+    prebuilt_ui: {
+      title: 'INTEGRAZIONE UI PREDEFINITA',
+      description:
+        'Integra rapidamente i flussi di verifica e impostazione di sicurezza predefiniti con una UI integrata.',
+      permission_notice:
+        "Per integrare questi flussi predefiniti, imposta i permessi dell'API account correlati su <strong>Modifica</strong> nelle impostazioni sottostanti.",
+      flows_title: 'Integra i flussi di impostazione di sicurezza predefiniti',
+      flows_description:
+        "Combina il tuo dominio con il percorso per formare il tuo URL di impostazione dell'account (ad es., https://auth.foo.com/account/email). Opzionalmente aggiungi un parametro URL `redirect=` per riportare gli utenti alla tua app dopo l'aggiornamento avvenuto con successo.",
+      tooltips: {
+        email: 'Aggiorna il tuo indirizzo email principale',
+        phone: 'Aggiorna il tuo numero di telefono principale',
+        username: 'Aggiorna il tuo nome utente',
+        password: 'Imposta una nuova password',
+        authenticator_app:
+          "Configura una nuova app di autenticazione per l'autenticazione multifattore",
+        passkey_add: 'Registra una nuova passkey',
+        passkey_manage: 'Gestisci le passkey esistenti o aggiungi nuove passkey',
+        backup_codes_generate: 'Genera un nuovo set di 10 codici di backup',
+        backup_codes_manage: 'Visualizza i codici di backup disponibili o genera nuovi codici',
+      },
+      customize_note: "Non vuoi l'esperienza predefinita? Puoi completamente",
+      customize_link: 'personalizzare i tuoi flussi con l’Account API invece.',
+    },
   },
   sign_up_and_sign_in,
   content,

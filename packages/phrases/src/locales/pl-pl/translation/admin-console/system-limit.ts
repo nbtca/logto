@@ -1,5 +1,6 @@
 const system_limit = {
-  limit_exceeded: 'Ten najemca osiągnął limit {{entity}} zgodnie z polityką limitów encji Logto.',
+  limit_exceeded:
+    'Ten najemca <planName/> osiągnął limit {{entity}} zgodnie z <a>polityką encji Logto</a>.',
   entities: {
     application: 'aplikacja',
     third_party_application: 'aplikacja zewnętrzna',
@@ -15,6 +16,7 @@ const system_limit = {
     tenant_member: 'członek najemcy',
     organization: 'organizacja',
     saml_application: 'aplikacja SAML',
+    custom_domain: 'niestandardowa domena',
     user_per_organization: 'użytkownik na organizację',
     organization_user_role: 'rola użytkownika organizacji',
     organization_machine_to_machine_role: 'rola maszyna-maszyna organizacji',

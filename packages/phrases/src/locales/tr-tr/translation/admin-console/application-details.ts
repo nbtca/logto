@@ -43,6 +43,8 @@ const application_details = {
     'Kullanıcının oturum açma işlemi tamamlandıktan sonra (başarılı olsa da olmasa da) yönlendirilen bir URI. Daha fazla bilgi için OpenID Connect <a>AuthRequesta</a> bakınız.',
   mixed_redirect_uri_warning:
     'Uygulama türünüz en az bir yönlendirme URIı ile uyumlu değil. Bu, en iyi uygulamaları takip etmez ve yönlendirme URIlarını tutarlı tutmanızı şiddetle öneriyoruz.',
+  wildcard_redirect_uri_warning:
+    'Joker karakter içeren yönlendirme URIları standart OIDC değildir ve saldırı yüzeyini artırabilir. Dikkatli kullanın ve mümkün olduğunca tam yönlendirme URIlarını tercih edin.',
   post_sign_out_redirect_uri: 'Oturumdan Çıkış sonrası yönlendirme URIı',
   post_sign_out_redirect_uris: 'Oturumdan Çıkış sonrası yönlendirme URIları',
   post_sign_out_redirect_uri_placeholder: 'https://siteniz.com/anasayfa',
@@ -75,6 +77,13 @@ const application_details = {
   backchannel_logout_uri_session_required: 'Oturum gerekli mi?',
   backchannel_logout_uri_session_required_description:
     'Etkinleştirildiğinde, RP, `sid` (oturum IDsi) talebinin oturumu kapatma belirtecinde bulunmasını ve `backchannel_logout_uri` kullanıldığında RP oturumunu OP ile tanımlamak için dahil edilmesini isteyecektir.',
+  token_exchange: 'Token değişimi',
+  token_exchange_description: 'Bu uygulama için token değişimi ayarlarını yönetin.',
+  allow_token_exchange: 'Token değişimine izin ver',
+  allow_token_exchange_description:
+    "Bu uygulamanın token değişimi istekleri başlatmasına izin verin. Bu, <impersonationLink>kullanıcı kimliğine bürünme</impersonationLink> ve <patLink>kişisel erişim token'ları</patLink> için gereklidir.",
+  allow_token_exchange_public_client_warning:
+    'Genel istemciler (tek sayfa uygulama / yerel uygulama) için token değişimini etkinleştirmek önerilmez. Genel istemciler kimlik bilgilerini güvenli şekilde saklayamaz; bu da uygulamanızı token kimliğine bürünme risklerine maruz bırakabilir.',
   delete_description:
     'Bu eylem geri alınamaz. Uygulama kalıcı olarak silinecektir. Lütfen onaylamak için uygulama adı <span>{{name}}</span> girin.',
   enter_your_application_name: 'Uygulama adı giriniz',
@@ -156,6 +165,18 @@ const application_details = {
     organization_description:
       'Üçüncü taraf uygulamanın belirli organizasyon verilerine erişmek için istediği izinleri seçin.',
     grant_organization_level_permissions: 'Organizasyon veri izinlerini ver',
+    oidc_title: 'OIDC',
+    oidc_description:
+      'Temel OIDC izinleri uygulamanız için otomatik olarak yapılandırılır. Bu kapsamlar kimlik doğrulama için gereklidir ve kullanıcı onay ekranında gösterilmez.',
+    default_oidc_permissions: 'Varsayılan OIDC izinleri',
+    permission_column: 'İzin',
+    guide_column: 'Kılavuz',
+    openid_permission: 'openid',
+    openid_permission_guide:
+      "OAuth kaynak erişimi için isteğe bağlıdır.\nOIDC kimlik doğrulaması için gereklidir. Bir ID token'a erişim sağlar ve 'userinfo_endpoint'e erişime izin verir.",
+    offline_access_permission: 'offline_access',
+    offline_access_permission_guide:
+      'İsteğe bağlıdır. Uzun süreli erişim veya arka plan görevleri için yenileme belirteçleri (refresh token) alır.',
   },
   roles: {
     assign_button: 'Makineden makineye rolleri atayın',

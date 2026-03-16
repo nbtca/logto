@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { UserScope, buildOrganizationUrn } from '@logto/core-kit';
 import { decodeAccessToken } from '@logto/js';
 import {
@@ -11,7 +12,12 @@ import { formUrlEncodedHeaders } from '@logto/shared';
 
 import { createUserMfaVerification, deleteUser } from '#src/api/admin-user.js';
 import { oidcApi } from '#src/api/api.js';
-import { createApplication, deleteApplication } from '#src/api/application.js';
+import {
+  createApplication,
+  deleteApplication,
+  getApplicationSecrets,
+  updateApplication,
+} from '#src/api/application.js';
 import { putInteraction } from '#src/api/interaction.js';
 import { deleteJwtCustomizer, upsertJwtCustomizer } from '#src/api/logto-config.js';
 import { createResource, deleteResource } from '#src/api/resource.js';
@@ -29,6 +35,9 @@ import {
   generateUsername,
 } from '#src/utils.js';
 
+const impersonationTokenType = 'urn:logto:token-type:impersonation_token';
+const legacyAccessTokenType = 'urn:ietf:params:oauth:token-type:access_token';
+
 describe('Token Exchange', () => {
   const username = generateUsername();
   const password = generatePassword();
@@ -43,8 +52,8 @@ describe('Token Exchange', () => {
   let testApiResourceId: string;
   let testApplicationId: string;
   let testUserId: string;
-  let testAccessToken: string;
   let client: MockClient;
+  let authorizationHeader: string;
   /* eslint-enable @silverhand/fp/no-let */
 
   beforeAll(async () => {
@@ -54,11 +63,17 @@ describe('Token Exchange', () => {
     const resource = await createResource(testApiResourceInfo.name, testApiResourceInfo.indicator);
     testApiResourceId = resource.id;
     const applicationName = 'test-token-exchange-app';
-    const applicationType = ApplicationType.SPA;
+    // Use Traditional (confidential client) and explicitly enable token exchange
+    const applicationType = ApplicationType.Traditional;
     const application = await createApplication(applicationName, applicationType, {
       oidcClientMetadata: { redirectUris: ['http://localhost:3000'], postLogoutRedirectUris: [] },
+      customClientMetadata: { allowTokenExchange: true },
     });
     testApplicationId = application.id;
+    const secrets = await getApplicationSecrets(application.id);
+    authorizationHeader = `Basic ${Buffer.from(`${application.id}:${secrets[0]!.value}`).toString(
+      'base64'
+    )}`;
     const { id } = await createUserByAdmin({ username, password });
     testUserId = id;
     client = await initClient({
@@ -70,7 +85,7 @@ describe('Token Exchange', () => {
     });
     const { redirectTo } = await client.submitInteraction();
     await processSession(client, redirectTo);
-    testAccessToken = await client.getAccessToken();
+    await client.getAccessToken();
     /* eslint-enable @silverhand/fp/no-mutation */
   });
 
@@ -81,17 +96,19 @@ describe('Token Exchange', () => {
   });
 
   describe('Basic flow', () => {
-    it('should exchange an access token by a subject token', async () => {
+    it('should exchange an access token by an impersonation token', async () => {
       const { subjectToken } = await createSubjectToken(testUserId);
 
       const body = await oidcApi
         .post('token', {
-          headers: formUrlEncodedHeaders,
+          headers: {
+            ...formUrlEncodedHeaders,
+            Authorization: authorizationHeader,
+          },
           body: new URLSearchParams({
-            client_id: testApplicationId,
             grant_type: GrantType.TokenExchange,
             subject_token: subjectToken,
-            subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+            subject_token_type: impersonationTokenType,
           }),
         })
         .json();
@@ -102,7 +119,29 @@ describe('Token Exchange', () => {
       expect(body).toHaveProperty('scope', '');
     });
 
-    it('should fail without valid client_id', async () => {
+    it('should exchange an access token using legacy access_token type for backward compatibility', async () => {
+      const { subjectToken } = await createSubjectToken(testUserId);
+
+      const body = await oidcApi
+        .post('token', {
+          headers: {
+            ...formUrlEncodedHeaders,
+            Authorization: authorizationHeader,
+          },
+          body: new URLSearchParams({
+            grant_type: GrantType.TokenExchange,
+            subject_token: subjectToken,
+            subject_token_type: legacyAccessTokenType,
+          }),
+        })
+        .json();
+
+      expect(body).toHaveProperty('access_token');
+      expect(body).toHaveProperty('token_type', 'Bearer');
+      expect(body).toHaveProperty('expires_in');
+    });
+
+    it('should fail without valid client credentials', async () => {
       const { subjectToken } = await createSubjectToken(testUserId);
 
       await expect(
@@ -111,7 +150,7 @@ describe('Token Exchange', () => {
           body: new URLSearchParams({
             grant_type: GrantType.TokenExchange,
             subject_token: subjectToken,
-            subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+            subject_token_type: impersonationTokenType,
           }),
         })
       ).rejects.toThrow();
@@ -120,12 +159,14 @@ describe('Token Exchange', () => {
     it('should failed with invalid subject token', async () => {
       await expect(
         oidcApi.post('token', {
-          headers: formUrlEncodedHeaders,
+          headers: {
+            ...formUrlEncodedHeaders,
+            Authorization: authorizationHeader,
+          },
           body: new URLSearchParams({
-            client_id: testApplicationId,
             grant_type: GrantType.TokenExchange,
-            subject_token: 'invalid_subject_token',
-            subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+            subject_token: 'sub_invalid_subject_token',
+            subject_token_type: impersonationTokenType,
           }),
         })
       ).rejects.toThrow();
@@ -135,22 +176,26 @@ describe('Token Exchange', () => {
       const { subjectToken } = await createSubjectToken(testUserId);
 
       await oidcApi.post('token', {
-        headers: formUrlEncodedHeaders,
+        headers: {
+          ...formUrlEncodedHeaders,
+          Authorization: authorizationHeader,
+        },
         body: new URLSearchParams({
-          client_id: testApplicationId,
           grant_type: GrantType.TokenExchange,
           subject_token: subjectToken,
-          subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+          subject_token_type: impersonationTokenType,
         }),
       });
       await expect(
         oidcApi.post('token', {
-          headers: formUrlEncodedHeaders,
+          headers: {
+            ...formUrlEncodedHeaders,
+            Authorization: authorizationHeader,
+          },
           body: new URLSearchParams({
-            client_id: testApplicationId,
             grant_type: GrantType.TokenExchange,
             subject_token: subjectToken,
-            subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+            subject_token_type: impersonationTokenType,
           }),
         })
       ).rejects.toThrow();
@@ -165,15 +210,21 @@ describe('Token Exchange', () => {
           isThirdParty: true,
         }
       );
+      const thirdPartySecrets = await getApplicationSecrets(thirdPartyApplication.id);
+      const thirdPartyAuthorizationHeader = `Basic ${Buffer.from(
+        `${thirdPartyApplication.id}:${thirdPartySecrets[0]!.value}`
+      ).toString('base64')}`;
 
       await expect(
         oidcApi.post('token', {
-          headers: formUrlEncodedHeaders,
+          headers: {
+            ...formUrlEncodedHeaders,
+            Authorization: thirdPartyAuthorizationHeader,
+          },
           body: new URLSearchParams({
-            client_id: thirdPartyApplication.id,
             grant_type: GrantType.TokenExchange,
             subject_token: subjectToken,
-            subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+            subject_token_type: impersonationTokenType,
           }),
         })
       ).rejects.toThrow();
@@ -181,17 +232,50 @@ describe('Token Exchange', () => {
       await deleteApplication(thirdPartyApplication.id);
     });
 
+    it('should fail when token exchange is disabled for the application', async () => {
+      const { subjectToken } = await createSubjectToken(testUserId);
+      const application = await createApplication(generateName(), ApplicationType.Traditional, {
+        oidcClientMetadata: { redirectUris: ['http://localhost:3000'], postLogoutRedirectUris: [] },
+      });
+      // Disable token exchange for this application
+      await updateApplication(application.id, {
+        customClientMetadata: { allowTokenExchange: false },
+      });
+      const secrets = await getApplicationSecrets(application.id);
+      const disabledAppAuthorizationHeader = `Basic ${Buffer.from(
+        `${application.id}:${secrets[0]!.value}`
+      ).toString('base64')}`;
+
+      await expect(
+        oidcApi.post('token', {
+          headers: {
+            ...formUrlEncodedHeaders,
+            Authorization: disabledAppAuthorizationHeader,
+          },
+          body: new URLSearchParams({
+            grant_type: GrantType.TokenExchange,
+            subject_token: subjectToken,
+            subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+          }),
+        })
+      ).rejects.toThrow();
+
+      await deleteApplication(application.id);
+    });
+
     it('should filter out non-oidc scopes', async () => {
       const { subjectToken } = await createSubjectToken(testUserId);
 
       const body = await oidcApi
         .post('token', {
-          headers: formUrlEncodedHeaders,
+          headers: {
+            ...formUrlEncodedHeaders,
+            Authorization: authorizationHeader,
+          },
           body: new URLSearchParams({
-            client_id: testApplicationId,
             grant_type: GrantType.TokenExchange,
             subject_token: subjectToken,
-            subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+            subject_token_type: impersonationTokenType,
             scope: [UserScope.Profile, 'non-oidc-scope'].join(' '),
           }),
         })
@@ -202,6 +286,39 @@ describe('Token Exchange', () => {
       expect(body).toHaveProperty('expires_in');
       expect(body).toHaveProperty('scope', UserScope.Profile);
     });
+
+    it('should exchange an access token with a machine-to-machine application', async () => {
+      const m2mApp = await createApplication(generateName(), ApplicationType.MachineToMachine, {
+        customClientMetadata: { allowTokenExchange: true },
+      });
+      const m2mSecrets = await getApplicationSecrets(m2mApp.id);
+      const m2mAuthorizationHeader = `Basic ${Buffer.from(
+        `${m2mApp.id}:${m2mSecrets[0]!.value}`
+      ).toString('base64')}`;
+
+      const { subjectToken } = await createSubjectToken(testUserId);
+
+      const body = await oidcApi
+        .post('token', {
+          headers: {
+            ...formUrlEncodedHeaders,
+            Authorization: m2mAuthorizationHeader,
+          },
+          body: new URLSearchParams({
+            grant_type: GrantType.TokenExchange,
+            subject_token: subjectToken,
+            subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+          }),
+        })
+        .json();
+
+      expect(body).toHaveProperty('access_token');
+      expect(body).toHaveProperty('token_type', 'Bearer');
+      expect(body).toHaveProperty('expires_in');
+      expect(body).toHaveProperty('scope', '');
+
+      await deleteApplication(m2mApp.id);
+    });
   });
 
   describe('get access token for resource', () => {
@@ -210,12 +327,14 @@ describe('Token Exchange', () => {
 
       const { access_token } = await oidcApi
         .post('token', {
-          headers: formUrlEncodedHeaders,
+          headers: {
+            ...formUrlEncodedHeaders,
+            Authorization: authorizationHeader,
+          },
           body: new URLSearchParams({
-            client_id: testApplicationId,
             grant_type: GrantType.TokenExchange,
             subject_token: subjectToken,
-            subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+            subject_token_type: impersonationTokenType,
             resource: testApiResourceInfo.indicator,
           }),
         })
@@ -232,12 +351,14 @@ describe('Token Exchange', () => {
 
       await expect(
         oidcApi.post('token', {
-          headers: formUrlEncodedHeaders,
+          headers: {
+            ...formUrlEncodedHeaders,
+            Authorization: authorizationHeader,
+          },
           body: new URLSearchParams({
-            client_id: testApplicationId,
             grant_type: GrantType.TokenExchange,
             subject_token: subjectToken,
-            subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+            subject_token_type: impersonationTokenType,
             resource: 'invalid_resource',
           }),
         })
@@ -249,26 +370,23 @@ describe('Token Exchange', () => {
     const scopeName = `read:${randomString()}`;
 
     /* eslint-disable @silverhand/fp/no-let */
-    let testApiScopeId: string;
     let testOrganizationId: string;
     /* eslint-enable @silverhand/fp/no-let */
 
     const organizationApi = new OrganizationApiTest();
 
-    /* eslint-disable @silverhand/fp/no-mutation */
     beforeAll(async () => {
+      /* eslint-disable @silverhand/fp/no-mutation */
       const organization = await organizationApi.create({ name: 'org1' });
       testOrganizationId = organization.id;
+      /* eslint-enable @silverhand/fp/no-mutation */
       await organizationApi.addUsers(testOrganizationId, [testUserId]);
 
       const scope = await organizationApi.scopeApi.create({ name: scopeName });
-      testApiScopeId = scope.id;
-
       const role = await organizationApi.roleApi.create({ name: `role1:${randomString()}` });
       await organizationApi.roleApi.addScopes(role.id, [scope.id]);
       await organizationApi.addUserRoles(testOrganizationId, testUserId, [role.id]);
     });
-    /* eslint-enable @silverhand/fp/no-mutation */
 
     afterAll(async () => {
       await organizationApi.cleanUp();
@@ -279,12 +397,14 @@ describe('Token Exchange', () => {
 
       const { access_token } = await oidcApi
         .post('token', {
-          headers: formUrlEncodedHeaders,
+          headers: {
+            ...formUrlEncodedHeaders,
+            Authorization: authorizationHeader,
+          },
           body: new URLSearchParams({
-            client_id: testApplicationId,
             grant_type: GrantType.TokenExchange,
             subject_token: subjectToken,
-            subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+            subject_token_type: impersonationTokenType,
             organization_id: testOrganizationId,
             scope: scopeName,
           }),
@@ -303,12 +423,14 @@ describe('Token Exchange', () => {
 
       await expect(
         oidcApi.post('token', {
-          headers: formUrlEncodedHeaders,
+          headers: {
+            ...formUrlEncodedHeaders,
+            Authorization: authorizationHeader,
+          },
           body: new URLSearchParams({
-            client_id: testApplicationId,
             grant_type: GrantType.TokenExchange,
             subject_token: subjectToken,
-            subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+            subject_token_type: impersonationTokenType,
             organization_id: testOrganizationId,
           }),
         })
@@ -320,12 +442,14 @@ describe('Token Exchange', () => {
       await createUserMfaVerification(testUserId, MfaFactor.TOTP);
       const { access_token } = await oidcApi
         .post('token', {
-          headers: formUrlEncodedHeaders,
+          headers: {
+            ...formUrlEncodedHeaders,
+            Authorization: authorizationHeader,
+          },
           body: new URLSearchParams({
-            client_id: testApplicationId,
             grant_type: GrantType.TokenExchange,
             subject_token: subjectToken,
-            subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+            subject_token_type: impersonationTokenType,
             organization_id: testOrganizationId,
           }),
         })
@@ -334,88 +458,6 @@ describe('Token Exchange', () => {
       expect(decodeAccessToken(access_token)).toMatchObject({
         aud: buildOrganizationUrn(testOrganizationId),
       });
-    });
-  });
-
-  describe('with actor token', () => {
-    it('should exchange an access token with `act` claim', async () => {
-      const { subjectToken } = await createSubjectToken(testUserId);
-
-      const { access_token } = await oidcApi
-        .post('token', {
-          headers: formUrlEncodedHeaders,
-          body: new URLSearchParams({
-            client_id: testApplicationId,
-            grant_type: GrantType.TokenExchange,
-            subject_token: subjectToken,
-            subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
-            actor_token: testAccessToken,
-            actor_token_type: 'urn:ietf:params:oauth:token-type:access_token',
-            resource: testApiResourceInfo.indicator,
-          }),
-        })
-        .json<{ access_token: string }>();
-
-      expect(getAccessTokenPayload(access_token)).toHaveProperty('act', { sub: testUserId });
-    });
-
-    it('should fail with invalid actor_token_type', async () => {
-      const { subjectToken } = await createSubjectToken(testUserId);
-
-      await expect(
-        oidcApi.post('token', {
-          headers: formUrlEncodedHeaders,
-          body: new URLSearchParams({
-            client_id: testApplicationId,
-            grant_type: GrantType.TokenExchange,
-            subject_token: subjectToken,
-            subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
-            actor_token: testAccessToken,
-            actor_token_type: 'invalid_actor_token_type',
-            resource: testApiResourceInfo.indicator,
-          }),
-        })
-      ).rejects.toThrow();
-    });
-
-    it('should fail with invalid actor_token', async () => {
-      const { subjectToken } = await createSubjectToken(testUserId);
-
-      await expect(
-        oidcApi.post('token', {
-          headers: formUrlEncodedHeaders,
-          body: new URLSearchParams({
-            client_id: testApplicationId,
-            grant_type: GrantType.TokenExchange,
-            subject_token: subjectToken,
-            subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
-            actor_token: 'invalid_actor_token',
-            actor_token_type: 'urn:ietf:params:oauth:token-type:access_token',
-            resource: testApiResourceInfo.indicator,
-          }),
-        })
-      ).rejects.toThrow();
-    });
-
-    it('should fail when the actor token do not have `openid` scope', async () => {
-      const { subjectToken } = await createSubjectToken(testUserId);
-      // Set `resource` to ensure that the access token is JWT, and then it won't have `openid` scope.
-      const accessToken = await client.getAccessToken(testApiResourceInfo.indicator);
-
-      await expect(
-        oidcApi.post('token', {
-          headers: formUrlEncodedHeaders,
-          body: new URLSearchParams({
-            client_id: testApplicationId,
-            grant_type: GrantType.TokenExchange,
-            subject_token: subjectToken,
-            subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
-            actor_token: accessToken,
-            actor_token_type: 'urn:ietf:params:oauth:token-type:access_token',
-            resource: testApiResourceInfo.indicator,
-          }),
-        })
-      ).rejects.toThrow();
     });
   });
 
@@ -430,12 +472,14 @@ describe('Token Exchange', () => {
 
       const { access_token } = await oidcApi
         .post('token', {
-          headers: formUrlEncodedHeaders,
+          headers: {
+            ...formUrlEncodedHeaders,
+            Authorization: authorizationHeader,
+          },
           body: new URLSearchParams({
-            client_id: testApplicationId,
             grant_type: GrantType.TokenExchange,
             subject_token: subjectToken,
-            subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+            subject_token_type: impersonationTokenType,
             resource: testApiResourceInfo.indicator,
           }),
         })
@@ -446,3 +490,4 @@ describe('Token Exchange', () => {
     });
   });
 });
+/* eslint-enable max-lines */

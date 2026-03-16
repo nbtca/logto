@@ -62,12 +62,20 @@ const usage = {
     tooltip_for_enterprise:
       'Sözleşmeye dayalı planınız, ilk {{basicQuota}} kiracı üyeyi içerir ve ücretsiz kullanım sağlar. Daha fazla ihtiyacınız varsa, her kiracı üye için aylık ${{price, number}}.',
   },
+  custom_domains: {
+    title: 'Özel alan adları',
+    tooltip:
+      'Ayda ${{price, number}} fiyatla en fazla 10 özel alan adı için eklenti özelliği. İlk özel alan adı ücretsizdir.',
+  },
   tokens: {
     title: 'Tokenler',
     tooltip:
       '{{tokenLimit}} token başına {{price, number}} $ ücretle ek özellik. İlk 1 {{basicQuota}} token dahildir.',
     tooltip_for_enterprise:
       'Sözleşmeye dayalı planınız, ilk {{basicQuota}} tokenleri içerir ve ücretsiz kullanım sağlar. Daha fazla ihtiyacınız varsa, her {{tokenLimit}} token için aylık ${{price, number}}.',
+  },
+  m2mTokens: {
+    title: 'M2M tokenler',
   },
   hooks: {
     title: 'Hooklar',

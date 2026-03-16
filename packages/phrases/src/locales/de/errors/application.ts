@@ -4,8 +4,10 @@ const application = {
   invalid_role_type:
     'Es ist nicht möglich, einer Maschinen-zu-Maschinen-Anwendung eine Benutzertyp-Rolle zuzuweisen.',
   invalid_third_party_application_type:
-    'Nur traditionelle Webanwendungen können als Drittanbieter-App markiert werden.',
+    'Nur traditionelle Web-, Single-Page- und native Anwendungen können als Drittanbieter-Apps markiert werden.',
   third_party_application_only: 'Das Feature ist nur für Drittanbieter-Anwendungen verfügbar.',
+  third_party_application_cannot_enable_token_exchange:
+    'Drittanbieteranwendungen dürfen den Token-Austausch nicht aktivieren.',
   user_consent_scopes_not_found: 'Ungültige Benutzerzustimmungsbereiche.',
   consent_management_api_scopes_not_allowed: 'Management API scopes sind nicht erlaubt.',
   protected_app_metadata_is_required: 'Geschützte App-Metadaten sind erforderlich.',

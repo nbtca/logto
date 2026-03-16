@@ -52,9 +52,27 @@ const sign_up_and_sign_in = {
       set_up_more: 'Configurer',
       go_to: "d'autres connecteurs sociaux maintenant.",
     },
-    automatic_account_linking: 'Lien automatique de compte',
-    automatic_account_linking_label:
-      "Lorsqu'elle est activée, si un utilisateur se connecte avec une identité sociale nouvelle pour le système, et qu'il existe exactement un compte existant avec le même identificateur (par exemple, l'adresse e-mail), Logto liera automatiquement le compte à l'identité sociale au lieu d'inviter l'utilisateur à lier son compte.",
+    settings_title: 'Expérience de connexion sociale',
+    automatic_account_linking: 'Lier automatiquement les comptes avec le même identifiant',
+    automatic_account_linking_tip:
+      "Lors de l'activation, si un utilisateur se connecte avec une nouvelle identité sociale et qu'il y a exactement un compte existant avec le même identifiant (par exemple, une adresse e-mail), Logto liera automatiquement l'identité sociale à ce compte. L'utilisateur ne sera pas invité à choisir s'il souhaite lier les comptes.",
+    required_sign_up_identifiers:
+      "Exiger des utilisateurs qu'ils fournissent l'identifiant d'inscription manquant",
+    required_sign_up_identifiers_tip:
+      "Lors de l'activation, les utilisateurs se connectant via des fournisseurs sociaux doivent remplir tout identifiant d'inscription manquant requis (tel qu'un e-mail) avant de terminer leur connexion.\n\nSi désactivé, les utilisateurs peuvent continuer sans fournir les identifiants manquants, même si le compte social ne les a pas synchronisés.",
+  },
+  passkey_sign_in: {
+    title: "CONNEXION PAR CLÉ D'ACCÈS",
+    passkey_sign_in: "Connexion par clé d'accès",
+    enable_passkey_sign_in_description:
+      "Permettre aux utilisateurs d'accéder rapidement et en toute sécurité à l'application via une clé d'accès (WebAuthn), en utilisant la biométrie ou une clé de sécurité, etc.",
+    prompts: "Invites de clé d'accès",
+    show_passkey_button:
+      'Afficher le bouton "Continuer avec la clé d\'accès" sur la page de connexion',
+    show_passkey_button_tip:
+      "La désactivation du bouton \"Continuer avec la clé d'accès\" rend le flux de connexion basé sur l'identifiant en premier, affichant les options de mot de passe et de clé d'accès à l'étape suivante.",
+    allow_autofill:
+      "Autoriser l'invitation et le remplissage automatique des clés d'accès enregistrées dans les champs d'identifiant",
   },
   tip: {
     set_a_password:

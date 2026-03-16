@@ -15,13 +15,13 @@ import {
   registerWithVerifiedIdentifier,
   signInWithOneTimeToken,
 } from '@/apis/experience';
-import LoadingLayer from '@/components/LoadingLayer';
 import useApi from '@/hooks/use-api';
 import useErrorHandler from '@/hooks/use-error-handler';
 import useGlobalRedirectTo from '@/hooks/use-global-redirect-to';
 import useNavigateWithPreservedSearchParams from '@/hooks/use-navigate-with-preserved-search-params';
 import useSubmitInteractionErrorHandler from '@/hooks/use-submit-interaction-error-handler';
 import useTerms from '@/hooks/use-terms';
+import LoadingLayer from '@/shared/components/LoadingLayer';
 
 const OneTimeToken = () => {
   const [params] = useSearchParams();
@@ -82,8 +82,8 @@ const OneTimeToken = () => {
   );
 
   /**
-   * Always try to submit the one-time token interaction with `Register` event first.
-   * If the email already exists, call the `signInWithOneTimeToken` function instead.
+   * Always try to submit the one-time token interaction with `SignIn` event first.
+   * If the user does not exist, call the `registerWithOneTimeToken` function instead.
    */
   const submit = useCallback(
     async (verificationId: string) => {

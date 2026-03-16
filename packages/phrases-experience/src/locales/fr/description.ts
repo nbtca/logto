@@ -17,11 +17,9 @@ const description = {
   passcode_sent: 'Le code a été renvoyé',
   resend_after_seconds: 'Pas encore reçu ? Renvoyer après <span>{{seconds}}</span> secondes',
   resend_passcode: 'Pas encore reçu ? <a>Renvoyer le code de vérification</a>',
-  create_account_id_exists:
-    'Le compte avec {{type}} {{value}} existe déjà, voulez-vous vous connecter?',
+  create_account_id_exists: 'Un compte avec {{value}} existe déjà. Continuer à se connecter.',
   link_account_id_exists: 'Le compte avec {{type}} {{value}} existe déjà, voulez-vous le lier?',
-  sign_in_id_does_not_exist:
-    "Le compte avec {{type}} {{value}} n'existe pas, voulez-vous créer un nouveau compte?",
+  sign_in_id_does_not_exist: 'Aucun compte trouvé pour {{value}}. Créer un nouveau?',
   sign_in_id_does_not_exist_alert: 'Nous ne trouvons aucun compte associé à {{type}} {{value}}.',
   create_account_id_exists_alert:
     'Le compte avec {{type}} {{value}} est lié à un autre compte. Veuillez essayer un autre {{type}}.',
@@ -113,6 +111,17 @@ const description = {
   switch_account_description:
     'Pour continuer, vous serez déconnecté du compte actuel, et le passage au nouveau compte se fera automatiquement.',
   about_yourself: 'Parlez-nous de vous',
+  verify_identity: 'Vérifiez votre identité',
+  choose_verification_method: 'Choisissez comment vous connecter',
+  verification_method: {
+    passkey: "Clé d'accès",
+    passkey_description: 'Vérifiez via votre appareil ou un matériel USB',
+    password: 'Mot de passe',
+    password_description: 'Entrez votre mot de passe',
+    email_verification_code: 'Code de vérification par e-mail',
+    phone_verification_code: 'Code de vérification par téléphone',
+    verification_code_description: 'Envoyer à {{target}}',
+  },
 };
 
 export default Object.freeze(description);

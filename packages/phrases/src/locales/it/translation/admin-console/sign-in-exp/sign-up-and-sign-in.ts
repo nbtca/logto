@@ -49,9 +49,26 @@ const sign_up_and_sign_in = {
       set_up_more: 'Imposta',
       go_to: 'altri connettori social ora.',
     },
-    automatic_account_linking: "Collegamento automatico dell'account",
-    automatic_account_linking_label:
-      "Quando attivato, se un utente accede con un'identità sociale nuova per il sistema, e c'è esattamente un account esistente con lo stesso identificatore (ad esempio, email), Logto collegherà automaticamente l'account con l'identità sociale invece di richiedere all'utente il collegamento dell'account.",
+    settings_title: 'Esperienza di accesso con i social',
+    automatic_account_linking: 'Collega automaticamente gli account con lo stesso identificatore',
+    automatic_account_linking_tip:
+      "Quando abilitato, se un utente accede con una nuova identità social e c'è esattamente un account esistente con lo stesso identificatore (ad esempio, un indirizzo email), Logto collegherà automaticamente l'identità social a quell'account. All'utente non verrà chiesto di scegliere se collegare gli account.",
+    required_sign_up_identifiers:
+      "Richiedi agli utenti di fornire l'identificatore di registrazione mancante",
+    required_sign_up_identifiers_tip:
+      "Quando abilitato, gli utenti che accedono tramite fornitori sociali devono completare gli identificatori di registrazione mancanti (come l'email) prima di completare il login. \n\nSe disabilitato, gli utenti possono procedere senza fornire identificatori mancanti, anche se l'account social non li ha sincronizzati.",
+  },
+  passkey_sign_in: {
+    title: 'ACCESSO CON PASSKEY',
+    passkey_sign_in: 'Accesso con Passkey',
+    enable_passkey_sign_in_description:
+      "Consenti agli utenti di accedere rapidamente e in sicurezza all'applicazione tramite Passkey (WebAuthn), utilizzando biometria o chiave di sicurezza, ecc.",
+    prompts: 'Prompt Passkey',
+    show_passkey_button: 'Mostra il pulsante "Continua con Passkey" nella pagina di accesso',
+    show_passkey_button_tip:
+      'Disabilitando il pulsante "Continua con Passkey", il flusso di accesso diventa prima per identificatore, mostrando le opzioni password e Passkey nel passaggio successivo.',
+    allow_autofill:
+      'Consenti prompt e compilazione automatica delle Passkey registrate nei campi identificatore',
   },
   tip: {
     set_a_password: 'Un set unico di password per il tuo nome utente è un must.',

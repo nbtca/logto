@@ -55,12 +55,19 @@ const usage = {
     tooltip_for_enterprise:
       '你的合約計劃中包含前 {{basicQuota}} 位租戶成員免費使用。如果你需要更多，每位租戶成員每月 ${{price, number}}。',
   },
+  custom_domains: {
+    title: '自訂網域',
+    tooltip: '附加功能，每月 ${{price, number}}，最多 10 個自訂網域。首個自訂網域免費。',
+  },
   tokens: {
     title: '令牌',
     tooltip:
       '附加功能，每 {{tokenLimit}} 次令牌 ${{price, number}}。首 {{basicQuota}} 次令牌已包含在內。',
     tooltip_for_enterprise:
       '你的合約計劃中包含前 {{basicQuota}} 次令牌並可免費使用。如果你需要更多，每 {{tokenLimit}} 次令牌每月 ${{price, number}}。',
+  },
+  m2mTokens: {
+    title: 'M2M 令牌',
   },
   hooks: {
     title: '鉤子',

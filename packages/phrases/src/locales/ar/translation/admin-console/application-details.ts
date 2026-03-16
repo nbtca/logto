@@ -43,6 +43,8 @@ const application_details = {
     'عنوان URI الذي يتم إعادة التوجيه إليه بعد تسجيل المستخدم (سواء نجح أم فشل). انظر OpenID Connect <a>AuthRequest</a> لمزيد من المعلومات.',
   mixed_redirect_uri_warning:
     'نوع التطبيق الخاص بك غير متوافق مع واحد على الأقل من عناوين URI لإعادة التوجيه. لا يتبع أفضل الممارسات ونوصي بشدة بالحفاظ على الاتساق في عناوين URI لإعادة التوجيه.',
+  wildcard_redirect_uri_warning:
+    'عناوين URI لإعادة التوجيه التي تحتوي على أحرف البدل ليست معيار OIDC وقد تزيد من سطح الهجوم. استخدمها بحذر وفضّل عناوين URI الدقيقة لإعادة التوجيه كلما أمكن ذلك.',
   post_sign_out_redirect_uri: 'عنوان URI لإعادة التوجيه بعد تسجيل الخروج',
   post_sign_out_redirect_uris: 'عناوين URI لإعادة التوجيه بعد تسجيل الخروج',
   post_sign_out_redirect_uri_placeholder: 'https://your.website.com/home',
@@ -75,6 +77,13 @@ const application_details = {
   backchannel_logout_uri_session_required: 'هل الجلسة مطلوبة؟',
   backchannel_logout_uri_session_required_description:
     'عند التمكين ، يتطلب RP تضمين مطالبة "sid" (معرف الجلسة) في رمز التسجيل الخروج لتحديد جلسة RP مع OP عند استخدام "backchannel_logout_uri".',
+  token_exchange: 'تبادل الرموز المميّزة',
+  token_exchange_description: 'إدارة إعدادات تبادل الرموز المميّزة لهذا التطبيق.',
+  allow_token_exchange: 'السماح بتبادل الرموز المميّزة',
+  allow_token_exchange_description:
+    'اسمح لهذا التطبيق ببدء طلبات تبادل الرموز المميّزة. هذا مطلوب لـ <impersonationLink>انتحال هوية المستخدم</impersonationLink> و <patLink>رموز الوصول الشخصية</patLink>.',
+  allow_token_exchange_public_client_warning:
+    'لا يُنصح بتمكين تبادل الرموز المميّزة للعملاء العموميين (تطبيق صفحة واحدة / تطبيق أصلي). لا يمكن للعملاء العموميين تخزين بيانات الاعتماد بشكل آمن، مما قد يعرّض تطبيقك لمخاطر انتحال الرموز المميّزة.',
   delete_description:
     'لا يمكن التراجع عن هذا الإجراء. سيتم حذف التطبيق بشكل دائم. يرجى إدخال اسم التطبيق <span>{{name}}</span> للتأكيد.',
   enter_your_application_name: 'أدخل اسم التطبيق الخاص بك',
@@ -155,6 +164,18 @@ const application_details = {
     organization_description:
       'Select the permissions requested by the third-party app for accessing specific organization data.',
     grant_organization_level_permissions: 'Grant permissions of organization data',
+    oidc_title: 'OIDC',
+    oidc_description:
+      'يتم تكوين أذونات OIDC الأساسية تلقائيًا لتطبيقك. هذه النطاقات ضرورية للمصادقة ولا يتم عرضها على شاشة موافقة المستخدم.',
+    default_oidc_permissions: 'أذونات OIDC الافتراضية',
+    permission_column: 'الإذن',
+    guide_column: 'الدليل',
+    openid_permission: 'openid',
+    openid_permission_guide:
+      "اختياري للوصول إلى موارد OAuth.\nمطلوب لمصادقة OIDC. يمنح الوصول إلى رمز مميز للهوية (ID token) ويسمح بالوصول إلى 'userinfo_endpoint'.",
+    offline_access_permission: 'offline_access',
+    offline_access_permission_guide:
+      'اختياري. يسترجع رموز التحديث للوصول طويل الأمد أو للمهام في الخلفية.',
   },
   roles: {
     assign_button: 'Assign roles',

@@ -1,14 +1,16 @@
 import {
   InteractionEvent,
   InteractionHookEvent,
+  type InteractionHookEventPayload,
   type User,
   managementApiHooksRegistration,
   type DataHookEvent,
   type InteractionApiMetadata,
   type ManagementApiContext,
   userInfoSelectFields,
+  type ExceptionHookEvent,
 } from '@logto/schemas';
-import { pick, type Optional } from '@silverhand/essentials';
+import { pick } from '@silverhand/essentials';
 import { type Context } from 'koa';
 import { type IRouterParamContext } from 'koa-router';
 
@@ -18,12 +20,12 @@ import {
   hasRegisteredDataHookEvent,
 } from './utils.js';
 
-type DataHookMetadata = {
+export type HookMetadata = {
   userAgent?: string;
   ip: string;
 } & Partial<InteractionApiMetadata>;
 
-export type DataHookContext = {
+export type HookContext = {
   /** Data details */
   data?: unknown;
 } & Partial<ManagementApiContext> &
@@ -46,21 +48,29 @@ type UserContext = {
 /**
  * A map of data hook event to its context type for better type hinting.
  */
-export type DataHookContextMap = {
+type DataHookContextMap = {
   'Organization.Membership.Updated': { organizationId: string };
   'User.Created': UserContext;
   'User.Data.Updated': UserContext;
   'User.Deleted': UserContext;
 };
 
-export class DataHookContextManager {
-  contextArray: Array<DataHookContext & { event: DataHookEvent }> = [];
+export class HookContextManager {
+  /**
+   * Data hooks are triggered when certain data mutations occur. E.g. user creation, user update, etc.
+   * Note that these hooks are only triggered for successful requests.
+   */
+  dataHookContextArray: Array<HookContext & { event: DataHookEvent }> = [];
+  /**
+   * Exception hooks are triggered when exceptions occur during request processing.
+   */
+  exceptionHookContextArray: Array<HookContext & { event: ExceptionHookEvent }> = [];
 
-  constructor(public metadata: DataHookMetadata) {}
+  constructor(public metadata: HookMetadata) {}
 
-  getRegisteredDataHookEventContext(
+  getRegisteredHookEventContext(
     ctx: IRouterParamContext & Context
-  ): Readonly<[DataHookEvent, DataHookContext]> | undefined {
+  ): Readonly<[DataHookEvent, HookContext]> | undefined {
     const { method, _matchedRoute: matchedRoute } = ctx;
 
     const key = buildManagementApiDataHookRegistrationKey(method, matchedRoute);
@@ -78,19 +88,27 @@ export class DataHookContextManager {
     ]);
   }
 
-  appendContext<Event extends DataHookEvent>(
+  appendDataHookContext<Event extends DataHookEvent>(
     event: Event,
     context: Event extends keyof DataHookContextMap
       ? DataHookContextMap[Event] & Partial<ManagementApiContext> & Record<string, unknown>
-      : DataHookContext
+      : HookContext
   ) {
     const { user, ...rest } = context;
     // eslint-disable-next-line @silverhand/fp/no-mutating-methods
-    this.contextArray.push({
+    this.dataHookContextArray.push({
       event,
       // eslint-disable-next-line no-restricted-syntax -- trust the input
       ...(user ? { data: pick(user as User, ...userInfoSelectFields) } : {}),
       ...rest,
+    });
+  }
+
+  appendExceptionHookContext<Event extends ExceptionHookEvent>(event: Event, context: HookContext) {
+    // eslint-disable-next-line @silverhand/fp/no-mutating-methods
+    this.exceptionHookContextArray.push({
+      event,
+      ...context,
     });
   }
 }
@@ -107,7 +125,16 @@ type InteractionHookMetadata = {
  */
 type InteractionHookResult = {
   userId: string;
+  event?: Exclude<InteractionHookEvent, InteractionHookEvent.PostSignInAdaptiveMfaTriggered>;
 };
+
+type AdaptiveMfaTriggeredInteractionHookResult = {
+  userId: string;
+  event: InteractionHookEvent.PostSignInAdaptiveMfaTriggered;
+  payload: Pick<InteractionHookEventPayload, 'adaptiveMfaResult'>;
+};
+
+type InteractionHookResultUnion = InteractionHookResult | AdaptiveMfaTriggeredInteractionHookResult;
 
 const interactionEventToHookEvent: Record<InteractionEvent, InteractionHookEvent> = {
   [InteractionEvent.Register]: InteractionHookEvent.PostRegister,
@@ -116,7 +143,7 @@ const interactionEventToHookEvent: Record<InteractionEvent, InteractionHookEvent
 };
 
 export class InteractionHookContextManager {
-  public interactionHookResult: Optional<InteractionHookResult>;
+  public interactionHookResultArray: InteractionHookResultUnion[] = [];
 
   constructor(public metadata: InteractionHookMetadata) {}
 
@@ -124,12 +151,17 @@ export class InteractionHookContextManager {
     return interactionEventToHookEvent[this.metadata.interactionEvent];
   }
 
+  get interactionHookResults(): readonly InteractionHookResultUnion[] {
+    return this.interactionHookResultArray;
+  }
+
   /**
    * Assign an interaction hook result to trigger webhook.
-   * Calling it multiple times will overwrite the original result, but only one webhook will be triggered.
+   * Calling it multiple times will queue multiple webhook triggers.
    * @param result The result to assign.
    */
-  assignInteractionHookResult(result: InteractionHookResult) {
-    this.interactionHookResult = result;
+  assignInteractionHookResult(result: InteractionHookResultUnion) {
+    // eslint-disable-next-line @silverhand/fp/no-mutating-methods
+    this.interactionHookResultArray.push(result);
   }
 }

@@ -1,5 +1,80 @@
 # Change Log
 
+## 1.26.0
+
+### Minor Changes
+
+- eced1f02d4: add application context to JWT customizer
+
+  The application context is now available in the JWT customizer script for both access token and client credentials token types. This allows you to access application details (e.g., name, description, custom data) when customizing JWT claims.
+
+- b8ca1a40c7: support ID token claims configuration
+
+  You can now customize which additional claims (e.g., `custom_data`, `identities`, `roles`, `organizations`, `organization_roles`) are included in the ID token via Console or Management API.
+
+## 1.25.0
+
+### Minor Changes
+
+- 7cbe315dde: support token exchange grant type with app-level control
+
+  - Add `allowTokenExchange` field to `customClientMetadata` to control whether an application can initiate token exchange requests
+  - Machine-to-machine applications now support token exchange
+  - All new applications will have token exchange disabled by default, you can enable it in the application settings
+  - For backward compatibility, existing first-party Traditional, Native, and SPA applications will have this enabled
+  - Third-party applications are not allowed to use token exchange
+  - Add UI toggle in Console with risk warning for public clients (single-page application / native application)
+
+- c8b2caec5c: add trust-unverified-email support for OIDC social connector and OIDC-based enterprise SSO connectors
+
+  - Add `trustUnverifiedEmail` to the OIDC social connector config (default `false`) to allow syncing emails when `email_verified` is missing or false
+  - Apply the setting in core OIDC/Azure OIDC SSO connectors and expose it in the Admin Console with new tips and translations
+
+- ce65b07964: support wildcard patterns in redirect URIs
+
+  Added support for wildcard patterns (`*`) in redirect URIs to better support dynamic environments like preview deployments.
+
+  Rules (web only):
+
+  - Wildcards are allowed for http/https redirect URIs in the hostname and/or pathname.
+  - Wildcards are rejected in scheme, port, query, and hash.
+  - Hostname wildcard patterns must contain at least one dot to avoid overly broad patterns.
+
+## 1.24.0
+
+### Minor Changes
+
+- 116dcf5e7d: support reCaptcha domain customization
+
+  You can now customize the domain for reCaptcha, for example, using reCaptcha with `recaptcha.net` domain.
+
+- d551f5ccc3: support creating third-party SPA and Native applications
+
+  Previously, only traditional web applications could be marked as third-party apps. Now you can also create third-party single-page applications (SPA) and native applications, enabling more flexible OAuth/OIDC integration scenarios.
+
+- 116dcf5e7d: support reCAPTCHA Enterprise checkbox mode
+
+  You can now choose between two verification modes for reCAPTCHA Enterprise:
+
+  - **Invisible**: Score-based verification that runs automatically in the background (default)
+  - **Checkbox**: Displays the "I'm not a robot" widget for user interaction
+
+  Note: The verification mode must match your reCAPTCHA key type configured in Google Cloud Console.
+
+### Patch Changes
+
+- a6858e76cf: update SAML relay state length and improve error handling
+
+  The data type of the `relay_state` column in the `saml_application_sessions` table has been changed from varchar(256) to varchar(512) to accommodate longer Relay State values. For example, when Firebase acts as a Service Provider and initiates a SAML request, the relay state length is approximately 300-400 characters, which previously prevented Firebase from integrating with Logto as an SP before this fix.
+
+  Additionally, we have updated the error handling logic in the APIs related to the SAML authentication flow to make error messages more straightforward.
+
+## 1.23.0
+
+### Minor Changes
+
+- c3266a917a: add a new webhook event "Identifier.Lockout", which is triggered when a user is locked out due to repeated failed sign-in attempts
+
 ## 1.22.0
 
 ### Minor Changes

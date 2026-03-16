@@ -41,6 +41,8 @@ const application_details = {
     '在用戶登錄完成（不論成功與否）後，重新導向的目標 URI。參見 OpenID Connect <a>AuthRequest</a> 以了解更多。',
   mixed_redirect_uri_warning:
     '你的應用程式類型不相容於至少一個重定向 URI。這不符合最佳實踐，我們強烈建議保持重定向 URI 一致。',
+  wildcard_redirect_uri_warning:
+    '萬用字元重定向 URI 不是標準 OIDC，可能會增加攻擊面。請謹慎使用，儘可能使用精確的重定向 URI。',
   post_sign_out_redirect_uri: '登出後重定向的 URI',
   post_sign_out_redirect_uris: '登出後重定向的 URIs',
   post_sign_out_redirect_uri_placeholder: 'https://your.website.com/home',
@@ -72,6 +74,13 @@ const application_details = {
   backchannel_logout_uri_session_required: '需要會話嗎？',
   backchannel_logout_uri_session_required_description:
     '啟用後，RP 要求 logout token 中包含 `sid`（會話 ID）聲明，以便當使用 `backchannel_logout_uri` 時識別 RP 與 OP 的會話。',
+  token_exchange: '權杖交換',
+  token_exchange_description: '管理此應用程式的權杖交換設定。',
+  allow_token_exchange: '允許權杖交換',
+  allow_token_exchange_description:
+    '允許此應用程式發起權杖交換請求。這是 <impersonationLink>使用者冒充</impersonationLink> 與 <patLink>個人存取權杖</patLink> 所必需的。',
+  allow_token_exchange_public_client_warning:
+    '不建議為公開用戶端（單頁應用／原生應用）啟用權杖交換。公開用戶端無法安全儲存憑證，可能使你的應用暴露於權杖冒充風險。',
   delete_description:
     '本操作會永久性地刪除該應用程式，且不可撤銷。輸入 <span>{{name}}</span> 確認。',
   enter_your_application_name: '輸入你的應用程式姓名',
@@ -144,6 +153,17 @@ const application_details = {
     organization_title: '組織',
     organization_description: '選擇由第三方應用程式請求的用於訪問特定組織資料的權限。',
     grant_organization_level_permissions: '授予組織資料權限',
+    oidc_title: 'OIDC',
+    oidc_description:
+      '核心 OIDC 權限會自動為你的應用程式設定。這些 scope 對驗證至關重要，且不會顯示於使用者同意畫面。',
+    default_oidc_permissions: '預設 OIDC 權限',
+    permission_column: '權限',
+    guide_column: '指南',
+    openid_permission: 'openid',
+    openid_permission_guide:
+      "用於存取 OAuth 資源時為選填。\n用於 OIDC 驗證時為必填。授予存取 ID Token 的權限，並允許存取 'userinfo_endpoint'。",
+    offline_access_permission: 'offline_access',
+    offline_access_permission_guide: '選填。取得刷新令牌，用於長期存取或背景任務。',
   },
   roles: {
     assign_button: '分配機器對機器角色',

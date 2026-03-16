@@ -1,6 +1,6 @@
 import { ApplicationType, type Application } from '@logto/schemas';
 import { type Nullable, joinPath, cond } from '@silverhand/essentials';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
@@ -26,6 +26,7 @@ import { buildUrl } from '@/utils/url';
 import GuideLibrary from './components/GuideLibrary';
 import GuideLibraryModal from './components/GuideLibraryModal';
 import ProtectedAppModal from './components/ProtectedAppModal';
+import ThirdPartyAppGuideLibrary from './components/ThirdPartyAppGuideLibrary';
 import ThirdPartyApplicationEmptyDataPlaceHolder from './components/ThirdPartyApplicationEmptyDataPlaceHolder';
 import useApplicationsData from './hooks/use-application-data';
 import styles from './index.module.scss';
@@ -114,7 +115,14 @@ function Applications({ tab }: Props) {
         metadata: thirdPartyAppGuide.metadata,
       });
     }
-  }, [setSelectedGuide]);
+  }, []);
+
+  const tablePlaceholder = useMemo(() => {
+    if (isThirdPartyTab) {
+      return <ThirdPartyApplicationEmptyDataPlaceHolder onCreateThirdParty={onCreateThirdParty} />;
+    }
+    return <EmptyDataPlaceholder />;
+  }, [isThirdPartyTab, onCreateThirdParty]);
 
   return (
     <div className={pageLayout.container}>
@@ -157,7 +165,7 @@ function Applications({ tab }: Props) {
         </TabNavItem>
       </TabNav>
 
-      {/* Guide library is only shown for my applications tab when there are no applications */}
+      {/* Guide library for my applications tab */}
       {!isLoading && !applications?.length && !isThirdPartyTab && (
         <div className={styles.guideLibraryContainer}>
           <CardTitle
@@ -173,20 +181,17 @@ function Applications({ tab }: Props) {
           />
         </div>
       )}
-      {(isLoading || !!applications?.length || isThirdPartyTab) && (
+      {!isLoading && !applications?.length && isThirdPartyTab && (
+        <ThirdPartyAppGuideLibrary onSelectGuide={setSelectedGuide} />
+      )}
+      {(isLoading || !!applications?.length) && (
         <Table
           isLoading={isLoading}
           className={pageLayout.table}
           rowGroups={[{ key: 'applications', data: applications }]}
           rowIndexKey="id"
           errorMessage={error?.body?.message ?? error?.message}
-          placeholder={
-            isThirdPartyTab ? (
-              <ThirdPartyApplicationEmptyDataPlaceHolder onCreateThirdParty={onCreateThirdParty} />
-            ) : (
-              <EmptyDataPlaceholder />
-            )
-          }
+          placeholder={tablePlaceholder}
           columns={[
             {
               title: t('applications.application_name'),

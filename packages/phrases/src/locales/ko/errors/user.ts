@@ -7,6 +7,7 @@ const user = {
   email_not_exist: '이메일 주소가 아직 등록되지 않았어요.',
   phone_not_exist: '휴대전화번호가 아직 등록되지 않았어요.',
   identity_not_exist: '소셜 계정이 아직 등록되지 않았어요.',
+  sso_identity_not_exist: '엔터프라이즈 SSO 계정이 아직 등록되지 않았어요.',
   identity_already_in_use: '소셜 계정이 이미 등록되어 있어요.',
   social_account_exists_in_profile: '이 소셜 계정은 이미 연동되어 있습니다.',
   cannot_delete_self: '자기 자신을 삭제할 수 없어요.',
@@ -46,6 +47,7 @@ const user = {
     '사용자는 지정된 SSO 커넥터 ID: {{ssoConnectorId}}에 연결된 엔터프라이즈 아이덴티티가 없습니다.',
   identity_not_exists_in_current_user:
     '지정된 아이덴티티는 현재 사용자 계정에 존재하지 않습니다. 진행하기 전에 아이덴티티를 연동해주세요.',
+  passkey_preferred: '패스키를 만들어 로그인 과정을 더 간단하게 하세요.',
 };
 
 export default Object.freeze(user);

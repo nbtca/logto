@@ -202,6 +202,19 @@ const quota_item = {
     unlimited: 'ความปลอดภัยขั้นสูง',
     not_eligible: 'ลบการตั้งค่าความปลอดภัยขั้นสูงของคุณ',
   },
+  custom_domains_limit: {
+    name: 'โดเมนแบบกำหนดเอง',
+    limited: '{{count, number}} โดเมนแบบกำหนดเอง',
+    limited_other: '{{count, number}} โดเมนแบบกำหนดเอง',
+    unlimited: 'ไม่จำกัดโดเมนแบบกำหนดเอง',
+    not_eligible: 'ลบโดเมนแบบกำหนดเองของคุณ',
+  },
+  passkey_sign_in_enabled: {
+    name: 'การลงชื่อเข้าใช้ด้วย Passkey',
+    limited: 'การลงชื่อเข้าใช้ด้วย Passkey',
+    unlimited: 'การลงชื่อเข้าใช้ด้วย Passkey',
+    not_eligible: 'ไม่รองรับการลงชื่อเข้าใช้ด้วย Passkey',
+  },
 };
 
 export default Object.freeze(quota_item);

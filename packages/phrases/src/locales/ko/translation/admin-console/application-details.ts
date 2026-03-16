@@ -43,6 +43,8 @@ const application_details = {
     '사용자 로그인 후 리디렉트될 URI 경로입니다. 더 자세한 정보는 OpenID Connect <a>인증 요청</a>을 참조하세요.',
   mixed_redirect_uri_warning:
     '어플리케이션 유형이 적어도 하나의 리디렉트 URI 와 호환되지 않습니다. 이는 모범 사례를 따르지 않으며, 리디렉트 URI 들을 일관되게 유지할 것을 강력히 권장합니다.',
+  wildcard_redirect_uri_warning:
+    '와일드카드 리디렉트 URI는 표준 OIDC가 아니며 공격 표면을 증가시킬 수 있습니다. 주의하여 사용하고 가능하면 정확한 리디렉트 URI를 사용하세요.',
   post_sign_out_redirect_uri: '로그아웃 후 리디렉트 URI',
   post_sign_out_redirect_uris: '로그아웃 후 리디렉트 URIs',
   post_sign_out_redirect_uri_placeholder: 'https://your.website.com/home',
@@ -75,6 +77,13 @@ const application_details = {
   backchannel_logout_uri_session_required: '세션이 필요합니까?',
   backchannel_logout_uri_session_required_description:
     '활성화되면, RP는 `sid` (세션 ID) 클레임이 로그아웃 토큰에 포함되어 `backchannel_logout_uri` 사용 시 OP와 RP 세션을 식별하도록 요구합니다.',
+  token_exchange: '토큰 교환',
+  token_exchange_description: '이 애플리케이션의 토큰 교환 설정을 관리합니다.',
+  allow_token_exchange: '토큰 교환 허용',
+  allow_token_exchange_description:
+    '이 애플리케이션이 토큰 교환 요청을 시작할 수 있도록 허용합니다. 이는 <impersonationLink>사용자 가장</impersonationLink> 및 <patLink>개인 액세스 토큰</patLink>에 필요합니다.',
+  allow_token_exchange_public_client_warning:
+    '공개 클라이언트(단일 페이지 앱/네이티브 앱)에서 토큰 교환을 활성화하는 것은 권장되지 않습니다. 공개 클라이언트는 자격 증명을 안전하게 저장할 수 없으므로 애플리케이션이 토큰 가장 위험에 노출될 수 있습니다.',
   delete_description:
     '이 행동은 취소할 수 없습니다. 애플리케이션을 영구적으로 삭제할 것입니다. 삭제를 진행하려면 <span>{{name}}</span>를 입력하세요.',
   enter_your_application_name: '어플리케이션 이름을 입력하세요.',
@@ -153,6 +162,18 @@ const application_details = {
     organization_title: '조직',
     organization_description: '제3자 앱에서 특정 조직 데이터에 액세스하려는 권한을 선택하세요.',
     grant_organization_level_permissions: '조직 데이터의 권한 부여',
+    oidc_title: 'OIDC',
+    oidc_description:
+      '핵심 OIDC 권한은 앱에 자동으로 구성됩니다. 이러한 스코프는 인증에 필수이며 사용자 동의 화면에 표시되지 않습니다.',
+    default_oidc_permissions: '기본 OIDC 권한',
+    permission_column: '권한',
+    guide_column: '가이드',
+    openid_permission: 'openid',
+    openid_permission_guide:
+      "OAuth 리소스 접근에는 선택 사항입니다.\nOIDC 인증에는 필수입니다. ID 토큰에 대한 접근을 부여하며 'userinfo_endpoint'에 접근할 수 있습니다.",
+    offline_access_permission: 'offline_access',
+    offline_access_permission_guide:
+      '선택 사항입니다. 장기 접근 또는 백그라운드 작업을 위한 리프레시 토큰을 가져옵니다.',
   },
   roles: {
     assign_button: '머신 간 역할 할당',

@@ -202,6 +202,19 @@ const quota_item = {
     unlimited: 'Zaawansowane zabezpieczenia',
     not_eligible: 'Usuń swoje ustawienia zaawansowanych zabezpieczeń',
   },
+  custom_domains_limit: {
+    name: 'Niestandardowe domeny',
+    limited: '{{count, number}} niestandardowa domena',
+    limited_other: '{{count, number}} niestandardowe domeny',
+    unlimited: 'Nieograniczone niestandardowe domeny',
+    not_eligible: 'Usuń swoje niestandardowe domeny',
+  },
+  passkey_sign_in_enabled: {
+    name: 'Logowanie passkey',
+    limited: 'Logowanie passkey',
+    unlimited: 'Logowanie passkey',
+    not_eligible: 'Brak obsługi logowania passkey',
+  },
 };
 
 export default Object.freeze(quota_item);

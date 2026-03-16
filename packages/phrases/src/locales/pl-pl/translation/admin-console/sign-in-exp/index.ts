@@ -109,13 +109,21 @@ const sign_in_exp = {
       account_security: {
         title: 'BEZPIECZEŃSTWO KONTA',
         description:
-          'Zarządzaj dostępem do Account API, aby użytkownicy po zalogowaniu mogli przeglądać lub edytować swoje dane tożsamości oraz czynniki uwierzytelniania. Zanim wprowadzą te zmiany związane z bezpieczeństwem, użytkownicy muszą potwierdzić swoją tożsamość i uzyskać identyfikator rekordu weryfikacji ważny przez 10 minut.',
+          'Zarządzaj dostępem do Account API, aby użytkownicy po zalogowaniu mogli przeglądać lub edytować swoje dane tożsamości oraz czynniki uwierzytelniania.',
+        security_verification: {
+          title: 'Weryfikacja bezpieczeństwa',
+          description:
+            'Przed zmianą ustawień bezpieczeństwa użytkownicy muszą potwierdzić swoją tożsamość, aby uzyskać identyfikator rekordu weryfikacji ważny przez 10 minut. Aby włączyć metodę weryfikacji (e-mail, telefon, hasło), ustaw uprawnienie Account API poniżej na <strong>Tylko do odczytu</strong> (minimum) lub <strong>Edytuj</strong>, aby system mógł wykryć, czy użytkownik ją skonfigurował. <a>Dowiedz się więcej</a>',
+        },
         groups: {
           identifiers: {
             title: 'Identyfikatory',
           },
           authentication_factors: {
             title: 'Czynniki uwierzytelniające',
+          },
+          session_management: {
+            title: 'Zarządzanie sesją',
           },
         },
       },
@@ -158,11 +166,36 @@ const sign_in_exp = {
       custom_data: 'Dane niestandardowe',
       custom_data_description:
         'Kontroluj dostęp do niestandardowych danych JSON przechowywanych przy użytkowniku.',
+      sessions: 'Sesje',
     },
     webauthn_related_origins: 'Powiązane źródła WebAuthn',
     webauthn_related_origins_description:
       'Dodaj domeny swoich aplikacji front-end, którym pozwalasz rejestrować klucze dostępu przez Account API.',
     webauthn_related_origins_error: 'Źródło musi zaczynać się od https:// lub http://',
+    prebuilt_ui: {
+      title: 'INTEGRUJ WSTĘPNIE ZBUDOWANY INTERFEJS',
+      description:
+        'Szybko zintegruj gotowe przepływy weryfikacji i ustawień bezpieczeństwa z interfejsem wstępnie zbudowanym.',
+      permission_notice:
+        'Aby zintegrować te gotowe przepływy, ustaw powiązane uprawnienia Account API na <strong>Edytuj</strong> w ustawieniach poniżej.',
+      flows_title: 'Integruj gotowe przepływy ustawień bezpieczeństwa',
+      flows_description:
+        'Połącz swoją domenę ze ścieżką, aby utworzyć URL ustawień konta (np. https://auth.foo.com/account/email). Opcjonalnie dodaj parametr URL `redirect=`, aby użytkownicy mogli wrócić do Twojej aplikacji po pomyślnym zaktualizowaniu.',
+      tooltips: {
+        email: 'Zaktualizuj swój główny adres e-mail',
+        phone: 'Zaktualizuj swój główny numer telefonu',
+        username: 'Zaktualizuj swoją nazwę użytkownika',
+        password: 'Ustaw nowe hasło',
+        authenticator_app:
+          'Skonfiguruj nową aplikację uwierzytelniającą dla uwierzytelniania wieloskładnikowego',
+        passkey_add: 'Zarejestruj nowy klucz dostępu',
+        passkey_manage: 'Zarządzaj istniejącymi kluczami dostępu lub dodaj nowe',
+        backup_codes_generate: 'Wygeneruj nowy zestaw 10 kodów zapasowych',
+        backup_codes_manage: 'Zobacz dostępne kody zapasowe lub wygeneruj nowe',
+      },
+      customize_note: 'Nie chcesz korzystać z gotowego rozwiązania? Możesz całkowicie',
+      customize_link: 'dostosować swoje przepływy za pomocą Account API.',
+    },
   },
   sign_up_and_sign_in,
   content,

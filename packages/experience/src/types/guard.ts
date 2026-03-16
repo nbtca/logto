@@ -10,7 +10,7 @@ import {
 } from '@logto/schemas';
 import * as s from 'superstruct';
 
-import { type IdentifierInputValue } from '@/components/InputFields/SmartInputField';
+import { type IdentifierInputValue } from '@/shared/components/InputFields/SmartInputField';
 
 import { UserFlow } from '.';
 
@@ -143,6 +143,14 @@ export const identifierInputValueGuard: s.Describe<IdentifierInputValue> = s.obj
  * Type guard for the `identifier` search param config on the identifier sign-in/register page.
  */
 export const identifierSearchParamGuard = s.array(identifierEnumGuard);
+
+/* Identifier-based passkey sign-in state - only contains WebAuthn options.
+ * Identifier and available methods are read from UserInteractionContext and useSieMethods(). */
+export const identifierPasskeyStateGuard = s.object({
+  options: s.record(s.string(), s.unknown()),
+});
+
+export type IdentifierPasskeyState = s.Infer<typeof identifierPasskeyStateGuard>;
 
 type StringGuard = ReturnType<typeof s.string>;
 // eslint-disable-next-line no-restricted-syntax -- Object.fromEntries can not infer the key type

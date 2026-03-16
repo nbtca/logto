@@ -21,6 +21,7 @@ const action = {
   switch_to: 'Перемкнутися на {{method}}',
   sign_in_via_passcode: 'Увійти за допомогою коду підтвердження',
   sign_in_via_password: 'Увійти за допомогою пароля',
+  sign_in_via_passkey: 'Увійти за допомогою ключа доступу',
   change: 'Змінити {{method}}',
   link_another_email: 'Зв’язати іншу електронну пошту',
   link_another_phone: 'Зв’язати інший телефон',
@@ -29,10 +30,14 @@ const action = {
   copy: 'Копіювати',
   verify_via_passkey: 'Підтвердити за допомогою ключа доступу',
   download: 'Завантажити',
+  remove: 'Видалити',
+  edit: 'Редагувати',
+  save: 'Зберегти',
   single_sign_on: 'Єдиний вхід (SSO)',
   authorize: 'Авторизуватися',
   use_another_account: 'Використати інший обліковий запис',
   back_to_current_account: 'Повернутися до поточного облікового запису',
+  done: 'Готово',
 };
 
 export default Object.freeze(action);

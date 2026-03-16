@@ -21,6 +21,7 @@ const action = {
   switch_to: '{{method}} yöntemine geç',
   sign_in_via_passcode: 'Doğrulama koduyla oturum açın',
   sign_in_via_password: 'şifre ile giriş yap',
+  sign_in_via_passkey: 'Passkey ile giriş yap',
   change: '{{method}} değiştir',
   link_another_email: 'Başka bir e-postayı bağla',
   link_another_phone: 'Başka bir telefon bağla',
@@ -29,10 +30,14 @@ const action = {
   copy: 'Kopyala',
   verify_via_passkey: 'Parola ile doğrula',
   download: 'İndir',
+  remove: 'Kaldır',
+  edit: 'Düzenle',
+  save: 'Kaydet',
   single_sign_on: 'Tek oturum açma',
   authorize: 'Yetkilendir',
   use_another_account: 'Başka bir hesap kullan',
   back_to_current_account: 'Mevcut hesaba geri dön',
+  done: 'Bitti',
 };
 
 export default Object.freeze(action);

@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { type Ref, forwardRef, useContext } from 'react';
 
 import { type GuideMetadata, type Guide } from '@/assets/docs/guides/types';
-import { type NewSubscriptionQuota } from '@/cloud/types/router';
+import { type SubscriptionQuota } from '@/cloud/types/router';
 import { CombinedAddOnAndFeatureTag } from '@/components/FeatureTag';
 import { latestProPlanId } from '@/consts/subscriptions';
 import { SubscriptionDataContext } from '@/contexts/SubscriptionDataProvider';
@@ -17,6 +17,7 @@ import styles from './index.module.scss';
 type Props = {
   readonly className?: string;
   readonly categoryName?: string;
+  readonly categoryDescription?: React.ReactNode;
   readonly guides?: readonly Guide[];
   readonly hasCardBorder?: boolean;
   readonly hasCardButton?: boolean;
@@ -25,7 +26,7 @@ type Props = {
 
 function getPaywallTag(
   guideMetadata: GuideMetadata,
-  currentSubscriptionQuota: NewSubscriptionQuota,
+  currentSubscriptionQuota: SubscriptionQuota,
   isPaidPlan: boolean,
   isEnterprisePlan: boolean
 ) {
@@ -49,7 +50,15 @@ function getPaywallTag(
 }
 
 function GuideCardGroup(
-  { className, categoryName, guides, hasCardBorder, hasCardButton, onClickGuide }: Props,
+  {
+    className,
+    categoryName,
+    categoryDescription,
+    guides,
+    hasCardBorder,
+    hasCardButton,
+    onClickGuide,
+  }: Props,
   ref: Ref<HTMLDivElement>
 ) {
   const {
@@ -66,6 +75,7 @@ function GuideCardGroup(
   return (
     <div ref={ref} className={classNames(styles.guideGroup, className)}>
       {categoryName && <label>{categoryName}</label>}
+      {categoryDescription && <div className={styles.description}>{categoryDescription}</div>}
       <div className={styles.grid}>
         {guides.map((guide) => (
           <GuideCard

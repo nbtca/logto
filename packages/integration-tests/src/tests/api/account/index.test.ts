@@ -12,7 +12,7 @@ import {
 import { updateSignInExperience } from '#src/api/sign-in-experience.js';
 import { createVerificationRecordByPassword } from '#src/api/verification-record.js';
 import { setEmailConnector } from '#src/helpers/connector.js';
-import { WebHookApiTest } from '#src/helpers/hook.js';
+import { getSupportedHookEvents, WebHookApiTest } from '#src/helpers/hook.js';
 import { expectRejects } from '#src/helpers/index.js';
 import {
   createDefaultTenantUserWithPassword,
@@ -45,7 +45,7 @@ describe('account', () => {
   beforeEach(async () => {
     await webHookApi.create({
       name: hookName,
-      events: [...hookEvents],
+      events: getSupportedHookEvents([...hookEvents]),
       config: { url: webHookMockServer.endpoint },
     });
   });
@@ -375,6 +375,42 @@ describe('account', () => {
       await initClientAndSignInForDefaultTenant(username, newPassword);
 
       await deleteDefaultTenantUser(user.id);
+    });
+
+    it('should throw error and trigger sentinel policy when failed to verify password', async () => {
+      const { user, username, password } = await createDefaultTenantUserWithPassword();
+      const api = await signInAndGetUserApi(username, password);
+
+      await updateSignInExperience({
+        sentinelPolicy: {
+          maxAttempts: 2,
+          lockoutDuration: 1,
+        },
+      });
+
+      await expectRejects(createVerificationRecordByPassword(api, 'wrong-password'), {
+        code: 'session.invalid_credentials',
+        status: 422,
+      });
+
+      // Second attempt to trigger the lockout
+      await expectRejects(createVerificationRecordByPassword(api, 'wrong-password'), {
+        code: 'session.verification_blocked_too_many_attempts',
+        status: 400,
+      });
+
+      const hook = webHookApi.hooks.get(hookName)!;
+      await assertHookLogResult(hook, 'Identifier.Lockout', {
+        hookPayload: {
+          event: 'Identifier.Lockout',
+        },
+      });
+
+      await deleteDefaultTenantUser(user.id);
+
+      await updateSignInExperience({
+        sentinelPolicy: {},
+      });
     });
   });
 });

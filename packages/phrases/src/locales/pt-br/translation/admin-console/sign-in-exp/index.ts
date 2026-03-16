@@ -109,13 +109,21 @@ const sign_in_exp = {
       account_security: {
         title: 'SEGURANÇA DA CONTA',
         description:
-          'Gerencie o acesso à Account API, permitindo que os usuários vejam ou editem suas informações de identidade e fatores de autenticação depois de entrar no aplicativo. Antes de fazer essas alterações relacionadas à segurança, os usuários precisam verificar a identidade e obter um ID de registro válido por 10 minutos.',
+          'Gerencie o acesso à Account API, permitindo que os usuários vejam ou editem suas informações de identidade e fatores de autenticação depois de entrar no aplicativo.',
+        security_verification: {
+          title: 'Verificação de segurança',
+          description:
+            'Antes de alterar as configurações de segurança, os usuários devem verificar sua identidade para obter um ID de registro de verificação válido por 10 minutos. Para habilitar um método de verificação (e-mail, telefone, senha), defina a permissão da Account API abaixo como <strong>Somente leitura</strong> (mínimo) ou <strong>Editar</strong> para que o sistema possa detectar se o usuário o configurou. <a>Saiba mais</a>',
+        },
         groups: {
           identifiers: {
             title: 'Identificadores',
           },
           authentication_factors: {
             title: 'Fatores de autenticação',
+          },
+          session_management: {
+            title: 'Gerenciamento de sessão',
           },
         },
       },
@@ -159,11 +167,35 @@ const sign_in_exp = {
       custom_data: 'Dados personalizados',
       custom_data_description:
         'Controle o acesso aos dados JSON personalizados armazenados no usuário.',
+      sessions: 'Sessões',
     },
     webauthn_related_origins: 'Origens relacionadas ao WebAuthn',
     webauthn_related_origins_description:
       'Adicione os domínios dos seus aplicativos front-end autorizados a registrar passkeys por meio da Account API.',
     webauthn_related_origins_error: 'A origem deve começar com https:// ou http://',
+    prebuilt_ui: {
+      title: 'INTEGRAR UI PRÉ-CONSTRUÍDO',
+      description:
+        'Integre rapidamente fluxos de verificação e configuração de segurança prontos para uso com UI pré-construída.',
+      permission_notice:
+        'Para integrar esses fluxos pré-construídos, defina as permissões da API de conta relacionadas como <strong>Editar</strong> nas configurações abaixo.',
+      flows_title: 'Integrar fluxos de configuração de segurança prontos para uso',
+      flows_description:
+        'Combine seu domínio com a rota para formar o URL de configurações da conta (por exemplo, https://auth.foo.com/account/email). Opcionalmente, adicione um parâmetro de URL `redirect=` para retornar os usuários ao seu aplicativo após atualização bem-sucedida.',
+      tooltips: {
+        email: 'Atualize seu endereço de e-mail principal',
+        phone: 'Atualize seu número de telefone principal',
+        username: 'Atualize seu nome de usuário',
+        password: 'Configure uma nova senha',
+        authenticator_app: 'Configure um novo aplicativo autenticador para autenticação multifator',
+        passkey_add: 'Registre uma nova chave de acesso',
+        passkey_manage: 'Gerencie suas chaves de acesso existentes ou adicione novas',
+        backup_codes_generate: 'Gere um novo conjunto de 10 códigos de backup',
+        backup_codes_manage: 'Veja seus códigos de backup disponíveis ou gere novos',
+      },
+      customize_note: 'Não quer a experiência pronta para uso? Você pode totalmente',
+      customize_link: 'personalizar seus fluxos com a Account API em vez disso.',
+    },
   },
   sign_up_and_sign_in,
   content,

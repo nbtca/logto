@@ -7,6 +7,7 @@ const user = {
   email_not_exist: 'La dirección de correo electrónico no ha sido registrada aún.',
   phone_not_exist: 'El número de teléfono no ha sido registrado aún.',
   identity_not_exist: 'La cuenta social no ha sido registrada aún.',
+  sso_identity_not_exist: 'La cuenta SSO empresarial no ha sido registrada aún.',
   identity_already_in_use: 'La cuenta social ha sido asociada a una cuenta existente.',
   social_account_exists_in_profile: 'Ya has asociado esta cuenta social.',
   cannot_delete_self: 'No puedes eliminarte a ti mismo.',
@@ -52,6 +53,7 @@ const user = {
     'El usuario no tiene una identidad empresarial vinculada al ID de conector SSO especificado: {{ ssoConnectorId }}.',
   identity_not_exists_in_current_user:
     'La identidad especificada no existe en la cuenta de usuario actual. Por favor, vincula la identidad antes de continuar.',
+  passkey_preferred: 'Crea una passkey para simplificar tu inicio de sesión.',
 };
 
 export default Object.freeze(user);

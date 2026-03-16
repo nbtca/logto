@@ -19,6 +19,7 @@ import {
   jwtCustomizerUserContextTypeDefinition,
   jwtCustomizerGrantContextTypeDefinition,
   jwtCustomizerUserInteractionContextTypeDefinition,
+  jwtCustomizerApplicationContextTypeDefinition,
 } from '@/pages/CustomizeJwtDetails/utils/type-definitions';
 
 import tabContentStyles from '../index.module.scss';
@@ -116,6 +117,22 @@ function InstructionTab({ isActive }: Props) {
           />
         </GuideCard>
       )}
+      <GuideCard
+        name={CardType.ApplicationData}
+        isExpanded={expendCard === CardType.ApplicationData}
+        setExpanded={(expand) => {
+          setExpendCard(expand ? CardType.ApplicationData : undefined);
+        }}
+      >
+        <Editor
+          language="typescript"
+          className={styles.sampleCode}
+          value={`declare ${jwtCustomizerApplicationContextTypeDefinition}`}
+          height="400px"
+          theme="logto-dark"
+          options={typeDefinitionCodeEditorOptions}
+        />
+      </GuideCard>
       <GuideCard
         name={CardType.FetchExternalData}
         isExpanded={expendCard === CardType.FetchExternalData}

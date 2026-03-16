@@ -21,6 +21,7 @@ const action = {
   switch_to: '{{method}}로 전환',
   sign_in_via_passcode: '인증번호로 로그인',
   sign_in_via_password: '비밀번호로 로그인',
+  sign_in_via_passkey: '패스키로 로그인',
   change: '변경 {{method}}',
   link_another_email: '다른 이메일 연동',
   link_another_phone: '다른 전화번호 연동',
@@ -29,10 +30,14 @@ const action = {
   copy: '복사',
   verify_via_passkey: '패스키로 확인',
   download: '다운로드',
+  remove: '삭제',
+  edit: '편집',
+  save: '저장',
   single_sign_on: '단일 로그인',
   authorize: '권한 부여',
   use_another_account: '다른 계정 사용',
   back_to_current_account: '현재 계정으로 돌아가기',
+  done: '완료',
 };
 
 export default Object.freeze(action);
