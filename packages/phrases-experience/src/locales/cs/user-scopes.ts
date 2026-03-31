@@ -5,6 +5,7 @@ const user_scopes = {
     phone: 'Tvé telefonní číslo',
     profile: 'Tvé jméno, uživatelské jméno, profilový obrázek a další údaje o profilu',
     roles: 'Tvé role',
+    groups: 'Tvé group',
     identities: 'Tvé propojené sociální účty',
     'urn:logto:scope:organizations': 'Informace o tvé organizaci',
     'urn:logto:scope:organization_roles': 'Role v tvé organizaci',
