@@ -1,11 +1,13 @@
 import LogtoSignature from '@experience/shared/components/LogtoSignature';
 import { LogtoProvider, Prompt, ReservedScope, useLogto, UserScope } from '@logto/react';
-import { accountCenterApplicationId, SignInIdentifier } from '@logto/schemas';
+import { accountCenterApplicationId, ExtraParamsKey, SignInIdentifier } from '@logto/schemas';
+import classNames from 'classnames';
 import { useContext, useEffect } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 
 import AppBoundary from '@ac/Providers/AppBoundary';
 import LoadingContextProvider from '@ac/Providers/LoadingContextProvider';
+import PageHeader from '@ac/components/PageHeader';
 
 import styles from './App.module.scss';
 import Callback from './Callback';
@@ -14,6 +16,7 @@ import LogtoErrorBoundary from './Providers/AppBoundary/LogtoErrorBoundary';
 import PageContextProvider from './Providers/PageContextProvider';
 import PageContext from './Providers/PageContextProvider/PageContext';
 import GlobalLoading from './components/GlobalLoading';
+import { isDevFeaturesEnabled } from './constants/env';
 import {
   emailRoute,
   emailSuccessRoute,
@@ -24,7 +27,9 @@ import {
   usernameRoute,
   usernameSuccessRoute,
   authenticatorAppRoute,
+  authenticatorAppReplaceRoute,
   authenticatorAppSuccessRoute,
+  authenticatorAppReplaceSuccessRoute,
   backupCodesGenerateRoute,
   backupCodesRegenerateRoute,
   backupCodesSuccessRoute,
@@ -32,8 +37,12 @@ import {
   passkeyAddRoute,
   passkeyManageRoute,
   passkeySuccessRoute,
+  socialSuccessRoute,
+  socialCallbackRoutePrefix,
+  socialRoutePrefix,
 } from './constants/routes';
 import initI18n from './i18n/init';
+import { resolveUiLocalesLanguage } from './i18n/utils';
 import BackupCodeBinding from './pages/BackupCodeBinding';
 import BackupCodeView from './pages/BackupCodeView';
 import Email from './pages/Email';
@@ -42,23 +51,46 @@ import PasskeyBinding from './pages/PasskeyBinding';
 import PasskeyView from './pages/PasskeyView';
 import Password from './pages/Password';
 import Phone from './pages/Phone';
+import Security from './pages/Security';
+import SocialCallback from './pages/SocialCallback';
+import SocialFlow from './pages/SocialFlow';
 import TotpBinding from './pages/TotpBinding';
 import UpdateSuccess from './pages/UpdateSuccess';
 import Username from './pages/Username';
-import { accountCenterBasePath, handleAccountCenterRoute } from './utils/account-center-route';
+import {
+  accountCenterBasePath,
+  getUiLocales,
+  handleAccountCenterRoute,
+  setRouteRestore,
+} from './utils/account-center-route';
+import { hasVisibleSecuritySection } from './utils/security-page';
 import '@experience/shared/scss/normalized.scss';
 
-void initI18n();
 handleAccountCenterRoute();
+void initI18n(resolveUiLocalesLanguage(getUiLocales()));
 
 const redirectUri = `${window.location.origin}${accountCenterBasePath}`;
 
 const Main = () => {
   const params = new URLSearchParams(window.location.search);
-  const isInCallback = Boolean(params.get('code'));
+  const { pathname } = window.location;
+  const isSocialCallback = pathname.startsWith(
+    `${accountCenterBasePath}${socialCallbackRoutePrefix}/`
+  );
+  const isAuthCallback =
+    Boolean(params.get('code')) &&
+    (pathname === accountCenterBasePath || pathname === `${accountCenterBasePath}/`);
+  const isInCallback = isSocialCallback || isAuthCallback;
+  const uiLocales = getUiLocales();
   const { isAuthenticated, isLoading, signIn } = useLogto();
-  const { isLoadingExperience, isLoadingUserInfo, userInfo, userInfoError } =
-    useContext(PageContext);
+  const {
+    accountCenterSettings,
+    experienceSettings,
+    isLoadingExperience,
+    isLoadingUserInfo,
+    userInfo,
+    userInfoError,
+  } = useContext(PageContext);
   const isInitialAuthLoading = !isAuthenticated && isLoading;
 
   useEffect(() => {
@@ -67,9 +99,11 @@ const Main = () => {
     }
 
     if (!isAuthenticated) {
-      void signIn({ redirectUri });
+      const extraParams = uiLocales ? { [ExtraParamsKey.UiLocales]: uiLocales } : undefined;
+      setRouteRestore(window.location.pathname);
+      void signIn({ redirectUri, extraParams });
     }
-  }, [isAuthenticated, isInCallback, isInitialAuthLoading, signIn]);
+  }, [isAuthenticated, isInCallback, isInitialAuthLoading, signIn, uiLocales]);
 
   useEffect(() => {
     if (isInCallback || isInitialAuthLoading || !isAuthenticated || isLoadingUserInfo) {
@@ -77,7 +111,9 @@ const Main = () => {
     }
 
     if (userInfoError) {
-      void signIn({ redirectUri, prompt: Prompt.Login });
+      const extraParams = uiLocales ? { [ExtraParamsKey.UiLocales]: uiLocales } : undefined;
+      setRouteRestore(window.location.pathname);
+      void signIn({ redirectUri, prompt: Prompt.Login, extraParams });
     }
   }, [
     isAuthenticated,
@@ -85,9 +121,14 @@ const Main = () => {
     isInitialAuthLoading,
     isLoadingUserInfo,
     signIn,
+    uiLocales,
     userInfoError,
   ]);
-  if (isInCallback) {
+  if (isSocialCallback) {
+    return <SocialCallback />;
+  }
+
+  if (isAuthCallback) {
     return <Callback />;
   }
 
@@ -98,6 +139,10 @@ const Main = () => {
   if (!userInfo) {
     return <GlobalLoading />;
   }
+
+  const showsSecurityPage =
+    isDevFeaturesEnabled && hasVisibleSecuritySection(accountCenterSettings, experienceSettings);
+  const indexElement = showsSecurityPage ? <Security /> : <Home />;
 
   return (
     <Routes>
@@ -119,41 +164,67 @@ const Main = () => {
         element={<UpdateSuccess identifierType="totp" />}
       />
       <Route
+        path={authenticatorAppReplaceSuccessRoute}
+        element={<UpdateSuccess identifierType="totp_replaced" />}
+      />
+      <Route
         path={backupCodesSuccessRoute}
         element={<UpdateSuccess identifierType="backup_code" />}
       />
       <Route path={passkeySuccessRoute} element={<UpdateSuccess identifierType="passkey" />} />
+      {isDevFeaturesEnabled && (
+        <Route path={socialSuccessRoute} element={<UpdateSuccess identifierType="social" />} />
+      )}
       <Route path={emailRoute} element={<Email />} />
       <Route path={phoneRoute} element={<Phone />} />
       <Route path={passwordRoute} element={<Password />} />
       <Route path={usernameRoute} element={<Username />} />
+      <Route path={authenticatorAppReplaceRoute} element={<TotpBinding isReplace />} />
       <Route path={authenticatorAppRoute} element={<TotpBinding />} />
       <Route path={backupCodesGenerateRoute} element={<BackupCodeBinding />} />
       <Route path={backupCodesRegenerateRoute} element={<BackupCodeBinding isRegenerate />} />
       <Route path={backupCodesManageRoute} element={<BackupCodeView />} />
       <Route path={passkeyAddRoute} element={<PasskeyBinding />} />
       <Route path={passkeyManageRoute} element={<PasskeyView />} />
-      <Route index element={<Home />} />
+      {isDevFeaturesEnabled && (
+        <>
+          <Route path={`${socialCallbackRoutePrefix}/:connectorId`} element={<SocialCallback />} />
+          <Route path={`${socialRoutePrefix}/:connectorId`} element={<SocialFlow mode="add" />} />
+          <Route
+            path={`${socialRoutePrefix}/:connectorId/remove`}
+            element={<SocialFlow mode="remove" />}
+          />
+        </>
+      )}
+      <Route index element={indexElement} />
       <Route path="*" element={<Home />} />
     </Routes>
   );
 };
 
 const Layout = () => {
-  const { experienceSettings, theme } = useContext(PageContext);
+  const { accountCenterSettings, experienceSettings, theme } = useContext(PageContext);
   const hideLogtoBranding = experienceSettings?.hideLogtoBranding === true;
+  const { pathname } = useLocation();
+  const isHomePage =
+    pathname === '/' &&
+    isDevFeaturesEnabled &&
+    hasVisibleSecuritySection(accountCenterSettings, experienceSettings);
 
   return (
     <div className={styles.app}>
-      <div className={styles.layout}>
-        <div className={styles.container}>
-          <main className={styles.main}>
+      <div className={classNames(styles.layout, isHomePage && styles.fullPage)}>
+        {isHomePage && <PageHeader />}
+        <div className={classNames(styles.container, !isHomePage && styles.cardContainer)}>
+          <main className={classNames(styles.main, !isHomePage && styles.cardMain)}>
             <ErrorBoundary>
               <LogtoErrorBoundary>
                 <Main />
               </LogtoErrorBoundary>
             </ErrorBoundary>
-            {!hideLogtoBranding && <LogtoSignature className={styles.signature} theme={theme} />}
+            {!isHomePage && !hideLogtoBranding && (
+              <LogtoSignature className={styles.signature} theme={theme} />
+            )}
           </main>
         </div>
       </div>

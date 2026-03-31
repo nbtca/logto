@@ -74,6 +74,12 @@ const user_details = {
     deletion_confirmation:
       'Sie entfernen die bestehende <name/> für die Zwei-Faktor-Authentifizierung. Sind Sie sicher, dass Sie fortfahren möchten?',
   },
+  passkey: {
+    field_name: 'Passkeys',
+    field_description_empty: 'Dieser Benutzer hat die Passkey-Anmeldung nicht aktiviert.',
+    deletion_confirmation:
+      'Sie entfernen den vorhandenen <name/> für die Passkey-Anmeldung. Sind Sie sicher, dass Sie fortfahren möchten?',
+  },
   suspended: 'Gesperrt',
   suspend_user: 'Benutzer sperren',
   suspend_user_reminder:
@@ -148,6 +154,31 @@ const user_details = {
     name_column: 'Name',
     session_id_column: 'Sitzungs-ID',
     location_column: 'Standort',
+    browser_on_os: '{{browser}} unter {{os}}',
+    user: 'Benutzer',
+    applications: 'Anwendungen',
+    signed_in_at: 'Zuletzt angemeldet',
+    ip: 'IP-Adresse',
+    browser_name: 'Browsername',
+    os_name: 'Betriebssystemname',
+    device_model: 'Gerätemodell',
+    revoke_session: 'Sitzung widerrufen',
+    revoke_session_confirmation:
+      'Wenn Sie diese Sitzung entfernen, müssen sich Benutzer erneut authentifizieren.',
+  },
+  third_party_apps: {
+    title: 'Drittanbieter-Apps',
+    description:
+      'Verwende Logto als Identitätsanbieter, um Drittanbieter-Apps zu autorisieren. Zeige die Apps an und verwalte sie, denen dieser Benutzer Zugriff gewährt hat.',
+    field_name: 'Autorisierte Drittanbieter-Apps',
+    multiple_authorized: 'Dieser Benutzer hat mehrere Drittanbieter-Apps und -Dienste autorisiert.',
+    not_authorized: 'Dieser Benutzer hat noch keine Drittanbieter-Apps oder -Dienste autorisiert.',
+    name_column: 'Name',
+    app_id_column: 'App-ID',
+    access_created_at_column: 'Zugriff erstellt am',
+    revoke_access_title: 'Zugriff widerrufen?',
+    revoke_access_description:
+      'Dadurch wird der Zugriff der App auf das Konto dieses Benutzers auf allen Geräten widerrufen. Der Benutzer muss die App erneut autorisieren, um den Zugriff wiederherzustellen.',
   },
   connections: {
     title: 'Verbindung',

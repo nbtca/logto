@@ -70,6 +70,12 @@ const user_details = {
     deletion_confirmation:
       'คุณกำลังนำ <name/> สำหรับ ขั้นตอนยืนยันสองขั้น ออก คุณแน่ใจหรือว่าต้องการดำเนินการต่อ?',
   },
+  passkey: {
+    field_name: 'พาสคีย์',
+    field_description_empty: 'ผู้ใช้นี้ยังไม่ได้เปิดใช้งานการลงชื่อเข้าใช้ด้วยพาสคีย์',
+    deletion_confirmation:
+      'คุณกำลังนำ <name/> สำหรับการลงชื่อเข้าใช้ด้วยพาสคีย์ ออก คุณแน่ใจหรือว่าต้องการดำเนินการต่อ?',
+  },
   suspended: 'ระงับ',
   suspend_user: 'ระงับผู้ใช้',
   suspend_user_reminder:
@@ -141,6 +147,30 @@ const user_details = {
     name_column: 'ชื่อ',
     session_id_column: 'รหัสเซสชัน',
     location_column: 'ตำแหน่ง',
+    browser_on_os: '{{browser}} บน {{os}}',
+    user: 'ผู้ใช้',
+    applications: 'แอปพลิเคชัน',
+    signed_in_at: 'การลงชื่อเข้าใช้ล่าสุด',
+    ip: 'IP',
+    browser_name: 'ชื่อเบราว์เซอร์',
+    os_name: 'ชื่อระบบปฏิบัติการ',
+    device_model: 'รุ่นอุปกรณ์',
+    revoke_session: 'เพิกถอนเซสชัน',
+    revoke_session_confirmation: 'หากลบเซสชันนี้ ผู้ใช้จะต้องยืนยันตัวตนอีกครั้ง',
+  },
+  third_party_apps: {
+    title: 'แอปของบุคคลที่สาม',
+    description:
+      'ใช้ Logto เป็นผู้ให้บริการตัวตนเพื่ออนุญาตแอปของบุคคลที่สาม ดูและจัดการแอปที่ผู้ใช้นี้เคยให้สิทธิ์เข้าถึงไว้',
+    field_name: 'แอปบุคคลที่สามที่ได้รับอนุญาต',
+    multiple_authorized: 'ผู้ใช้นี้ได้อนุญาตแอปและบริการของบุคคลที่สามหลายรายการ',
+    not_authorized: 'ผู้ใช้นี้ยังไม่ได้อนุญาตแอปหรือบริการของบุคคลที่สาม',
+    name_column: 'ชื่อ',
+    app_id_column: 'รหัสแอป',
+    access_created_at_column: 'ให้สิทธิ์เข้าถึงเมื่อ',
+    revoke_access_title: 'เพิกถอนการเข้าถึง?',
+    revoke_access_description:
+      'การดำเนินการนี้จะเพิกถอนสิทธิ์เข้าถึงบัญชีของผู้ใช้นี้จากแอปในทุกอุปกรณ์ ผู้ใช้ต้องอนุญาตใหม่อีกครั้งเพื่อกู้คืนการเข้าถึง',
   },
   connections: {
     title: 'การเชื่อมต่อ',

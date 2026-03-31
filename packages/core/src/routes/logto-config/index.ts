@@ -12,11 +12,13 @@ import {
   type OidcConfigKeysResponse,
   type OidcConfigKey,
   LogtoOidcConfigKeyType,
+  oidcSessionConfigGuard,
 } from '@logto/schemas';
 import { z } from 'zod';
 
 import RequestError from '#src/errors/RequestError/index.js';
 import koaGuard from '#src/middleware/koa-guard.js';
+import defaults from '#src/oidc/defaults.js';
 import { getConsoleLogFromContext } from '#src/utils/console.js';
 import { exportJWK } from '#src/utils/jwks.js';
 
@@ -28,10 +30,15 @@ import logtoConfigJwtCustomizerRoutes from './jwt-customizer.js';
 /**
  * Provide a simple API router key type and DB config key mapping
  */
-const getOidcConfigKeyDatabaseColumnName = (key: LogtoOidcConfigKeyType): LogtoOidcConfigKey =>
+const getOidcConfigKeyDatabaseColumnName = (
+  key: LogtoOidcConfigKeyType
+): Exclude<LogtoOidcConfigKey, LogtoOidcConfigKey.Session> =>
   key === LogtoOidcConfigKeyType.PrivateKeys
     ? LogtoOidcConfigKey.PrivateKeys
     : LogtoOidcConfigKey.CookieKeys;
+
+// Keep `ttl` constraints from `oidcSessionConfigGuard` while requiring this field in API responses.
+const oidcSessionConfigResponseGuard = oidcSessionConfigGuard.required({ ttl: true });
 
 /**
  * Remove actual values of the private keys from response.
@@ -89,6 +96,52 @@ export default function logtoConfigRoutes<T extends ManagementApiRouter>(
     async (ctx, next) => {
       const { value } = await updateAdminConsoleConfig(ctx.guard.body);
       ctx.body = value;
+
+      return next();
+    }
+  );
+
+  router.get(
+    '/configs/oidc/session',
+    koaGuard({
+      response: oidcSessionConfigResponseGuard,
+      status: [200],
+    }),
+    async (ctx, next) => {
+      const configs = await getOidcConfigs(getConsoleLogFromContext(ctx));
+      const sessionConfig = configs[LogtoOidcConfigKey.Session];
+
+      ctx.body = {
+        // Add default TTL value if session config is not set.
+        ttl: defaults.sessionTtl,
+        ...sessionConfig,
+      };
+
+      // Intentionally do not call next() to avoid falling through to /configs/oidc/:keyType.
+      // Running next() will trigger all the downstream middleware including the route handler for /configs/oidc/:keyType, which is not expected for this endpoint.
+    }
+  );
+
+  router.patch(
+    '/configs/oidc/session',
+    koaGuard({
+      body: oidcSessionConfigGuard.partial(),
+      response: oidcSessionConfigResponseGuard,
+      status: [200],
+    }),
+    async (ctx, next) => {
+      const configs = await getOidcConfigs(getConsoleLogFromContext(ctx));
+      const sessionConfig = configs[LogtoOidcConfigKey.Session];
+
+      const updatedSessionConfig = { ...sessionConfig, ...ctx.guard.body };
+
+      await updateOidcConfigsByKey(LogtoOidcConfigKey.Session, updatedSessionConfig);
+      void tenant.invalidateCache();
+
+      ctx.body = {
+        ttl: defaults.sessionTtl,
+        ...updatedSessionConfig,
+      };
 
       return next();
     }

@@ -69,6 +69,12 @@ const user_details = {
     deletion_confirmation:
       'أنت تقوم بإزالة <name/> الحالية للتحقق المتعدد من عوامل التحقق. هل أنت متأكد أنك تريد المتابعة؟',
   },
+  passkey: {
+    field_name: 'مفاتيح المرور',
+    field_description_empty: 'لم يقم هذا المستخدم بتمكين تسجيل الدخول بمفاتيح المرور.',
+    deletion_confirmation:
+      'أنت تقوم بإزالة <name/> الحالية لتسجيل الدخول بمفاتيح المرور. هل أنت متأكد أنك تريد المتابعة؟',
+  },
   suspended: 'موقوف',
   suspend_user: 'تعليق المستخدم',
   suspend_user_reminder:
@@ -139,8 +145,32 @@ const user_details = {
     multiple_signed_in: 'قام هذا المستخدم بتسجيل الدخول إلى عدة أجهزة أو متصفحات.',
     not_found: 'لم يتم العثور على جلسات Logto نشطة. المستخدم ليس مسجلاً حاليًا في أي جهاز.',
     name_column: 'الاسم',
-    session_id_column: 'معرف الجلسة',
+    session_id_column: 'معرّف الجلسة',
     location_column: 'الموقع',
+    browser_on_os: '{{browser}} على {{os}}',
+    user: 'المستخدم',
+    applications: 'التطبيقات',
+    signed_in_at: 'آخر تسجيل دخول',
+    ip: 'عنوان IP',
+    browser_name: 'اسم المتصفح',
+    os_name: 'اسم نظام التشغيل',
+    device_model: 'طراز الجهاز',
+    revoke_session: 'إبطال الجلسة',
+    revoke_session_confirmation: 'إذا أزلت هذه الجلسة، فسيُطلب من المستخدمين إعادة المصادقة.',
+  },
+  third_party_apps: {
+    title: 'تطبيقات الطرف الثالث',
+    description:
+      'استخدم Logto كمزوّد هوية لتفويض تطبيقات الطرف الثالث. اعرض التطبيقات التي منحها هذا المستخدم صلاحية الوصول وأدرها.',
+    field_name: 'تطبيقات الطرف الثالث المصرح بها',
+    multiple_authorized: 'قام هذا المستخدم بتفويض عدة تطبيقات وخدمات تابعة لجهات خارجية.',
+    not_authorized: 'لم يفوض هذا المستخدم أي تطبيقات أو خدمات تابعة لجهات خارجية بعد.',
+    name_column: 'الاسم',
+    app_id_column: 'معرّف التطبيق',
+    access_created_at_column: 'تاريخ إنشاء الوصول',
+    revoke_access_title: 'إلغاء الوصول؟',
+    revoke_access_description:
+      'سيؤدي هذا إلى إلغاء وصول التطبيق إلى حساب هذا المستخدم عبر جميع الأجهزة. يجب على المستخدم إعادة التفويض لاستعادة الوصول.',
   },
   connections: {
     title: 'الاتصال',

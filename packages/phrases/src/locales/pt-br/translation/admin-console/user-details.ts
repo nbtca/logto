@@ -71,6 +71,12 @@ const user_details = {
     deletion_confirmation:
       'Você está removendo o existente <name/> para a verificação em duas etapas. Tem certeza de que deseja continuar?',
   },
+  passkey: {
+    field_name: 'Chaves de acesso',
+    field_description_empty: 'Este usuário não habilitou o login com chave de acesso.',
+    deletion_confirmation:
+      'Você está removendo a chave de acesso existente <name/> para login. Tem certeza de que deseja continuar?',
+  },
   suspended: 'Suspenso',
   suspend_user: 'Suspender usuário',
   suspend_user_reminder:
@@ -143,8 +149,33 @@ const user_details = {
     not_found:
       'Nenhuma sessão ativa do Logto encontrada. O usuário não está atualmente conectado em nenhum dispositivo.',
     name_column: 'Nome',
-    session_id_column: 'ID da Sessão',
+    session_id_column: 'ID da sessão',
     location_column: 'Localização',
+    browser_on_os: '{{browser}} no {{os}}',
+    user: 'Usuário',
+    applications: 'Aplicativos',
+    signed_in_at: 'Último login',
+    ip: 'IP',
+    browser_name: 'Nome do navegador',
+    os_name: 'Nome do sistema operacional',
+    device_model: 'Modelo do dispositivo',
+    revoke_session: 'Revogar sessão',
+    revoke_session_confirmation:
+      'Se você remover esta sessão, os usuários serão forçados a se autenticar novamente.',
+  },
+  third_party_apps: {
+    title: 'Aplicativos de terceiros',
+    description:
+      'Use o Logto como provedor de identidade para autorizar aplicativos de terceiros. Visualize e gerencie os aplicativos aos quais este usuário concedeu acesso.',
+    field_name: 'Aplicativos de terceiros autorizados',
+    multiple_authorized: 'Este usuário autorizou vários aplicativos e serviços de terceiros.',
+    not_authorized: 'Este usuário ainda não autorizou nenhum aplicativo ou serviço de terceiros.',
+    name_column: 'Nome',
+    app_id_column: 'ID do aplicativo',
+    access_created_at_column: 'Acesso criado em',
+    revoke_access_title: 'Revogar acesso?',
+    revoke_access_description:
+      'Isso revogará o acesso do aplicativo à conta deste usuário em todos os dispositivos. O usuário precisará autorizar novamente para restaurar o acesso.',
   },
   connections: {
     title: 'Conexão',
